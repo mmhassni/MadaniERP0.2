@@ -8,22 +8,39 @@ import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
+import {ListeChantierPage} from "../pages/liste-chantier/liste-chantier";
+import {ListeDemandePage} from "../pages/liste-demande/liste-demande";
+import {ListeSousDemandePage} from "../pages/liste-sous-demande/liste-sous-demande";
+import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    ListeProjetPage,
+    ListeChantierPage,
+    ListeDemandePage,
+    ListeSousDemandePage,
+    NouveauProduitPage
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    ListeProjetPage,
+    ListeChantierPage,
+    ListeDemandePage,
+    ListeSousDemandePage,
+    NouveauProduitPage
   ],
   providers: [
     StatusBar,
