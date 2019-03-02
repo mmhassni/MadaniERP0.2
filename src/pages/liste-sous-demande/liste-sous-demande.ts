@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {SousDemandePage} from "../sous-demande/sous-demande";
+import {HttpClient} from "@angular/common/http";
 
 /**
  * Generated class for the ListeSousDemandePage page.
@@ -17,7 +19,9 @@ export class ListeSousDemandePage {
 
   public informationsActuelles = {};
 
-  public listeSousDemandes = [
+  public listeFournisseurs = [];
+
+  /* public listeSousDemandes = [
     {"idSousDemande":1228,
       "idFournisseur":564,
       "raisonSocialeFournisseur":'Betton Fourni',
@@ -49,13 +53,30 @@ export class ListeSousDemandePage {
       "sousDemandeReceptionnee":false,
     }
 
-  ];
+  ]; */
+
+  public listeSousDemandes = [];
 
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient) {
+
+    //on recupere la liste de tout les fournisseurs de la bdd qui sont affecte a ce fournisseur
+
+    console.log(this.navParams.data.informationsActuelles);
+
+    //pour cela on doit dabord recuperer l id de l utilisateur pour voir la liste des fournisseur qui lui sont affectes
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+
+
+    this.httpClient.get("http://localhost:9090/requestAny/select sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, *  from sousdemande, demande, fournisseur where sousdemande.reffournisseur = fournisseur.id  and sousdemande.refdemande = demande.id and demande.id = " + (this.informationsActuelles as any).iddemande)
+      .subscribe(data => {
+        console.log(data);
+        this.listeSousDemandes = (data as any).features;
+
+      });
+
 
 
   }
@@ -68,16 +89,18 @@ export class ListeSousDemandePage {
 
     // That's right, we're pushing to ourselves!
     //On complete nos informations actuelles pour y ajouter les informations concernant le chantier selectionnee
-    this.informationsActuelles["idFournisseur"] = item.idFournisseur;
-    this.informationsActuelles["raisonSocialeFournisseur"] = item.raisonSocialeFournisseur;
+
+    this.informationsActuelles["idfournisseur"] = item.idfournisseur;
+    this.informationsActuelles["idsousdemande"] = item.idsousdemande;
+    this.informationsActuelles["raisonsocialefournisseur"] = item.raisonsocialefournisseur;
     this.informationsActuelles["photoBL"] = item.photoBL;
     this.informationsActuelles["observations"] = item.observations;
-    this.informationsActuelles["dateModificationSousDemande"] = item.dateModificationSousDemande;
-    this.informationsActuelles["sousDemandeTraitee"] = item.sousDemandeTraitee;
-    this.informationsActuelles["sousDemandeValidee"] = item.sousDemandeValidee;
-    this.informationsActuelles["sousDemandeReceptionnee"] = item.sousDemandeReceptionnee;
+    this.informationsActuelles["datemodificationsousdemande"] = item.datemodificationsousdemande;
+    this.informationsActuelles["traitee"] = item.traitee;
+    this.informationsActuelles["validee"] = item.validee;
+    this.informationsActuelles["receptionnee"] = item.receptionnee;
 
-    this.navCtrl.push(ListeSousDemandePage, {
+    this.navCtrl.push(SousDemandePage, {
       informationsActuelles: this.informationsActuelles
     });
 

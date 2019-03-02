@@ -14,6 +14,8 @@ import {ListeDemandePage} from "../pages/liste-demande/liste-demande";
 import {ListeSousDemandePage} from "../pages/liste-sous-demande/liste-sous-demande";
 import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
 import {HttpClientModule} from "@angular/common/http";
+import {SousDemandePage} from "../pages/sous-demande/sous-demande";
+import { UtilisateurProvider } from '../providers/utilisateur/utilisateur';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import {HttpClientModule} from "@angular/common/http";
     ListeChantierPage,
     ListeDemandePage,
     ListeSousDemandePage,
-    NouveauProduitPage
+    NouveauProduitPage,
+    SousDemandePage
   ],
   imports: [
     BrowserModule,
@@ -40,12 +43,14 @@ import {HttpClientModule} from "@angular/common/http";
     ListeChantierPage,
     ListeDemandePage,
     ListeSousDemandePage,
-    NouveauProduitPage
+    NouveauProduitPage,
+    SousDemandePage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    UtilisateurProvider
   ]
 })
 export class AppModule {}

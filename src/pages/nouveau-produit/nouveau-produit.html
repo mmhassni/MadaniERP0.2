@@ -20,14 +20,14 @@
     <ion-label style="color: #000;">
       Désignation :
     </ion-label>
-    <ion-input type="text" name="prenom" placeholder=""></ion-input>
+    <ion-input type="text" name="prenom" placeholder="" [(ngModel)]="produitActuel.nomduproduit"></ion-input>
   </ion-item>
 
 
 
   <ion-item>
     <ion-label style="color: #000;">Unité:</ion-label>
-    <ion-select [selectOptions]="selectUniteOptions" name = "organisme" >
+    <ion-select [selectOptions]="selectUniteOptions" name = "unites" [(ngModel)]="produitActuel.unite">
       <ion-option *ngFor="let item of listeUnites" [value]="item.libelle">{{item.description}}</ion-option>
       <ion-option value="">Aucune</ion-option>
     </ion-select>
@@ -37,11 +37,11 @@
     <ion-label style="color: #000;">
       Prix dh :
     </ion-label>
-    <ion-input type="text" name="prenom" placeholder="" ></ion-input>
+    <ion-input type="text" name="prenom" placeholder="" [(ngModel)]="produitActuel.prixht"></ion-input>
   </ion-item>
 
-  <button type="submit" ion-button color="secondary" block>
-    Créer Produit
+  <button type="submit" ion-button color="secondary" (click)="creerNouveauProduit()" block>
+  Créer Produit
   </button>
 
 </ion-content>

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {ListeChantierPage} from "../liste-chantier/liste-chantier";
+import {HttpClient} from "@angular/common/http";
+import {UtilisateurProvider} from "../../providers/utilisateur/utilisateur";
+import {Subscription} from "rxjs";
 
 /**
  * Generated class for the ListeProjetPage page.
@@ -29,7 +32,44 @@ export class ListeProjetPage {
 
   ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+
+  public utilisateurSubscription : Subscription;
+  public utilisateur = {
+      "id":1,
+      "nom":'issam',
+      "prenom":'madani'
+
+  };
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public utilisateurProvider: UtilisateurProvider) {
+
+    this.utilisateurSubscription = this.utilisateurProvider.utilisateur$.subscribe(
+
+      (utilisateurImported : any) => {
+        this.utilisateur = utilisateurImported;
+        console.log(this.utilisateur);
+
+        // on ne doit recuperer la liste des projet que lorsque les donnes sur les roles de l utilisateur sont recuperees
+        if(this.utilisateur != null){
+
+
+
+        }
+
+
+      }
+
+    ); // fin code subscription
+
+
+    this.httpClient.get("http://localhost:9090/requestAny/select id as idprojet, * from projet")
+      .subscribe(data => {
+        console.log(data);
+        this.listeProjets = (data as any).features;
+
+      });
+
+
 
   }
 
@@ -39,9 +79,15 @@ export class ListeProjetPage {
 
   itemTapped(event, item) {
     // That's right, we're pushing to ourselves!
-    this.navCtrl.push(ListeChantierPage, {
-      informationsActuelles: item
-    });
+    if(this.utilisateur != {}){
+
+      item["utilisateur"]=this.utilisateur;
+      this.navCtrl.push(ListeChantierPage, {
+        informationsActuelles: item
+      });
+
+    }
+
   }
 
 }

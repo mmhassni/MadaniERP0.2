@@ -1,12 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import {Nav, NavController, Platform} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
-import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
+import {UtilisateurProvider} from "../providers/utilisateur/utilisateur";
+import {Subscription} from "rxjs";
 
 @Component({
   templateUrl: 'app.html'
@@ -14,20 +15,37 @@ import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = NouveauProduitPage;
+  rootPage: any = ListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  public utilisateurSubscription : Subscription;
+  public utilisateur : any;
+
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public utilisateurProvider: UtilisateurProvider) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Home', component: HomePage },
-      { title: 'List', component: ListPage },
-      { title: "Demandes d'achat ", component: ListeProjetPage },
+      { title: "Demandes d'achats", component: ListeProjetPage },
+      { title: 'Fournisseurs', component: HomePage },
+      { title: 'Projets', component: ListPage },
+      { title: 'Utilisateurs', component: ListPage }
 
     ];
+
+    this.utilisateurProvider.emitUtilisateur();
+
+
+    this.utilisateurSubscription = this.utilisateurProvider.utilisateur$.subscribe(
+
+      (utilisateurImported : any) => {
+        this.utilisateur = utilisateurImported;
+        console.log(this.utilisateur);
+
+      }
+
+    );
 
   }
 

@@ -9,7 +9,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Demande d'achat</ion-title>
+    <ion-title>Demandee d'achat</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -20,9 +20,9 @@
 
   <ion-list>
     <button ion-item *ngFor="let item of listeProjets" (click)="itemTapped($event, item)">
-      Projet : {{item.nomProjet}}
-      <p>Id : {{item.idProjet}}</p>
-      <p>Date dernier achat: {{item.date}} </p>
+      Projet : {{item.nomprojet}}
+      <p>Id : {{item.idprojet}}</p>
+      <p>Date ordre service: {{item.dateordreservice}} </p>
       <button ion-button clear item-end >Détail</button>
     </button>
   </ion-list>

@@ -1,0 +1,163 @@
+
+See http://ionicframework.com/docs/components/#navigation for more info on
+Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Demande d'achat</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Projet : {{informationsActuelles.nomprojet}}
+    </ion-label>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Chantier : {{informationsActuelles.nomchantier}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Id demande : {{informationsActuelles.iddemande}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Demandeur : {{informationsActuelles.nomdemandeur}}
+    </ion-label>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="color: #000;">Fournisseurs:</ion-label>
+    <ion-select [selectOptions]="selectFournisseursOptions" name = "fournisseurs" [(ngModel)]="informationsActuelles.idfournisseur" [placeholder]="informationsActuelles.raisonsocialefournisseur">
+      <ion-option *ngFor="let item of listeFournisseurs" [value]="item.idfournisseur">{{item.raisonsociale}}</ion-option>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+  <ion-item>
+    <p>Date modification: {{informationsActuelles.datemodificationsousdemande}} </p>
+    <p *ngIf="informationsActuelles?.traitee == 'TRUE'">Traitée: oui</p>
+    <p *ngIf="informationsActuelles?.traitee != 'TRUE'">Traitée: non</p>
+    <p *ngIf="informationsActuelles?.validee == 'TRUE'">Validée: oui</p>
+    <p *ngIf="informationsActuelles?.validee != 'TRUE'">Validée: non</p>
+    <p *ngIf="informationsActuelles?.receptionnee == 'TRUE'">Récéptionnée: oui</p>
+    <p *ngIf="informationsActuelles?.receptionnee != 'TRUE'">Récéptionnée: non</p>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">Mod. paiement:</ion-label>
+    <ion-select name="modalitepaiement" [(ngModel)]="informationsActuelles.modalitepaiement">
+      <ion-option value="cheque">Cheque</ion-option>
+      <ion-option value="espece">Espece</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Numero BL :
+    </ion-label>
+    <ion-input type="tel" name="text" placeholder="" [(ngModel)]="informationsActuelles.numerobl"  ></ion-input>
+  </ion-item>
+
+
+
+  <ion-item padding="0">
+    <h1 >Liste des articles:</h1>
+    <ion-icon name="add-circle" item-end></ion-icon>
+  </ion-item>
+
+
+
+  <ion-list>
+
+    <button ion-item *ngFor="let item of listeArticles"   (click)="itemTapped($event, item)">
+      Num article : {{item.idarticle}}
+      <p>Désignation: {{item.nomproduit}} </p>
+      <p>Unité: {{item.nomproduit}} </p>
+      <p>Quantité: {{item.quantitesaisie}} </p>
+      <p>Quantité récéptionnée: {{item.quantiterecue}} </p>
+      <p>Prix HT: {{item.prixarticle}} </p>
+      <p>TVA: {{item.tvaarticle}} </p>
+      <p>Montant HT: {{(item.prixarticle*(100 - item.tvaarticle)) / 100}} </p>
+      <p>Date livraison souhaitée: {{item.datelivraison}} </p>
+
+    </button>
+
+  </ion-list>
+
+  <button type="submit" ion-button color="secondary" (click)="creerNouveauProduit()" block>
+    Ajouter article
+  </button>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Observations :
+    </ion-label>
+    <ion-textarea type="text" name="observations" placeholder="Observations" [(ngModel)]="informationsActuelles.observations"  ></ion-textarea>
+  </ion-item>
+
+  <ion-item padding="0">
+    <h1 >Reception de la livraison:</h1>
+  </ion-item>
+
+  <ion-list>
+
+    <ion-item *ngFor="let itemR of listeArticles">
+
+      <ion-label style="color: #000;">
+        Quantité récéptionnée:
+        <p>Num article : {{itemR.idarticle}}</p>
+        <p>Désignation: {{itemR.nomproduit}} </p>
+      </ion-label>
+      <ion-input type="text" name="quantiterecue" placeholder="" [(ngModel)]="itemR.quantiterecue"></ion-input>
+    </ion-item>
+
+  </ion-list>
+
+
+  <ion-item style="padding-bottom:4px;padding-top: 4px">
+    <ion-label>Photo BL:</ion-label>
+
+  </ion-item>
+  <img  [(src)]="informationsActuelles.photobl" *ngIf="informationsActuelles.photobl"/>
+
+
+  <div text-center>
+    <button ion-button round (click)="photoBLChooser()">
+      Charger Photo  <ion-icon padding name="camera"></ion-icon>
+    </button>
+  </div>
+
+  <button type="submit" color="tertiary" ion-button  block>
+    Enregistrer informations
+  </button>
+
+
+  <button type="submit" color="danger" ion-button  block>
+    Generer bon de commande
+  </button>
+
+
+
+
+
+</ion-content>
