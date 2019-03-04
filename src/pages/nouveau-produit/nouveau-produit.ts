@@ -38,7 +38,7 @@ export class NouveauProduitPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient: HttpClient) {
 
-    this.httpClient.get("http://localhost:9090/requestAny/select%20*%20from%20unites")
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select%20*%20from%20unites")
       .subscribe(data => {
         console.log(data);
 

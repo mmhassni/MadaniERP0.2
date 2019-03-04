@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { Camera } from '@ionic-native/camera';
+import { Base64ToGallery } from '@ionic-native/base64-to-gallery';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -16,22 +18,28 @@ import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
 import {HttpClientModule} from "@angular/common/http";
 import {SousDemandePage} from "../pages/sous-demande/sous-demande";
 import { UtilisateurProvider } from '../providers/utilisateur/utilisateur';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { EmailComposer } from '@ionic-native/email-composer';
+import {AjouterProjetPage} from "../pages/ajouter-projet/ajouter-projet";
+
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     ListPage,
-    ListeProjetPage,
     ListeChantierPage,
     ListeDemandePage,
+    ListeProjetPage,
     ListeSousDemandePage,
     NouveauProduitPage,
-    SousDemandePage
+    SousDemandePage,
+    AjouterProjetPage
+
   ],
   imports: [
-    BrowserModule,
     HttpClientModule,
+    BrowserModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
@@ -41,14 +49,19 @@ import { UtilisateurProvider } from '../providers/utilisateur/utilisateur';
     ListPage,
     ListeProjetPage,
     ListeChantierPage,
-    ListeDemandePage,
     ListeSousDemandePage,
+    ListeDemandePage,
     NouveauProduitPage,
-    SousDemandePage
+    SousDemandePage,
+    AjouterProjetPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    Camera,
+    FilePath,
+    EmailComposer,
+    Base64ToGallery,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UtilisateurProvider
   ]

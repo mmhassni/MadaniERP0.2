@@ -1,0 +1,76 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Nouveau projet</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Objet :
+    </ion-label>
+    <ion-input type="text" name="nomprojet" placeholder=""   ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Montant :
+    </ion-label>
+    <ion-input type="number" name="montantprojet" placeholder=""  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Délais réalisation (mois) :
+    </ion-label>
+    <ion-input type="number" name="delaisrealisationprojet" placeholder=""   ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;width: 100%;max-width: 100% !important">Région :</ion-label>
+    <ion-select [selectOptions]="selectRegionsOptions" name = "regions" >
+      <ion-option *ngFor="let item of listeRegions" [value]="item.id">{{item.nomregion}}</ion-option>
+      <ion-option value="">Autre</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Nº marché :
+    </ion-label>
+    <ion-input type="number" name="nummarcheprojet" placeholder=""   ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Maitre d'ouvrage :
+    </ion-label>
+    <ion-input type="number" name="maitredouvrageprojet" placeholder=""   ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Bureau d'études :
+    </ion-label>
+    <ion-input type="text" name="bureaudetudeprojet" placeholder=""   ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;">
+      Laboratoire :
+    </ion-label>
+    <ion-input type="text" name="laboratoireprojet" placeholder=""   ></ion-input>
+
+
+
+
+</ion-content>

@@ -37,7 +37,7 @@ export class ListeChantierPage {
     console.log(this.navParams.data);
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
-    this.httpClient.get("http://localhost:9090/requestAny/select chantier.id as idchantier, chantier.nom as nomchantier, chantier.zone as zonechantier,*  " +
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select chantier.id as idchantier, chantier.nom as nomchantier, chantier.zone as zonechantier,*  " +
       "from chantier, projet " +
       "where chantier.refprojet = projet.id " +
       "and chantier.refprojet =" + (this.informationsActuelles as any).idprojet)

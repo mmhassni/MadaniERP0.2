@@ -27,7 +27,7 @@ export class ListeDemandePage {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
-    this.httpClient.get("http://localhost:9090/requestAny/select utilisateur.nom as nomdemandeur,  utilisateur.prenom as prenomdemandeur, demande.id as iddemande , *  from chantier, demande, utilisateur where  demande.refutilisateur = utilisateur.id and demande.refchantier = chantier.id  and chantier.id = " + (this.informationsActuelles as any).idchantier)
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select utilisateur.nom as nomdemandeur,  utilisateur.prenom as prenomdemandeur, demande.id as iddemande , *  from chantier, demande, utilisateur where  demande.refutilisateur = utilisateur.id and demande.refchantier = chantier.id  and chantier.id = " + (this.informationsActuelles as any).idchantier)
       .subscribe(data => {
         console.log(data);
         this.listeDemandes = (data as any).features;

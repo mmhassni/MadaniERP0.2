@@ -1,6 +1,8 @@
 {
   "name": "MadaniERP0.2",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "ionic-angular",
   "id": "63e37ece"
 }

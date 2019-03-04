@@ -4,6 +4,7 @@ import {ListeChantierPage} from "../liste-chantier/liste-chantier";
 import {HttpClient} from "@angular/common/http";
 import {UtilisateurProvider} from "../../providers/utilisateur/utilisateur";
 import {Subscription} from "rxjs";
+import {AjouterProjetPage} from "../ajouter-projet/ajouter-projet";
 
 /**
  * Generated class for the ListeProjetPage page.
@@ -62,7 +63,7 @@ export class ListeProjetPage {
     ); // fin code subscription
 
 
-    this.httpClient.get("http://localhost:9090/requestAny/select id as idprojet, * from projet")
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select id as idprojet, * from projet")
       .subscribe(data => {
         console.log(data);
         this.listeProjets = (data as any).features;
@@ -71,6 +72,13 @@ export class ListeProjetPage {
 
 
 
+  }
+
+  ajouterProjet(){
+
+    this.navCtrl.push(AjouterProjetPage, {
+      informationsActuelles: ""
+    });
   }
 
   ionViewDidLoad() {

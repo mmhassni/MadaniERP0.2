@@ -70,7 +70,7 @@ export class ListeSousDemandePage {
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
 
-    this.httpClient.get("http://localhost:9090/requestAny/select sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, *  from sousdemande, demande, fournisseur where sousdemande.reffournisseur = fournisseur.id  and sousdemande.refdemande = demande.id and demande.id = " + (this.informationsActuelles as any).iddemande)
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, *  from sousdemande, demande, fournisseur where sousdemande.reffournisseur = fournisseur.id  and sousdemande.refdemande = demande.id and demande.id = " + (this.informationsActuelles as any).iddemande)
       .subscribe(data => {
         console.log(data);
         this.listeSousDemandes = (data as any).features;
@@ -93,7 +93,9 @@ export class ListeSousDemandePage {
     this.informationsActuelles["idfournisseur"] = item.idfournisseur;
     this.informationsActuelles["idsousdemande"] = item.idsousdemande;
     this.informationsActuelles["raisonsocialefournisseur"] = item.raisonsocialefournisseur;
-    this.informationsActuelles["photoBL"] = item.photoBL;
+    this.informationsActuelles["adressefournisseur"] = item.adressefournisseur;
+    this.informationsActuelles["emailfournisseur"] = item.emailfournisseur;
+    this.informationsActuelles["photobl"] = item.photobl;
     this.informationsActuelles["observations"] = item.observations;
     this.informationsActuelles["datemodificationsousdemande"] = item.datemodificationsousdemande;
     this.informationsActuelles["traitee"] = item.traitee;
