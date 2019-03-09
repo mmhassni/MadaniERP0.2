@@ -98,4 +98,19 @@ export class ListeProjetPage {
 
   }
 
+
+  detailTapped($event, item) {
+
+    event.stopPropagation();
+    console.log(item);
+
+
+
+
+    this.navCtrl.push(AjouterProjetPage, {
+      informationsActuelles: item
+    });
+
+  }
+
 }

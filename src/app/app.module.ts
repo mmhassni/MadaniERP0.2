@@ -21,6 +21,8 @@ import { UtilisateurProvider } from '../providers/utilisateur/utilisateur';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { EmailComposer } from '@ionic-native/email-composer';
 import {AjouterProjetPage} from "../pages/ajouter-projet/ajouter-projet";
+import {DetailProjetPage} from "../pages/detail-projet/detail-projet";
+import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import {AjouterProjetPage} from "../pages/ajouter-projet/ajouter-projet";
     ListeSousDemandePage,
     NouveauProduitPage,
     SousDemandePage,
-    AjouterProjetPage
+    AjouterProjetPage,
+    DetailProjetPage,
+    ListeFournisseurPage
 
   ],
   imports: [
@@ -53,7 +57,9 @@ import {AjouterProjetPage} from "../pages/ajouter-projet/ajouter-projet";
     ListeDemandePage,
     NouveauProduitPage,
     SousDemandePage,
-    AjouterProjetPage
+    AjouterProjetPage,
+    DetailProjetPage,
+    ListeFournisseurPage
   ],
   providers: [
     StatusBar,

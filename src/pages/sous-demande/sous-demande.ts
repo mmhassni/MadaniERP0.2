@@ -224,7 +224,7 @@ export class SousDemandePage {
   genererBonDeCommande() {
 
 
-    let bodyHTML = '<h1 color="red">' + (this.informationsActuelles as any).raisonsocialefournisseur + "</h1>";
+    let bodyHTML = '<h1 style="background-color:rgb(255, 0, 0);">' + (this.informationsActuelles as any).raisonsocialefournisseur + "</h1>";
 
     bodyHTML = bodyHTML + "<br>";
 

@@ -8,6 +8,8 @@ import { ListPage } from '../pages/list/list';
 import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
 import {UtilisateurProvider} from "../providers/utilisateur/utilisateur";
 import {Subscription} from "rxjs";
+import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
+import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
 
 @Component({
   templateUrl: 'app.html'
@@ -28,9 +30,10 @@ export class MyApp {
     // used for an example of ngFor and navigation
     this.pages = [
       { title: "Demandes d'achats", component: ListeProjetPage },
-      { title: 'Fournisseurs', component: HomePage },
+      { title: 'Fournisseurs', component: ListeFournisseurPage },
+      { title: 'Nouveau Produit', component: NouveauProduitPage },
       { title: 'Projets', component: ListPage },
-      { title: 'Utilisateurs', component: ListPage }
+      { title: 'Utilisateurs', component: HomePage }
 
     ];
 

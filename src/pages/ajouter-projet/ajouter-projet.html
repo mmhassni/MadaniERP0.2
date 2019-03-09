@@ -6,36 +6,54 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>Nouveau projet</ion-title>
+    <ion-title>Projet</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
   </ion-navbar>
+
 </ion-header>
+
+
 
 <ion-content padding>
 
+
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold">
+      Projet :
+    </ion-label>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="nomprojet" placeholder="" [(ngModel)]="projetActuel.nomprojet"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
       Objet :
     </ion-label>
-    <ion-input type="text" name="nomprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="text" name="objetprojet" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="projetActuel.objetprojet"  ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold">
       Montant :
     </ion-label>
-    <ion-input type="number" name="montantprojet" placeholder=""  ></ion-input>
+    <ion-input text-center type="number" name="montantprojet" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="projetActuel.montantprojet" ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;">
-      Délais réalisation (mois) :
+    <ion-label style="color: #000;font-weight: bold">
+      Délai réalisation (m) :
     </ion-label>
-    <ion-input type="number" name="delaisrealisationprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="number" name="delaisrealisationprojet" [disabled]="!modeEditionAffichage" [(ngModel)]="projetActuel.delaisrealisationprojet" placeholder=""   ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;width: 100%;max-width: 100% !important">Région :</ion-label>
-    <ion-select [selectOptions]="selectRegionsOptions" name = "regions" >
+    <ion-label style="opacity:1; color: #000;width: 100%;max-width: 100%;font-weight: bold !important">Région :</ion-label>
+    <ion-select [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 70%; !important" [selectOptions]="selectRegionsOptions" [(ngModel)]="projetActuel.idregion" name = "regions" >
       <ion-option *ngFor="let item of listeRegions" [value]="item.id">{{item.nomregion}}</ion-option>
       <ion-option value="">Autre</ion-option>
     </ion-select>
@@ -44,31 +62,72 @@
 
 
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold;">
       Nº marché :
     </ion-label>
-    <ion-input type="number" name="nummarcheprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="number" [disabled]="!modeEditionAffichage" name="nummarcheprojet" placeholder="" [(ngModel)]="projetActuel.nummarcheprojet"  ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold;">
       Maitre d'ouvrage :
     </ion-label>
-    <ion-input type="number" name="maitredouvrageprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="maitredouvrageprojet" placeholder="" [(ngModel)]="projetActuel.maitredouvrageprojet"  ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold;">
       Bureau d'études :
     </ion-label>
-    <ion-input type="text" name="bureaudetudeprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="bureaudetudeprojet" placeholder="" [(ngModel)]="projetActuel.bureaudetudeprojet"  ></ion-input>
   </ion-item>
 
   <ion-item>
-    <ion-label style="color: #000;">
+    <ion-label style="color: #000;font-weight: bold;">
       Laboratoire :
     </ion-label>
-    <ion-input type="text" name="laboratoireprojet" placeholder=""   ></ion-input>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="laboratoireprojet" placeholder="" [(ngModel)]="projetActuel.laboratoireprojet" ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;text-align: right;font-weight: bold">
+      Bureau de controle :
+    </ion-label>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="bureaudecontrole" placeholder=""  [(ngModel)]="projetActuel.bureaudecontrole" ></ion-input>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">
+      Date ordre de service :
+    </ion-label>
+    <ion-datetime name="dateordreservice" [disabled]="!modeEditionAffichage"  display-format="D MMMM, YYYY" picker-format="D MMMM, YYYY" [(ngModel)]="projetActuel.dateordreservice">
+
+    </ion-datetime>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="opacity:1;color: #000;width: 100%;max-width: 100%;font-weight: bold !important">Chef de projet :</ion-label>
+    <br>
+    <ion-select [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectChefProjetsOptions" name = "chefsprojet" [(ngModel)]="projetActuel.chefsprojet">
+      <ion-option *ngFor="let item of listeChefsProjet" [value]="item.id" >{{item.nom}} {{item.prenom}}</ion-option>
+      <ion-option value="">Autre</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouveauProjet()">
+    Créer Projet
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationProjet2()">
+    Enregistrer modifications
+  </button>
+
+
 
 
 
