@@ -27,6 +27,7 @@
     <button ion-item *ngFor="let fournisseur of listeFournisseursFiltree"   (click)="itemTapped($event, item)">
       {{fournisseur.raisonsociale}}
       <p>Adresse : fournisseur.adresse</p>
+      <button ion-button clear item-end  (click)="detailTapped($event, item)">Détail</button>
     </button>
   </ion-list>
 

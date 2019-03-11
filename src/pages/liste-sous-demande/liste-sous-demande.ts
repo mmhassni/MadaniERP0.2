@@ -69,11 +69,36 @@ export class ListeSousDemandePage {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
+    this.refresh();
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, *  from sousdemande, demande, fournisseur where sousdemande.reffournisseur = fournisseur.id  and sousdemande.refdemande = demande.id and demande.id = " + (this.informationsActuelles as any).iddemande)
+
+
+
+
+  }
+
+  refresh(){
+
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from sousdemande LEFT OUTER JOIN fournisseur ON sousdemande.reffournisseur= fournisseur.id LEFT OUTER JOIN demande ON demande.id= sousdemande.refdemande where demande.id = " + (this.informationsActuelles as any).iddemande)
       .subscribe(data => {
         console.log(data);
         this.listeSousDemandes = (data as any).features;
+
+      });
+
+
+  }
+
+  creerNouvelleSousDemande(){
+
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/insert into sousdemande (refdemande) values (" + (this.informationsActuelles as any).iddemande + ")")
+      .subscribe(data => {
+        console.log(data);
+        this.refresh();
+
+
+      }, err => {
+        this.refresh();
 
       });
 

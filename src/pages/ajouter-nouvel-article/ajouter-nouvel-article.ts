@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 
 /**
- * Generated class for the AjouterProjetPage page.
+ * Generated class for the AjouterNouvelArticlePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -11,125 +11,108 @@ import {HttpClient} from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-ajouter-projet',
-  templateUrl: 'ajouter-projet.html',
+  selector: 'page-ajouter-nouvel-article',
+  templateUrl: 'ajouter-nouvel-article.html',
 })
-export class AjouterProjetPage {
-
-  public listeRegions = [];
-  public listeChefsProjet = [];
-
+export class AjouterNouvelArticlePage {
   //le mode edition se divise en deux modes : le mode modification et le mode creation
   public modeModificationCreation = false; //modeModification est l'opposé du mode Creation
   public modeEditionAffichage = false; //modeAffichage est l'opposé du mode Affichage
 
 
-  public projetActuel = {
-    idprojet:"",
-    nomprojet: "",
-    objetprojet: "",
-    montantprojet: "NULL",
-    delaisrealisationprojet: "",
-    nomregion: "",
-    numeromarcheprojet: "",
-    maitredouvrageprojet: "",
-    bureaudetudeprojet: "",
-    laboratoireprojet: "",
-    bureaudecontrole: "",
-    dateordreservice: "NULL",
-    chefsprojet: "NULL",
-    idregion: "NULL",
-    chefdeprojet: "NULL"
 
-  };
-
-
-  public selectRegionsOptions = {
-    title: 'Regions',
+  public selectProduitFournisseurOptions = {
+    title: 'Produits',
     mode: 'md'
   };
 
-  public selectChefProjetsOptions = {
-    title: 'Chefs de projet',
-    mode: 'md'
-  };
+  @ViewChild('produitHach') produitTest;
+
   public tableauMappingBDD = [
-    ["idprojet","id","number"],
-    ["nomprojet","nomprojet","text"],
-    ["montantprojet","montantprojet","number"],
-    ["delaisrealisationprojet","delaisrealisation","number"],
-    ["idregion","refregion","number"],
-    ["numeromarcheprojet","numeromarche","text"],
-    ["maitredouvrageprojet","maitredouvrage","text"],
-    ["bureaudetudeprojet","bureaudetude","text"],
-    ["bureaudecontroleprojet","bureaudecontrole","text"],
-    ["laboratoireprojet","laboratoire","text"],
-    ["dateordreservice","dateordreservice","date"],
-    ["chefdeprojet","chefdeprojet","number"],
-    ["objetprojet","objetprojet","text"]
-    ];
+    ["idarticle","id","number"],
+    ["quantitesaisiearticle","quantitesaisie","number"],
+    ["quantiterecuearticle","quantiterecue","number"],
+    ["prixarticlearticle","prix","number"],
+    ["datelivraisonarticle","datelivraison","date"],
+    ["idsousdemande","refsousdemande","number"],
+    ["refproduitfournisseurarticle","refproduitfournisseur","number"],
+    ["tvaarticle","tva","number"],
+    ["datereceptionarticle","datereception","date"]
+  ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient : HttpClient) {
+  public articleActuel = {};
 
-    console.log(navParams);
+  public listeArticles = [];
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient) {
+
+
+
+    this.articleActuel = {};
+
+    console.log(this.articleActuel);
+
+
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select produitfournisseur.id as idproduitfournisseur ,* from produitfournisseur, fournisseur  where produitfournisseur.reffournisseur = fournisseur.id and produitfournisseur.reffournisseur = " + navParams.data.informationsActuelles.idfournisseur)
+      .subscribe(data => {
+        console.log(data);
+        this.listeArticles = (data as any).features;
+
+
+      });
+
+
+
+    //on recupere les informations recuperees de la bdd
+    this.articleActuel = navParams.data.informationsActuelles;
+
+
+    console.log(this.articleActuel);
+    //on saisie les champs manquants
+
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
-    if(navParams.data.informationsActuelles != ""){
+    if(navParams.data.action &&  navParams.data.action == "ajouter"){
 
-      for (var property in navParams.data.informationsActuelles) {
-        if(navParams.data.informationsActuelles[property] != null){
-          this.projetActuel[property] = navParams.data.informationsActuelles[property];
-        }
-      }
+      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,["nomchantier","zonechantier"]);
 
-      console.log(this.projetActuel);
-
+      console.log(this.articleActuel);
       this.modeModificationCreation = false;
-      this.modeEditionAffichage = false;
-      this.projetActuel = navParams.data.informationsActuelles;
+      this.modeEditionAffichage = true;
+
 
     }
     else{
-      this.modeModificationCreation = false;
-      this.modeEditionAffichage = true;
-      let tableauMappingBDDParam = this.tableauMappingBDD;
-      (this.projetActuel as any) = this.initialiserObjetBDD(this.projetActuel,tableauMappingBDDParam);
-      console.log(this.projetActuel);
 
+      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,[]);
+
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = false;
 
     }
 
-
-    //on recupere la liste des regions
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from region")
-      .subscribe(data => {
-        console.log(data);
-
-        this.listeRegions = (data as any).features;
-
-      });
-
-    //on recupere la liste des utilisateurs
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from utilisateur")
-      .subscribe(data => {
-        console.log(data);
-
-        this.listeChefsProjet = (data as any).features;
-
-      });
-
   }
-
-
-
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AjouterProjetPage');
+    console.log('ionViewDidLoad AjouterChantierPage');
+    console.log(this.produitTest);
   }
 
-  enregistrerNouveauProjet(){
+  uniteProduit( idProduitFournisseur){
 
-    this.createObjet(this.projetActuel,"projet",this.tableauMappingBDD);
+    let uniteRetour = "";
+
+    for(let i = 0 ; i < this.listeArticles.length ; i++){
+      if(this.listeArticles[i].idproduitfournisseur == idProduitFournisseur){
+        uniteRetour = this.listeArticles[i].unite;
+      }
+    }
+    return uniteRetour;
+  }
+
+  enregistrerNouvelObjet(){
+
+    this.createObjet(this.articleActuel,"article",this.tableauMappingBDD);
 
     //console.log(this.navParams.data.parentPage);
 
@@ -140,11 +123,11 @@ export class AjouterProjetPage {
 
   }
 
-  enregistrerModificationProjet(){
+  enregistrerModificationObjet(){
 
-    console.log(this.projetActuel);
+    console.log(this.articleActuel);
 
-    this.updateObjet(this.projetActuel,"projet",this.projetActuel.idprojet,this.tableauMappingBDD);
+    this.updateObjet(this.articleActuel,"chantier",(this.articleActuel as any)[Object.keys(this.articleActuel as any)[0]],this.tableauMappingBDD);
 
     this.navCtrl.pop();
 
@@ -154,7 +137,7 @@ export class AjouterProjetPage {
   createObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
     let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
@@ -221,7 +204,7 @@ export class AjouterProjetPage {
   updateObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     console.log(objetAEnregistrer);
 
@@ -280,31 +263,26 @@ export class AjouterProjetPage {
 
   }
 
-  remplirChampManquant(objetBDD , tableauMappingBDD ){
+  remplirChampManquant(objetBDD , tableauMappingBDD, tableauChampAIgnorer ){
 
     console.log(objetBDD);
 
     let objetBDDRempli = new Object();
 
+    objetBDDRempli = this.initialiserObjetBDD(objetBDD,tableauMappingBDD);
+
     for(let i = 0; i < tableauMappingBDD.length; i++){
 
-      //on initialise d'abord l'objet
-      if(tableauMappingBDD[i][2] == "number" || tableauMappingBDD[i][2] == "date"){
-        objetBDDRempli[tableauMappingBDD[i][0]] = "NULL";
-      }
-      //sinon le champ sera de type text
-      else{
-        objetBDDRempli[tableauMappingBDD[i][0]] = "";
-      }
+      if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
 
-      //apres on doit chercher si ce champ est deja renseignés dans l objet et qui ne sont pas null
-      for (var property in objetBDD) {
-        //une fois le cemp trouve on doti verifier si il est null
-        if (property == tableauMappingBDD[i][0] && objetBDD[property] != null) {
-          objetBDDRempli[property] = objetBDD[property];
+        //apres on doit chercher si ce champ est deja renseignés dans l objet et qui ne sont pas null
+        for (var property in objetBDD) {
+          //une fois le cemp trouve on doti verifier si il est null
+          if (property == tableauMappingBDD[i][0] && objetBDD[property] != null) {
+            objetBDDRempli[property] = objetBDD[property];
+          }
         }
       }
-
 
     }
 
@@ -315,6 +293,8 @@ export class AjouterProjetPage {
   }
 
   initialiserObjetBDD(objetBDD, tableauMappingBDDPar ){
+
+
 
     let tableauMappingBDD = tableauMappingBDDPar.slice();
 
@@ -337,10 +317,10 @@ export class AjouterProjetPage {
 
   }
 
-
-
   modeEdition() {
     this.modeModificationCreation = true;
     this.modeEditionAffichage = true;
   }
+
+
 }

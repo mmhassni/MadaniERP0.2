@@ -20,16 +20,23 @@ import {AjouterProjetPage} from "../ajouter-projet/ajouter-projet";
 })
 export class ListeProjetPage {
 
+  public projetTableauMappingBDD = [
+    ["idprojet","id","number"],
+    ["nomprojet","nomprojet","text"],
+    ["montantprojet","montantprojet","number"],
+    ["delaisrealisationprojet","delaisrealisation","number"],
+    ["idregion","refregion","number"],
+    ["numeromarcheprojet","numeromarche","text"],
+    ["maitredouvrageprojet","maitredouvrage","text"],
+    ["bureaudetudeprojet","bureaudetude","text"],
+    ["bureaudecontroleprojet","bureaudecontrole","text"],
+    ["laboratoireprojet","laboratoire","text"],
+    ["dateordreservice","dateordreservice","date"],
+    ["chefdeprojet","chefdeprojet","number"],
+    ["objetprojet","objetprojet","text"]
+  ];
+
   public listeProjets = [
-    {"idProjet":12,
-      "nomProjet":"projet bengurir",
-      "date":'12/02/2019'},
-    {"idProjet":13,
-      "nomProjet":"projet khemisset",
-      "date":'02/12/2018'},
-    {"idProjet":14,
-      "nomProjet":"projet temara",
-      "date":'03/11/2018'}
 
   ];
 
@@ -63,14 +70,29 @@ export class ListeProjetPage {
     ); // fin code subscription
 
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select id as idprojet, * from projet")
-      .subscribe(data => {
-        console.log(data);
-        this.listeProjets = (data as any).features;
-
-      });
+    this.getProjet("projet").subscribe(data => {
+      console.log(data);
+      this.listeProjets = (data as any).features;
+    });
 
 
+
+  }
+
+
+
+  getProjet(nomTable){
+
+    let requeteGetProjet = "http://192.168.43.85:9090/requestAny/select";
+    for (let i = 0; i < this.projetTableauMappingBDD.length; i++) {
+
+      requeteGetProjet = requeteGetProjet + " " + this.projetTableauMappingBDD[i][1] + " as " + this.projetTableauMappingBDD[i][0] + ",";
+
+    }
+
+    requeteGetProjet = requeteGetProjet + " * from " + nomTable + " order by " + this.projetTableauMappingBDD[0][1] + " desc";
+
+    return this.httpClient.get(requeteGetProjet);
 
   }
 
@@ -90,6 +112,8 @@ export class ListeProjetPage {
     if(this.utilisateur != {}){
 
       item["utilisateur"]=this.utilisateur;
+      item["nomprojet"]=item.nomprojet;
+
       this.navCtrl.push(ListeChantierPage, {
         informationsActuelles: item
       });
@@ -99,16 +123,30 @@ export class ListeProjetPage {
   }
 
 
+
+  refresh(){
+
+    this.getProjet("projet").subscribe(data => {
+      console.log(data);
+      this.listeProjets = (data as any).features;
+    });
+
+  }
+
+  ionViewDidEnter() {
+    this.refresh();
+  }
+
+
   detailTapped($event, item) {
 
     event.stopPropagation();
     console.log(item);
 
 
-
-
     this.navCtrl.push(AjouterProjetPage, {
-      informationsActuelles: item
+      informationsActuelles: item,
+      parentPage: this
     });
 
   }

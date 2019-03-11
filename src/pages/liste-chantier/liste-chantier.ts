@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {ListeDemandePage} from "../liste-demande/liste-demande";
 import {HttpClient} from "@angular/common/http";
+import {AjouterChantierPage} from "../ajouter-chantier/ajouter-chantier";
 
 /**
  * Generated class for the ListeChantierPage page.
@@ -19,17 +20,12 @@ export class ListeChantierPage {
 
   public informationsActuelles = {};
 
-  public listeChantiers = [
-    {"idChantier":22,
-      "nomChantier":"bengurir1",
-      "zoneChantier":'commune benzri'},
-    {"idChantier":23,
-      "nomChantier":"bengurir2",
-      "zoneChantier":'commune bentri'},
-    {"idChantier":44,
-      "nomChantier":"bengurir3",
-      "zoneChantier":'commune benfri'}
+  public listeChantiers = [  ];
 
+  public chantierTableauMappingBDD = [
+    ["idchantier","id","id"],
+    ["nomchantier","nom","number"],
+    ["zonechantier","zone","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient) {
@@ -37,31 +33,94 @@ export class ListeChantierPage {
     console.log(this.navParams.data);
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select chantier.id as idchantier, chantier.nom as nomchantier, chantier.zone as zonechantier,*  " +
-      "from chantier, projet " +
-      "where chantier.refprojet = projet.id " +
-      "and chantier.refprojet =" + (this.informationsActuelles as any).idprojet)
-      .subscribe(data => {
-        console.log(data);
-        this.listeChantiers = (data as any).features;
-
-      });
+    this.getTable("chantier").subscribe(data => {
+      console.log(data);
+      this.listeChantiers = (data as any).features;
+    });
 
   }
 
+
+
+  getTable(nomTable){
+
+    let requeteGetProjet = "http://192.168.43.85:9090/requestAny/select";
+    for (let i = 0; i < this.chantierTableauMappingBDD.length; i++) {
+
+      requeteGetProjet = requeteGetProjet + " " + this.chantierTableauMappingBDD[i][1] + " as " + this.chantierTableauMappingBDD[i][0] + ",";
+
+    }
+
+    requeteGetProjet = requeteGetProjet + " * from " + nomTable + " where chantier.refprojet = " + (this.informationsActuelles as any).idprojet +  " order by " + this.chantierTableauMappingBDD[0][1] + " desc";
+
+    return this.httpClient.get(requeteGetProjet);
+
+  }
+
+  ajouterChantier(){
+
+
+    this.informationsActuelles["refprojet"] = (this.informationsActuelles as any).idprojet;
+
+    this.navCtrl.push(AjouterChantierPage, {
+      informationsActuelles: this.informationsActuelles,
+      action: "ajouterChantier"
+
+    });
+  }
+
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListeChantierPage');
+    console.log('ionViewDidLoad ListeProjetPage');
   }
 
   itemTapped(event, item) {
     // That's right, we're pushing to ourselves!
-    //On complete nos informations actuelles pour y ajouter les informations concernant le chantier selectionnee
+
     this.informationsActuelles["idchantier"] = item.idchantier;
     this.informationsActuelles["nomchantier"] = item.nomchantier;
     this.informationsActuelles["zonechantier"] = item.zonechantier;
+
+    item["nomprojet"]=this.informationsActuelles["nomprojet"];
+
+
     this.navCtrl.push(ListeDemandePage, {
-      informationsActuelles: this.informationsActuelles
+      informationsActuelles: item
     });
+
+
   }
 
+
+
+  refresh(){
+
+    this.getTable("chantier").subscribe(data => {
+      console.log(data);
+      this.listeChantiers = (data as any).features;
+    });
+
+  }
+
+  ionViewDidEnter() {
+    this.refresh();
+  }
+
+
+  detailTapped($event, item) {
+
+    event.stopPropagation();
+    console.log(item);
+
+    this.informationsActuelles["idchantier"] = item.idchantier;
+    this.informationsActuelles["nomchantier"] = item.nomchantier;
+    this.informationsActuelles["zonechantier"] = item.zonechantier;
+    this.informationsActuelles["refprojet"] = item.refprojet;
+
+
+    this.navCtrl.push(AjouterChantierPage, {
+      informationsActuelles: item,
+      parentPage: this
+    });
+
+  }
 }

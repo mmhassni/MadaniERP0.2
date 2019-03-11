@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
+import {ListeDemandePage} from "../liste-demande/liste-demande";
+import {AjouterFournisseurPage} from "../ajouter-fournisseur/ajouter-fournisseur";
 
 /**
  * Generated class for the ListeFournisseurPage page.
@@ -18,10 +20,11 @@ export class ListeFournisseurPage {
 
   public listeFournisseurs = [];
   public listeFournisseursFiltree = [];
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient) {
 
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.*, string_agg(produitfournisseur.nomproduit,',') as listeproduits from fournisseur, produitfournisseur where fournisseur.id = produitfournisseur.reffournisseur group by fournisseur.id")
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.*, string_agg(produitfournisseur.nomproduit,',') as listeproduits from fournisseur, produitfournisseur where fournisseur.id = produitfournisseur.reffournisseur group by fournisseur.id order by fournisseur.id desc")
       .subscribe(data => {
 
         this.listeFournisseurs = (data as any).features;
@@ -33,8 +36,20 @@ export class ListeFournisseurPage {
 
   }
 
+  ajouterFournisseur(){
+
+    this.navCtrl.push(AjouterFournisseurPage, {
+      informationsActuelles: "",
+      action: "modeAjout"
+
+    });
+  }
+
   ionViewDidLoad() {
     console.log('ionViewDidLoad ListeFournisseurPage');
+
+
+
   }
 
   getItems(ev) {
@@ -57,7 +72,11 @@ export class ListeFournisseurPage {
   }
 
 
-  itemTapped($event: MouseEvent, item: any) {
+  itemTapped($event, item) {
+
+    this.navCtrl.push(ListeDemandePage, {
+      informationsActuelles: item
+    });
     
   }
 }

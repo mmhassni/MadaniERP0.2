@@ -23,6 +23,9 @@ import { EmailComposer } from '@ionic-native/email-composer';
 import {AjouterProjetPage} from "../pages/ajouter-projet/ajouter-projet";
 import {DetailProjetPage} from "../pages/detail-projet/detail-projet";
 import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
+import {AjouterChantierPage} from "../pages/ajouter-chantier/ajouter-chantier";
+import {AjouterFournisseurPage} from "../pages/ajouter-fournisseur/ajouter-fournisseur";
+import {AjouterNouvelArticlePage} from "../pages/ajouter-nouvel-article/ajouter-nouvel-article";
 
 
 @NgModule({
@@ -38,7 +41,10 @@ import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur
     SousDemandePage,
     AjouterProjetPage,
     DetailProjetPage,
-    ListeFournisseurPage
+    ListeFournisseurPage,
+    AjouterChantierPage,
+    AjouterFournisseurPage,
+    AjouterNouvelArticlePage
 
   ],
   imports: [
@@ -59,7 +65,12 @@ import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur
     SousDemandePage,
     AjouterProjetPage,
     DetailProjetPage,
-    ListeFournisseurPage
+    ListeFournisseurPage,
+    AjouterChantierPage,
+    AjouterFournisseurPage,
+    AjouterNouvelArticlePage
+
+
   ],
   providers: [
     StatusBar,

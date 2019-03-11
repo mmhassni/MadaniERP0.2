@@ -1,0 +1,78 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Article</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+
+
+
+
+  <ion-item #produitHash>
+    <ion-label style="opacity:1;color: #000;width: 100%;max-width: 100%;font-weight: bold !important">Désignation : </ion-label>
+    <br>
+    <ion-select #produitHash  [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectProduitFournisseurOptions" name = "chefsprojet" [(ngModel)]="articleActuel.refproduitfournisseurarticle">
+      <ion-option *ngFor="let item of listeArticles" [value]="item.idproduitfournisseur" >{{item.nomproduit}}</ion-option>
+      <ion-option value="">Autre</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label *ngIf="produitHash?.value != 'NULL'" style="color: #000;">
+      <span style="color: #000;font-weight: bold">Unité : </span> {{uniteProduit(produitHash.value)}}
+    </ion-label>
+    <ion-label *ngIf="produitHash?.value == 'NULL'" style="color: #000;">
+      <span style="color: #000;font-weight: bold">Unité : </span>
+    </ion-label>
+  </ion-item>
+
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Quantité :
+    </ion-label>
+    <ion-input text-center type="number" name="objetprojet" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="articleActuel.quantitesaisiearticle"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">
+      Date de livraison souhaitée :
+    </ion-label>
+    <ion-datetime name="dateordreservice" [disabled]="!modeEditionAffichage"  display-format="D MMMM, YYYY" picker-format="D MMMM, YYYY" [(ngModel)]="articleActuel.datelivraisonarticle">
+
+    </ion-datetime>
+  </ion-item>
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Ajouter
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

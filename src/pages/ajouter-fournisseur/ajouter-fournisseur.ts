@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 
 /**
- * Generated class for the AjouterProjetPage page.
+ * Generated class for the AjouterFournisseurPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -11,125 +11,69 @@ import {HttpClient} from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-ajouter-projet',
-  templateUrl: 'ajouter-projet.html',
+  selector: 'page-ajouter-fournisseur',
+  templateUrl: 'ajouter-fournisseur.html',
 })
-export class AjouterProjetPage {
+export class AjouterFournisseurPage {
 
-  public listeRegions = [];
-  public listeChefsProjet = [];
 
   //le mode edition se divise en deux modes : le mode modification et le mode creation
   public modeModificationCreation = false; //modeModification est l'opposé du mode Creation
   public modeEditionAffichage = false; //modeAffichage est l'opposé du mode Affichage
 
-
-  public projetActuel = {
-    idprojet:"",
-    nomprojet: "",
-    objetprojet: "",
-    montantprojet: "NULL",
-    delaisrealisationprojet: "",
-    nomregion: "",
-    numeromarcheprojet: "",
-    maitredouvrageprojet: "",
-    bureaudetudeprojet: "",
-    laboratoireprojet: "",
-    bureaudecontrole: "",
-    dateordreservice: "NULL",
-    chefsprojet: "NULL",
-    idregion: "NULL",
-    chefdeprojet: "NULL"
-
-  };
-
-
-  public selectRegionsOptions = {
-    title: 'Regions',
-    mode: 'md'
-  };
-
-  public selectChefProjetsOptions = {
-    title: 'Chefs de projet',
-    mode: 'md'
-  };
   public tableauMappingBDD = [
-    ["idprojet","id","number"],
-    ["nomprojet","nomprojet","text"],
-    ["montantprojet","montantprojet","number"],
-    ["delaisrealisationprojet","delaisrealisation","number"],
-    ["idregion","refregion","number"],
-    ["numeromarcheprojet","numeromarche","text"],
-    ["maitredouvrageprojet","maitredouvrage","text"],
-    ["bureaudetudeprojet","bureaudetude","text"],
-    ["bureaudecontroleprojet","bureaudecontrole","text"],
-    ["laboratoireprojet","laboratoire","text"],
-    ["dateordreservice","dateordreservice","date"],
-    ["chefdeprojet","chefdeprojet","number"],
-    ["objetprojet","objetprojet","text"]
-    ];
+    ["idfournisseur","id","number"],
+    ["raisonsocialefournisseur","raisonsociale","text"],
+    ["adressefournisseur","adresse","text"],
+    ["telfournisseur","tel","text"],
+    ["faxfournisseur","fax","text"],
+    ["emailfournisseur","email","text"],
+    ["patentefournisseur","patente","text"],
+    ["rcfournisseur","rc","text"],
+  ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient : HttpClient) {
+  public fournisseurActuel = {};
 
-    console.log(navParams);
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient) {
+
+
+    //on recupere les informations recuperees de la bdd
+    this.fournisseurActuel = navParams.data.informationsActuelles;
+
+    console.log(this.fournisseurActuel);
+
+    //on saisie les champs manquants
+
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
-    if(navParams.data.informationsActuelles != ""){
+    if(navParams.data.action &&  navParams.data.action == "modeAjout"){
 
-      for (var property in navParams.data.informationsActuelles) {
-        if(navParams.data.informationsActuelles[property] != null){
-          this.projetActuel[property] = navParams.data.informationsActuelles[property];
-        }
-      }
+      (this.fournisseurActuel as any) = this.remplirChampManquant(this.fournisseurActuel,this.tableauMappingBDD,["nomchantier","zonechantier"]);
 
-      console.log(this.projetActuel);
-
+      console.log(this.fournisseurActuel);
       this.modeModificationCreation = false;
-      this.modeEditionAffichage = false;
-      this.projetActuel = navParams.data.informationsActuelles;
+      this.modeEditionAffichage = true;
+
 
     }
     else{
-      this.modeModificationCreation = false;
-      this.modeEditionAffichage = true;
-      let tableauMappingBDDParam = this.tableauMappingBDD;
-      (this.projetActuel as any) = this.initialiserObjetBDD(this.projetActuel,tableauMappingBDDParam);
-      console.log(this.projetActuel);
 
+      (this.fournisseurActuel as any) = this.remplirChampManquant(this.fournisseurActuel,this.tableauMappingBDD,[]);
+
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = false;
 
     }
 
-
-    //on recupere la liste des regions
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from region")
-      .subscribe(data => {
-        console.log(data);
-
-        this.listeRegions = (data as any).features;
-
-      });
-
-    //on recupere la liste des utilisateurs
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from utilisateur")
-      .subscribe(data => {
-        console.log(data);
-
-        this.listeChefsProjet = (data as any).features;
-
-      });
-
   }
-
-
-
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AjouterProjetPage');
+    console.log('ionViewDidLoad AjouterChantierPage');
   }
 
-  enregistrerNouveauProjet(){
+  enregistrerNouvelObjet(){
 
-    this.createObjet(this.projetActuel,"projet",this.tableauMappingBDD);
+    this.createObjet(this.fournisseurActuel,"chantier",this.tableauMappingBDD);
 
     //console.log(this.navParams.data.parentPage);
 
@@ -140,11 +84,11 @@ export class AjouterProjetPage {
 
   }
 
-  enregistrerModificationProjet(){
+  enregistrerModificationObjet(){
 
-    console.log(this.projetActuel);
+    console.log(this.fournisseurActuel);
 
-    this.updateObjet(this.projetActuel,"projet",this.projetActuel.idprojet,this.tableauMappingBDD);
+    this.updateObjet(this.fournisseurActuel,"chantier",(this.fournisseurActuel as any)[Object.keys(this.fournisseurActuel as any)[0]],this.tableauMappingBDD);
 
     this.navCtrl.pop();
 
@@ -154,7 +98,7 @@ export class AjouterProjetPage {
   createObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
     let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
@@ -221,7 +165,7 @@ export class AjouterProjetPage {
   updateObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     console.log(objetAEnregistrer);
 
@@ -280,31 +224,26 @@ export class AjouterProjetPage {
 
   }
 
-  remplirChampManquant(objetBDD , tableauMappingBDD ){
+  remplirChampManquant(objetBDD , tableauMappingBDD, tableauChampAIgnorer ){
 
     console.log(objetBDD);
 
     let objetBDDRempli = new Object();
 
+    objetBDDRempli = this.initialiserObjetBDD(objetBDD,tableauMappingBDD);
+
     for(let i = 0; i < tableauMappingBDD.length; i++){
 
-      //on initialise d'abord l'objet
-      if(tableauMappingBDD[i][2] == "number" || tableauMappingBDD[i][2] == "date"){
-        objetBDDRempli[tableauMappingBDD[i][0]] = "NULL";
-      }
-      //sinon le champ sera de type text
-      else{
-        objetBDDRempli[tableauMappingBDD[i][0]] = "";
-      }
+      if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
 
-      //apres on doit chercher si ce champ est deja renseignés dans l objet et qui ne sont pas null
-      for (var property in objetBDD) {
-        //une fois le cemp trouve on doti verifier si il est null
-        if (property == tableauMappingBDD[i][0] && objetBDD[property] != null) {
-          objetBDDRempli[property] = objetBDD[property];
+        //apres on doit chercher si ce champ est deja renseignés dans l objet et qui ne sont pas null
+        for (var property in objetBDD) {
+          //une fois le cemp trouve on doti verifier si il est null
+          if (property == tableauMappingBDD[i][0] && objetBDD[property] != null) {
+            objetBDDRempli[property] = objetBDD[property];
+          }
         }
       }
-
 
     }
 
@@ -315,6 +254,8 @@ export class AjouterProjetPage {
   }
 
   initialiserObjetBDD(objetBDD, tableauMappingBDDPar ){
+
+
 
     let tableauMappingBDD = tableauMappingBDDPar.slice();
 
@@ -337,10 +278,10 @@ export class AjouterProjetPage {
 
   }
 
-
-
   modeEdition() {
     this.modeModificationCreation = true;
     this.modeEditionAffichage = true;
   }
+
+
 }

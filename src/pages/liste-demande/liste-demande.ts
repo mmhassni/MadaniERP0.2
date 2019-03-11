@@ -27,15 +27,49 @@ export class ListeDemandePage {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
+
+
+
+  }
+  
+  refresh(){
+
     this.httpClient.get("http://192.168.43.85:9090/requestAny/select utilisateur.nom as nomdemandeur,  utilisateur.prenom as prenomdemandeur, demande.id as iddemande , *  from chantier, demande, utilisateur where  demande.refutilisateur = utilisateur.id and demande.refchantier = chantier.id  and chantier.id = " + (this.informationsActuelles as any).idchantier)
       .subscribe(data => {
         console.log(data);
         this.listeDemandes = (data as any).features;
 
       });
+    
+  }
+
+  ionViewDidEnter() {
+
+    this.refresh();
+
+  }
+
+
+  creerNouvelleDemande(){
+
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/insert into demande (refutilisateur,refchantier) values (" + 1 + ", " + (this.informationsActuelles as any).idchantier + ")")
+      .subscribe(data => {
+        console.log(data);
+        this.listeDemandes = (data as any).features;
+        this.refresh();
+
+
+      }, err => {
+        this.refresh();
+
+      });
+
 
 
   }
+
+
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ListeDemandePage');

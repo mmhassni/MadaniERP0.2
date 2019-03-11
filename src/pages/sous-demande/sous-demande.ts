@@ -6,6 +6,9 @@ import { Camera } from '@ionic-native/camera';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import {ActionSheetController} from "ionic-angular";
 import { EmailComposer } from '@ionic-native/email-composer';
+import {AjouterNouvelArticlePage} from "../ajouter-nouvel-article/ajouter-nouvel-article";
+
+import { normalizeURL } from 'ionic-angular';
 
 
 
@@ -44,7 +47,7 @@ export class SousDemandePage {
     this.informationsActuelles["photobl"] = "";
     this.informationsActuelles["observations"] = "";
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from utilisateurfournisseurassocie, fournisseur where utilisateurfournisseurassocie.refutilisateur =" + (this.informationsActuelles as any).utilisateur.id)
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from fournisseur")
       .subscribe(data => {
         console.log(data);
 
@@ -54,13 +57,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select article.datereception as datereception, article.prix as prixarticle, article.tva as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
-      .subscribe(data => {
-        console.log(data);
-
-        this.listeArticles = (data as any).features;
-
-      });
+    this.refreshArticles();
 
   }
 
@@ -76,11 +73,11 @@ export class SousDemandePage {
 
     // Create options for the Camera Dialog
     var options = {
-      quality: 99,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.JPEG,
+      quality: 100,
+      destinationType: this.platform.is('ios') ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL,
+      //encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
-      saveToPhotoAlbum:false,
+      saveToPhotoAlbum:true,
       sourceType: sourceType,
       correctOrientation: true
     };
@@ -88,37 +85,37 @@ export class SousDemandePage {
 
 
     // Get the data of an image
-    this.camera.getPicture(options).then((imagePath) => {
+    this.camera.getPicture(options).then((imageData) => {
 
 
       // Special handling for Android library
       if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
 
         //console.log(imagePath);
-        (this.informationsActuelles as any).photobl = imagePath;
+        (this.informationsActuelles as any).photobl = imageData;
 
-        //console.log(imagePath);
+        console.log((this.informationsActuelles as any).photobl);
 
 
-        this.filePath.resolveNativePath(imagePath);
+        this.filePath.resolveNativePath(imageData);
 
 
       } else {
 
-        console.log(imagePath);
+        console.log(imageData);
 
+        let base64Image = null;
 
-        //(this.informationsActuelles as any).photobl = normalizeURL(imagePath);
+        //get photo from the camera based on platform type
+        if (this.platform.is('ios')){
+          base64Image = normalizeURL(imageData);
+        }
+        else{
+          base64Image = imageData;
+        }
 
-        //(this.informationsActuelles as any).photobl = 'data:image/jpeg;base64,' + imagePath;
-        //(this.informationsActuelles as any).photobl = normalizeURL(imagePath);
-        //console.log((this.informationsActuelles as any).photobl);
-
-        //(this.informationsActuelles as any).photobl = normalizeURL(imagePath).replace("///", "//");
-        //console.log((this.informationsActuelles as any).photobl);
-
-        (this.informationsActuelles as any).photobl = imagePath;
-
+        (this.informationsActuelles as any).photobl = base64Image;
+        console.log(imageData);
 
 
         //console.log((this.informationsActuelles as any).photoblnat);
@@ -185,6 +182,25 @@ export class SousDemandePage {
 
   }
 
+  //rafraichir les articles
+  ionViewDidEnter() {
+
+    this.refreshArticles();
+
+  }
+
+  refreshArticles(){
+
+    this.httpClient.get("http://192.168.43.85:9090/requestAny/select article.datereception as datereception, article.prix as prixarticle, article.tva as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
+      .subscribe(data => {
+        console.log(data);
+
+        this.listeArticles = (data as any).features;
+
+      });
+
+  }
+
   sommeTotaleTTC(){
 
     let sommettc = 0 ;
@@ -214,7 +230,6 @@ export class SousDemandePage {
 
     return sommeht;
   }
-
 
   enregistrerSousDemande() {
 
@@ -268,5 +283,13 @@ export class SousDemandePage {
 
   }
 
+  creerNouvelArticle($event) {
 
+    this.navCtrl.push(AjouterNouvelArticlePage, {
+      informationsActuelles: this.informationsActuelles,
+      action: "ajouter"
+    });
+
+
+  }
 }

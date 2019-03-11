@@ -6,7 +6,7 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>Projet</ion-title>
+    <ion-title>Chantier</ion-title>
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -65,7 +65,7 @@
     <ion-label style="color: #000;font-weight: bold;">
       Nº marché :
     </ion-label>
-    <ion-input text-center type="number" [disabled]="!modeEditionAffichage" name="nummarcheprojet" placeholder="" [(ngModel)]="projetActuel.nummarcheprojet"  ></ion-input>
+    <ion-input text-center type="number" [disabled]="!modeEditionAffichage" name="nummarcheprojet" placeholder="" [(ngModel)]="projetActuel.numeromarcheprojet"  ></ion-input>
   </ion-item>
 
   <ion-item>
@@ -93,7 +93,7 @@
     <ion-label style="color: #000;text-align: right;font-weight: bold">
       Bureau de controle :
     </ion-label>
-    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="bureaudecontrole" placeholder=""  [(ngModel)]="projetActuel.bureaudecontrole" ></ion-input>
+    <ion-input text-center type="text" [disabled]="!modeEditionAffichage" name="bureaudecontrole" placeholder=""  [(ngModel)]="projetActuel.bureaudecontroleprojet" ></ion-input>
   </ion-item>
 
 
@@ -112,7 +112,7 @@
   <ion-item>
     <ion-label style="opacity:1;color: #000;width: 100%;max-width: 100%;font-weight: bold !important">Chef de projet :</ion-label>
     <br>
-    <ion-select [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectChefProjetsOptions" name = "chefsprojet" [(ngModel)]="projetActuel.chefsprojet">
+    <ion-select [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectChefProjetsOptions" name = "chefsprojet" [(ngModel)]="projetActuel.chefdeprojet">
       <ion-option *ngFor="let item of listeChefsProjet" [value]="item.id" >{{item.nom}} {{item.prenom}}</ion-option>
       <ion-option value="">Autre</ion-option>
     </ion-select>
@@ -123,7 +123,7 @@
     Créer Projet
   </button>
 
-  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationProjet2()">
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationProjet()">
     Enregistrer modifications
   </button>
 
