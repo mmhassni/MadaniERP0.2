@@ -30,12 +30,12 @@ export class AjouterNouvelArticlePage {
 
   public tableauMappingBDD = [
     ["idarticle","id","number"],
-    ["quantitesaisiearticle","quantitesaisie","number"],
+    ["quantitesaisie","quantitesaisie","number"],
     ["quantiterecuearticle","quantiterecue","number"],
-    ["prixarticlearticle","prix","number"],
-    ["datelivraisonarticle","datelivraison","date"],
+    ["prixarticle","prix","number"],
+    ["datelivraison","datelivraison","date"],
     ["idsousdemande","refsousdemande","number"],
-    ["refproduitfournisseurarticle","refproduitfournisseur","number"],
+    ["refproduitfournisseur","refproduitfournisseur","number"],
     ["tvaarticle","tva","number"],
     ["datereceptionarticle","datereception","date"]
   ];
@@ -45,7 +45,6 @@ export class AjouterNouvelArticlePage {
   public listeArticles = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient) {
-
 
 
     this.articleActuel = {};
@@ -62,7 +61,6 @@ export class AjouterNouvelArticlePage {
       });
 
 
-
     //on recupere les informations recuperees de la bdd
     this.articleActuel = navParams.data.informationsActuelles;
 
@@ -74,7 +72,7 @@ export class AjouterNouvelArticlePage {
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
 
-      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,["nomchantier","zonechantier"]);
+      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,["quantiterecuearticle","tvaarticle","datereceptionarticle","prixarticle"]);
 
       console.log(this.articleActuel);
       this.modeModificationCreation = false;
@@ -84,14 +82,18 @@ export class AjouterNouvelArticlePage {
     }
     else{
 
-      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,[]);
+      (this.articleActuel as any) = this.remplirChampManquant(this.articleActuel,this.tableauMappingBDD,["quantiterecuearticle","tvaarticle","datereceptionarticle","prixarticle"]);
+
 
       this.modeModificationCreation = false;
       this.modeEditionAffichage = false;
 
     }
 
+
   }
+
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad AjouterChantierPage');
@@ -127,10 +129,9 @@ export class AjouterNouvelArticlePage {
 
     console.log(this.articleActuel);
 
-    this.updateObjet(this.articleActuel,"chantier",(this.articleActuel as any)[Object.keys(this.articleActuel as any)[0]],this.tableauMappingBDD);
+    this.updateObjet(this.articleActuel,"article",(this.articleActuel as any)[Object.keys(this.articleActuel as any)[0]],this.tableauMappingBDD,["quantiterecuearticle","tvaarticle","datereceptionarticle","prixarticle"]);
 
     this.navCtrl.pop();
-
 
   }
 
@@ -201,10 +202,10 @@ export class AjouterNouvelArticlePage {
 
   }
 
-  updateObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD){
+  updateObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
 
     console.log(objetAEnregistrer);
 
@@ -216,35 +217,39 @@ export class AjouterNouvelArticlePage {
     for (var property in objetAEnregistrer) {
 
 
+        // on doit recuperer les informations du mapping
+        for(let i = 1; i < tableauMappingBDD.length; i++){
 
-      // on doit recuperer les informations du mapping
-      for(let i = 0; i < tableauMappingBDD.length; i++){
-
-
-        //si on trouve les informations du mapping
-        if( property == tableauMappingBDD[i][0]){
+          if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
 
 
 
-          if(tableauMappingBDD[i][2] == "text"){
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
-          }
+              //si on trouve les informations du mapping
+            if( property == tableauMappingBDD[i][0]){
 
-          else if(tableauMappingBDD[i][2] == "date"){
-            if(objetAEnregistrer[property] != "NULL"){
-              objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+
+
+              if(tableauMappingBDD[i][2] == "text"){
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
+              }
+
+              else if(tableauMappingBDD[i][2] == "date"){
+                if(objetAEnregistrer[property] != "NULL"){
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                }
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+              }
+
+              //les autres cas se traitent de la meme facon
+              else{
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+              }
+
             }
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
-          }
 
-          //les autres cas se traitent de la meme facon
-          else{
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
           }
 
         }
-
-      }
 
     }
 

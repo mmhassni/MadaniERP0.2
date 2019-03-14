@@ -121,4 +121,5 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="your usage message" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="your usage message" />
     </plugin>
+    <plugin name="cordova-plugin-x-toast" spec="2.7.2" />
 </widget>

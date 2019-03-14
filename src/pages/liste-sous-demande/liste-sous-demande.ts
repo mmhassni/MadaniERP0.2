@@ -21,40 +21,6 @@ export class ListeSousDemandePage {
 
   public listeFournisseurs = [];
 
-  /* public listeSousDemandes = [
-    {"idSousDemande":1228,
-      "idFournisseur":564,
-      "raisonSocialeFournisseur":'Betton Fourni',
-      "photoBL":'',
-      "observations":'Des observations de test 1',
-      "dateModificationSousDemande":'11/02/2019',
-      "sousDemandeTraitee":true,
-      "sousDemandeValidee":true,
-      "sousDemandeReceptionnee":false,
-    },
-    {"idSousDemande":1228,
-      "idFournisseur":464,
-      "raisonSocialeFournisseur":'Betton Maroc',
-      "photoBL":'',
-      "observations":'Des observations de test 2',
-      "dateModificationSousDemande":'18/01/2019',
-      "sousDemandeTraitee":true,
-      "sousDemandeValidee":true,
-      "sousDemandeReceptionnee":true,
-    },
-    {"idSousDemande":1228,
-      "idFournisseur":864,
-      "raisonSocialeFournisseur":'LP Kayas',
-      "photoBL":'',
-      "observations":'Des observations de test 3',
-      "dateModificationSousDemande":'11/03/2019',
-      "sousDemandeTraitee":true,
-      "sousDemandeValidee":false,
-      "sousDemandeReceptionnee":false,
-    }
-
-  ]; */
-
   public listeSousDemandes = [];
 
 
@@ -110,6 +76,11 @@ export class ListeSousDemandePage {
     console.log('ionViewDidLoad ListeDemandePage');
   }
 
+  ionViewDidEnter() {
+    this.refresh();
+  }
+
+
   itemTapped(event, item) {
 
     // That's right, we're pushing to ourselves!
@@ -121,11 +92,13 @@ export class ListeSousDemandePage {
     this.informationsActuelles["adressefournisseur"] = item.adressefournisseur;
     this.informationsActuelles["emailfournisseur"] = item.emailfournisseur;
     this.informationsActuelles["photobl"] = item.photobl;
+    this.informationsActuelles["numerobl"] = item.numerobl;
     this.informationsActuelles["observations"] = item.observations;
     this.informationsActuelles["datemodificationsousdemande"] = item.datemodificationsousdemande;
     this.informationsActuelles["traitee"] = item.traitee;
     this.informationsActuelles["validee"] = item.validee;
     this.informationsActuelles["receptionnee"] = item.receptionnee;
+    this.informationsActuelles["suprimee"] = item.suprimee;
 
     this.navCtrl.push(SousDemandePage, {
       informationsActuelles: this.informationsActuelles

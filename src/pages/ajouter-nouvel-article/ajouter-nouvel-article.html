@@ -29,7 +29,7 @@
   <ion-item #produitHash>
     <ion-label style="opacity:1;color: #000;width: 100%;max-width: 100%;font-weight: bold !important">Désignation : </ion-label>
     <br>
-    <ion-select #produitHash  [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectProduitFournisseurOptions" name = "chefsprojet" [(ngModel)]="articleActuel.refproduitfournisseurarticle">
+    <ion-select #produitHash  [disabled]="!modeEditionAffichage" style="width: 100%;max-width: 60%; !important" [selectOptions]="selectProduitFournisseurOptions" name = "chefsprojet" [(ngModel)]="articleActuel.refproduitfournisseur">
       <ion-option *ngFor="let item of listeArticles" [value]="item.idproduitfournisseur" >{{item.nomproduit}}</ion-option>
       <ion-option value="">Autre</ion-option>
     </ion-select>
@@ -49,14 +49,14 @@
     <ion-label style="color: #000;font-weight: bold">
       Quantité :
     </ion-label>
-    <ion-input text-center type="number" name="objetprojet" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="articleActuel.quantitesaisiearticle"  ></ion-input>
+    <ion-input text-center type="number" name="objetprojet" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="articleActuel.quantitesaisie"  ></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label style="opacity:1; color: #000;font-weight: bold">
       Date de livraison souhaitée :
     </ion-label>
-    <ion-datetime name="dateordreservice" [disabled]="!modeEditionAffichage"  display-format="D MMMM, YYYY" picker-format="D MMMM, YYYY" [(ngModel)]="articleActuel.datelivraisonarticle">
+    <ion-datetime name="dateordreservice" [disabled]="!modeEditionAffichage"  display-format="D MMMM, YYYY" picker-format="D MMMM, YYYY" [(ngModel)]="articleActuel.datelivraison">
 
     </ion-datetime>
   </ion-item>

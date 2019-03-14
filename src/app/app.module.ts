@@ -26,6 +26,7 @@ import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur
 import {AjouterChantierPage} from "../pages/ajouter-chantier/ajouter-chantier";
 import {AjouterFournisseurPage} from "../pages/ajouter-fournisseur/ajouter-fournisseur";
 import {AjouterNouvelArticlePage} from "../pages/ajouter-nouvel-article/ajouter-nouvel-article";
+import {Toast} from "@ionic-native/toast";
 
 
 @NgModule({
@@ -79,6 +80,7 @@ import {AjouterNouvelArticlePage} from "../pages/ajouter-nouvel-article/ajouter-
     FilePath,
     EmailComposer,
     Base64ToGallery,
+    Toast,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UtilisateurProvider
   ]
