@@ -96,7 +96,7 @@ export class AjouterChantierPage {
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -165,7 +165,7 @@ export class AjouterChantierPage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
 
 
     //apres on doit parcourir tout les champs de notre objet

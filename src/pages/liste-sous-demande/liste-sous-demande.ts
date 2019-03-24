@@ -29,7 +29,7 @@ export class ListeSousDemandePage {
 
     //on recupere la liste de tout les fournisseurs de la bdd qui sont affecte a ce fournisseur
 
-    console.log(this.navParams.data.informationsActuelles);
+    //console.log(this.navParams.data.informationsActuelles);
 
     //pour cela on doit dabord recuperer l id de l utilisateur pour voir la liste des fournisseur qui lui sont affectes
 
@@ -45,7 +45,7 @@ export class ListeSousDemandePage {
 
   refresh(){
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from sousdemande LEFT OUTER JOIN fournisseur ON sousdemande.reffournisseur= fournisseur.id LEFT OUTER JOIN demande ON demande.id= sousdemande.refdemande where demande.id = " + (this.informationsActuelles as any).iddemande)
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from sousdemande LEFT OUTER JOIN fournisseur ON sousdemande.reffournisseur= fournisseur.id LEFT OUTER JOIN demande ON demande.id= sousdemande.refdemande where demande.id = " + (this.informationsActuelles as any).iddemande)
       .subscribe(data => {
         console.log(data);
         this.listeSousDemandes = (data as any).features;
@@ -57,7 +57,7 @@ export class ListeSousDemandePage {
 
   creerNouvelleSousDemande(){
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/insert into sousdemande (refdemande) values (" + (this.informationsActuelles as any).iddemande + ")")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into sousdemande (refdemande) values (" + (this.informationsActuelles as any).iddemande + ")")
       .subscribe(data => {
         console.log(data);
         this.refresh();
@@ -80,7 +80,6 @@ export class ListeSousDemandePage {
     this.refresh();
   }
 
-
   itemTapped(event, item) {
 
     // That's right, we're pushing to ourselves!
@@ -92,17 +91,30 @@ export class ListeSousDemandePage {
     this.informationsActuelles["adressefournisseur"] = item.adressefournisseur;
     this.informationsActuelles["emailfournisseur"] = item.emailfournisseur;
     this.informationsActuelles["photobl"] = item.photobl;
+    this.informationsActuelles["photofourniture"] = item.photofourniture;
     this.informationsActuelles["numerobl"] = item.numerobl;
     this.informationsActuelles["observations"] = item.observations;
     this.informationsActuelles["datemodificationsousdemande"] = item.datemodificationsousdemande;
-    this.informationsActuelles["traitee"] = item.traitee;
-    this.informationsActuelles["validee"] = item.validee;
-    this.informationsActuelles["receptionnee"] = item.receptionnee;
-    this.informationsActuelles["suprimee"] = item.suprimee;
+    this.informationsActuelles["traitee"] = this.stringToBoolean(item.traitee);
+    this.informationsActuelles["validee"] = this.stringToBoolean(item.validee);
+    this.informationsActuelles["receptionnee"] = this.stringToBoolean(item.receptionnee);
+    this.informationsActuelles["suprimee"] = this.stringToBoolean(item.suprimee);
 
     this.navCtrl.push(SousDemandePage, {
       informationsActuelles: this.informationsActuelles
     });
+
+  }
+
+
+  public stringToBoolean(string){
+
+    if(string == "t"){
+      return true;
+    }
+    else{
+      return false;
+    }
 
   }
 

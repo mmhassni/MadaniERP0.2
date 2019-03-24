@@ -8,8 +8,8 @@ import { ListPage } from '../pages/list/list';
 import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
 import {UtilisateurProvider} from "../providers/utilisateur/utilisateur";
 import {Subscription} from "rxjs";
-import {NouveauProduitPage} from "../pages/nouveau-produit/nouveau-produit";
 import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
+import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/suivi-gasoil-liste-projet";
 
 @Component({
   templateUrl: 'app.html'
@@ -17,7 +17,7 @@ import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = ListeProjetPage;
+  rootPage: any = SuiviGasoilListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -29,9 +29,14 @@ export class MyApp {
 
     // used for an example of ngFor and navigation
     this.pages = [
+
       { title: "Demandes d'achats", component: ListeProjetPage },
       { title: 'Fournisseurs', component: ListeFournisseurPage },
-      { title: 'Nouveau Produit', component: NouveauProduitPage },
+      { title: 'Sous traitances', component: ListPage },
+      { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
+      { title: "Suivi Main d'oeuvre", component: ListPage },
+      { title: "Location des engins", component: ListPage },
+      { title: 'Paiement', component: ListPage },
       { title: 'Projets', component: ListPage },
       { title: 'Utilisateurs', component: HomePage }
 

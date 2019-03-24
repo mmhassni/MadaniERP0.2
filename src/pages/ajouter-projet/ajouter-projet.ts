@@ -101,7 +101,7 @@ export class AjouterProjetPage {
 
 
     //on recupere la liste des regions
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from region")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select * from region")
       .subscribe(data => {
         console.log(data);
 
@@ -110,7 +110,7 @@ export class AjouterProjetPage {
       });
 
     //on recupere la liste des utilisateurs
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select * from utilisateur")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select * from utilisateur")
       .subscribe(data => {
         console.log(data);
 
@@ -157,7 +157,7 @@ export class AjouterProjetPage {
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -226,7 +226,7 @@ export class AjouterProjetPage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
 
 
     //apres on doit parcourir tout les champs de notre objet

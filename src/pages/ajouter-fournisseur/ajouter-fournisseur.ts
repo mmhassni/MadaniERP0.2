@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 
 /**
@@ -25,7 +25,7 @@ export class AjouterFournisseurPage {
     ["idfournisseur","id","number"],
     ["raisonsocialefournisseur","raisonsociale","text"],
     ["adressefournisseur","adresse","text"],
-    ["telfournisseur","tel","text"],
+    ["telephonefournisseur","tel","text"],
     ["faxfournisseur","fax","text"],
     ["emailfournisseur","email","text"],
     ["patentefournisseur","patente","text"],
@@ -34,7 +34,7 @@ export class AjouterFournisseurPage {
 
   public fournisseurActuel = {};
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController) {
 
 
     //on recupere les informations recuperees de la bdd
@@ -46,9 +46,9 @@ export class AjouterFournisseurPage {
 
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
-    if(navParams.data.action &&  navParams.data.action == "modeAjout"){
+    if(navParams.data.action &&  navParams.data.action == "ajouter"){
 
-      (this.fournisseurActuel as any) = this.remplirChampManquant(this.fournisseurActuel,this.tableauMappingBDD,["nomchantier","zonechantier"]);
+      (this.fournisseurActuel as any) = this.remplirChampManquant(this.fournisseurActuel,this.tableauMappingBDD,[]);
 
       console.log(this.fournisseurActuel);
       this.modeModificationCreation = false;
@@ -73,7 +73,7 @@ export class AjouterFournisseurPage {
 
   enregistrerNouvelObjet(){
 
-    this.createObjet(this.fournisseurActuel,"chantier",this.tableauMappingBDD);
+    this.insertObjet(this.fournisseurActuel,"fournisseur",this.tableauMappingBDD);
 
     //console.log(this.navParams.data.parentPage);
 
@@ -88,20 +88,53 @@ export class AjouterFournisseurPage {
 
     console.log(this.fournisseurActuel);
 
-    this.updateObjet(this.fournisseurActuel,"chantier",(this.fournisseurActuel as any)[Object.keys(this.fournisseurActuel as any)[0]],this.tableauMappingBDD);
+    this.updateGetObjet(this.fournisseurActuel,"fournisseur",(this.fournisseurActuel as any)[Object.keys(this.fournisseurActuel as any)[0]],this.tableauMappingBDD,[]);
 
     this.navCtrl.pop();
 
 
   }
 
-  createObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
+
+
+  fusionnerObjet(objetInformationsActuelles,objetComplement){
+    return Object.assign(objetComplement,objetInformationsActuelles);
+  }
+
+  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
+
+    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
+
+
+    this.navCtrl.push(PageSuivante, {
+      informationsActuelles: objetComplement,
+      action: action
+    });
+
+  }
+
+  getListObjet(nomTableBDD, tableauMappingBDD){
+
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    for (let i = 0; i < tableauMappingBDD.length; i++) {
+
+      requeteGetProjet = requeteGetProjet + " " + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+
+    }
+
+    requeteGetProjet = requeteGetProjet + " * from " + nomTableBDD + " order by " + tableauMappingBDD[0][1] + " desc";
+
+    return this.httpClient.get(requeteGetProjet);
+
+  }
+
+  insertObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -162,45 +195,160 @@ export class AjouterFournisseurPage {
 
   }
 
-  updateObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD){
+  updateGetObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
 
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/Update " + nomTableBDD + " set";
-
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
 
 
-
       // on doit recuperer les informations du mapping
-      for(let i = 0; i < tableauMappingBDD.length; i++){
+      for(let i = 1; i < tableauMappingBDD.length; i++){
 
-
-        //si on trouve les informations du mapping
-        if( property == tableauMappingBDD[i][0]){
+        if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
 
 
 
-          if(tableauMappingBDD[i][2] == "text"){
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
-          }
+          //si on trouve les informations du mapping
+          if( property == tableauMappingBDD[i][0]){
 
-          else if(tableauMappingBDD[i][2] == "date"){
-            if(objetAEnregistrer[property] != "NULL"){
-              objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+
+
+            if(tableauMappingBDD[i][2] == "text"){
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
             }
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+
+            else if(tableauMappingBDD[i][2] == "date"){
+              if(objetAEnregistrer[property] != "NULL"){
+                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+              }
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+            }
+
+            //les autres cas se traitent de la meme facon
+            else{
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+            }
+
           }
 
-          //les autres cas se traitent de la meme facon
-          else{
-            requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+        }
+
+      }
+
+
+    }
+
+
+
+
+
+    //on doit enlever la derniere virgule
+    let requeteUpdateGet = requeteUpdate.substring(0, requeteUpdate.length - 1);
+
+
+    requeteUpdateGet = requeteUpdateGet + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+    //enregistrement des parametres attributaires
+    this.httpClient.get(requeteUpdateGet).subscribe(data => {
+
+      console.log(data);
+
+    },err => {
+
+      let messageGetToast = "Informations attributaires enregistrées";
+
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-success"
+        });
+
+        toast.present();
+
+
+
+      }
+      else{
+        messageGetToast = "Informations attributaires non enregistrées";
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-echec"
+        });
+
+        toast.present();
+
+      }
+
+
+    });
+
+
+
+
+
+
+
+  }
+
+  updatePostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
+    //on doit dabord remplir les champs manquants
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
+
+    console.log(objetAEnregistrer);
+
+    //debut de la construction de la requete
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+
+    //apres on doit parcourir tout les champs de notre objet
+    for (var property in objetAEnregistrer) {
+
+      if( ! parametresPost.includes(property) ){
+
+        // on doit recuperer les informations du mapping
+        for(let i = 1; i < tableauMappingBDD.length; i++){
+
+          if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+
+
+
+            //si on trouve les informations du mapping
+            if( property == tableauMappingBDD[i][0]){
+
+
+
+              if(tableauMappingBDD[i][2] == "text"){
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
+              }
+
+              else if(tableauMappingBDD[i][2] == "date"){
+                if(objetAEnregistrer[property] != "NULL"){
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                }
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+              }
+
+              //les autres cas se traitent de la meme facon
+              else{
+                requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+              }
+
+            }
+
           }
 
         }
@@ -209,17 +357,142 @@ export class AjouterFournisseurPage {
 
     }
 
+
+
+
+
     //on doit enlever la derniere virgule
-    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    let requeteUpdateGet = requeteUpdate.substring(0, requeteUpdate.length - 1);
 
 
-    requeteUpdate = requeteUpdate + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+    requeteUpdateGet = requeteUpdateGet + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
 
-    this.httpClient.get(requeteUpdate)
-      .subscribe(data => {
-        console.log(data);
+    //enregistrement des parametres attributaires
+    this.httpClient.get(requeteUpdateGet).subscribe(data => {
 
-      });
+      console.log(data);
+
+    },err => {
+
+      let messageGetToast = "Informations attributaires enregistrées";
+
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-success"
+        });
+
+        toast.present();
+
+
+
+      }
+      else{
+        messageGetToast = "Informations attributaires non enregistrées";
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-echec"
+        });
+
+        toast.present();
+
+      }
+
+
+    });
+
+
+    //enregistrement des parametres post
+    for(let i = 0; i < parametresPost.length; i++){
+
+      //on doit enlever la derniere virgule
+      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+
+      //preparation de la requete
+      requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+      //recuperation des informations du post
+      let body = objetAEnregistrer[parametresPost[i]];
+
+      if(!body){
+        body = "NULL";
+        console.log("aucune photo");
+      }
+
+
+      this.httpClient.post(requeteUpdatePost,
+
+        body)
+
+        .subscribe(data => {
+
+          console.log(data);
+
+        },err => {
+
+          let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+
+            this.httpClient.post( requeteUpdate,
+
+              body)
+
+              .subscribe(data2 => {
+
+                console.log(data2);
+
+              },err2 => {
+
+
+
+              });
+
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+          }
+          else{
+
+            messageToastPost = "Informations " + parametresPostLibelle[i] +  " non enregistrées";
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+
+          }
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+
 
 
   }

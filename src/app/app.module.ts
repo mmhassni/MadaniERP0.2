@@ -27,7 +27,15 @@ import {AjouterChantierPage} from "../pages/ajouter-chantier/ajouter-chantier";
 import {AjouterFournisseurPage} from "../pages/ajouter-fournisseur/ajouter-fournisseur";
 import {AjouterNouvelArticlePage} from "../pages/ajouter-nouvel-article/ajouter-nouvel-article";
 import {Toast} from "@ionic-native/toast";
-
+import {ChoixActionFournisseurPage} from "../pages/choix-action-fournisseur/choix-action-fournisseur";
+import {ListeProduitFournisseurPage} from "../pages/liste-produit-fournisseur/liste-produit-fournisseur";
+import {AjouterProduitFournisseurPage} from "../pages/ajouter-produit-fournisseur/ajouter-produit-fournisseur";
+import {ListeProjetFournisseurAssociePage} from "../pages/liste-projet-fournisseur-associe/liste-projet-fournisseur-associe";
+import {AjouterProjetFournisseurAssociePage} from "../pages/ajouter-projet-fournisseur-associe/ajouter-projet-fournisseur-associe";
+import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/suivi-gasoil-liste-projet";
+import {SuiviGasoilListeChantierPage} from "../pages/suivi-gasoil-liste-chantier/suivi-gasoil-liste-chantier";
+import {SuiviGasoilListeBonGasoilPage} from "../pages/suivi-gasoil-liste-bon-gasoil/suivi-gasoil-liste-bon-gasoil";
+import {SuiviGasoilAjouterBonGasoilPage} from "../pages/suivi-gasoil-ajouter-bon-gasoil/suivi-gasoil-ajouter-bon-gasoil";
 
 @NgModule({
   declarations: [
@@ -45,7 +53,16 @@ import {Toast} from "@ionic-native/toast";
     ListeFournisseurPage,
     AjouterChantierPage,
     AjouterFournisseurPage,
-    AjouterNouvelArticlePage
+    AjouterNouvelArticlePage,
+    ChoixActionFournisseurPage,
+    ListeProduitFournisseurPage,
+    AjouterProduitFournisseurPage,
+    ListeProjetFournisseurAssociePage,
+    AjouterProjetFournisseurAssociePage,
+    SuiviGasoilListeProjetPage,
+    SuiviGasoilListeChantierPage,
+    SuiviGasoilListeBonGasoilPage,
+    SuiviGasoilAjouterBonGasoilPage
 
   ],
   imports: [
@@ -69,7 +86,16 @@ import {Toast} from "@ionic-native/toast";
     ListeFournisseurPage,
     AjouterChantierPage,
     AjouterFournisseurPage,
-    AjouterNouvelArticlePage
+    AjouterNouvelArticlePage,
+    ChoixActionFournisseurPage,
+    ListeProduitFournisseurPage,
+    AjouterProduitFournisseurPage,
+    ListeProjetFournisseurAssociePage,
+    AjouterProjetFournisseurAssociePage,
+    SuiviGasoilListeProjetPage,
+    SuiviGasoilListeChantierPage,
+    SuiviGasoilListeBonGasoilPage,
+    SuiviGasoilAjouterBonGasoilPage
 
 
   ],

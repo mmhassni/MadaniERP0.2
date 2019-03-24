@@ -60,12 +60,12 @@ Ionic pages and navigation.
     <button ion-item *ngFor="let item of listeSousDemandes"   (click)="itemTapped($event, item)">
       Fournisseur : {{item.raisonsocialefournisseur}}
       <p>Date modification: {{item.datemodificationsousdemande}} </p>
-      <p *ngIf="item?.traitee == 'TRUE'">Traitée: oui</p>
-      <p *ngIf="item?.traitee != 'TRUE'">Traitée: non</p>
-      <p *ngIf="item?.validee == 'TRUE'">Validée: oui</p>
-      <p *ngIf="item?.validee != 'TRUE'">Validée: non</p>
-      <p *ngIf="item?.receptionnee == 'TRUE'">Récéptionnée: oui</p>
-      <p *ngIf="item?.receptionnee != 'TRUE'">Récéptionnée: non</p>
+      <p *ngIf="item?.traitee == 't'">Traitée: oui</p>
+      <p *ngIf="item?.traitee != 't'">Traitée: non</p>
+      <p *ngIf="item?.validee == 't'">Validée: oui</p>
+      <p *ngIf="item?.validee != 't'">Validée: non</p>
+      <p *ngIf="item?.receptionnee == 't'">Récéptionnée: oui</p>
+      <p *ngIf="item?.receptionnee != 't'">Récéptionnée: non</p>
     </button>
 
   </ion-list>

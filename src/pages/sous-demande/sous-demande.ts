@@ -9,7 +9,11 @@ import {AjouterNouvelArticlePage} from "../ajouter-nouvel-article/ajouter-nouvel
 
 import { Toast } from '@ionic-native/toast';
 
+import { ToastController } from 'ionic-angular';
+
 import { normalizeURL } from 'ionic-angular';
+
+import { AlertController } from 'ionic-angular';
 
 
 
@@ -49,14 +53,15 @@ export class SousDemandePage {
     ["traitee","traitee","text"],
     ["validee","validee","text"],
     ["receptionnee","receptionnee","text"],
-    ["suprimee","suprimee","text"]
+    ["suprimee","suprimee","text"],
+    ["photofourniture","photofourniture","text"]
   ];
 
 
   public sousdemandeActuelle = {};
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, private camera: Camera, private filePath: FilePath, public platform: Platform, public actionSheetCtrl: ActionSheetController, private emailComposer: EmailComposer , public toast: Toast) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, private camera: Camera, private filePath: FilePath, public platform: Platform, public actionSheetCtrl: ActionSheetController, private emailComposer: EmailComposer , public toastCtrl: ToastController, public toast: Toast, private alertCtrl: AlertController) {
 
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
@@ -69,7 +74,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from fournisseur")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from fournisseur")
       .subscribe(data => {
         console.log(data);
 
@@ -107,7 +112,8 @@ export class SousDemandePage {
 
   }
 
-  public takePicture(sourceType) {
+
+  public takeBLPicture(sourceType) {
 
     // Create options for the Camera Dialog
     var options = {
@@ -172,6 +178,71 @@ export class SousDemandePage {
 
   }
 
+  public takeFourniturePicture(sourceType) {
+
+    // Create options for the Camera Dialog
+    var options = {
+      quality: 100,
+      destinationType: this.platform.is('ios') ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL,
+      //encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      saveToPhotoAlbum:true,
+      sourceType: sourceType,
+      correctOrientation: true
+    };
+
+
+
+    // Get the data of an image
+    this.camera.getPicture(options).then((imageData) => {
+
+
+      // Special handling for Android library
+      if (this.platform.is('android') && sourceType === this.camera.PictureSourceType.PHOTOLIBRARY) {
+
+        //console.log(imagePath);
+        (this.sousdemandeActuelle as any).photobl = imageData;
+
+        console.log((this.informationsActuelles as any).photofourniture);
+
+
+        this.filePath.resolveNativePath(imageData);
+
+
+      } else {
+
+        console.log(imageData);
+
+        let base64Image = null;
+
+        //get photo from the camera based on platform type
+        if (this.platform.is('ios')){
+          base64Image = normalizeURL(imageData);
+        }
+        else{
+          base64Image = imageData;
+        }
+
+
+        (this.sousdemandeActuelle as any).photofourniture = base64Image;
+        console.log(imageData);
+
+
+        //console.log((this.informationsActuelles as any).photoblnat);
+
+
+        //var currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
+        //var correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
+        //this.copyFileToLocalDir(correctPath, currentName, this.createFileName());
+      }
+    }, (err) => {
+      //this.presentToast('Error while selecting image.');
+    });
+
+
+
+  }
+
   public photoBLChooser() :void{
     /*
     const options: CameraOptions = {
@@ -188,14 +259,53 @@ export class SousDemandePage {
         {
           text: 'Charger à partir de la galerie',
           handler: () => {
-            this.takePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+            this.takeBLPicture(this.camera.PictureSourceType.PHOTOLIBRARY);
 
           }
         },
         {
           text: 'Charger à partir de Caméra',
           handler: () => {
-            this.takePicture(this.camera.PictureSourceType.CAMERA);
+            this.takeBLPicture(this.camera.PictureSourceType.CAMERA);
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    actionSheet.present();
+
+
+
+  }
+
+  public photoFournitureChooser() :void{
+    /*
+    const options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      saveToPhotoAlbum:true
+    };
+*/
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Select Image Source',
+      buttons: [
+        {
+          text: 'Charger à partir de la galerie',
+          handler: () => {
+            this.takeFourniturePicture(this.camera.PictureSourceType.PHOTOLIBRARY);
+
+          }
+        },
+        {
+          text: 'Charger à partir de Caméra',
+          handler: () => {
+            this.takeFourniturePicture(this.camera.PictureSourceType.CAMERA);
           }
         },
         {
@@ -213,10 +323,44 @@ export class SousDemandePage {
 
   creerNouvelArticle($event) {
 
-    this.navCtrl.push(AjouterNouvelArticlePage, {
-      informationsActuelles: this.informationsActuelles,
-      action: "ajouter"
-    });
+    if((this.sousdemandeActuelle as any).idfournisseur != "NULL"){
+
+      this.navCtrl.push(AjouterNouvelArticlePage, {
+        informationsActuelles: this.informationsActuelles,
+        action: "ajouter"
+      });
+
+    }
+    else{
+
+      let alert = this.alertCtrl.create({
+        title: 'Attention',
+        subTitle: "Vous devez d'abord selectionner un fournisseur",
+        buttons: ['Cancel']
+      });
+      alert.present();
+
+    }
+
+
+
+
+
+
+  }
+
+  verifierListeArticleVide(){
+
+    if(this.listeArticles.length != 0){
+
+      let alert = this.alertCtrl.create({
+        title: 'Attention',
+        subTitle: "Vous devez d'abord vider la liste des articles",
+        buttons: ['Cancel']
+      });
+      alert.present();
+
+    }
 
 
   }
@@ -230,7 +374,7 @@ export class SousDemandePage {
 
   refreshArticles(){
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select article.datereception as datereception, produitfournisseur.prixht as prixarticle, produitfournisseur.tvaenpourcentage as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select article.datereception as datereception, produitfournisseur.prixht as prixarticle, produitfournisseur.tvaenpourcentage as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
       .subscribe(data => {
         console.log(data);
 
@@ -270,22 +414,80 @@ export class SousDemandePage {
     return sommeht;
   }
 
-  enregistrerModificationObjet(){
+  enregistrerEtatTraite() {
 
-    console.log(this.informationsActuelles);
+    (this.sousdemandeActuelle as any).traitee = true;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],"photobl");
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
 
 
   }
 
-  createObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
+  enregistrerEtatValide() {
+
+    (this.sousdemandeActuelle as any).validee = true;
+
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+
+
+  }
+
+  enregistrerEtatRecepetionne() {
+
+    (this.sousdemandeActuelle as any).receptionnee = true;
+
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+
+
+  }
+
+  enregistrerEtatDerecepetionne() {
+
+    (this.sousdemandeActuelle as any).receptionnee = false;
+
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+
+  }
+
+  enregistrerEtatDevalide() {
+
+    (this.sousdemandeActuelle as any).validee = false;
+
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+
+  }
+
+  enregistrerModificationObjet(){
+
+    console.log(this.informationsActuelles);
+
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+
+
+  }
+
+  getListObjet(nomTableBDD, tableauMappingBDD){
+
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    for (let i = 0; i < tableauMappingBDD.length; i++) {
+
+      requeteGetProjet = requeteGetProjet + " " + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+
+    }
+
+    requeteGetProjet = requeteGetProjet + " * from " + nomTableBDD + " order by " + tableauMappingBDD[0][1] + " desc";
+
+    return this.httpClient.get(requeteGetProjet);
+
+  }
+
+  insertObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 
     //on doit dabord remplir les champs manquants
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -346,7 +548,7 @@ export class SousDemandePage {
 
   }
 
-  updatePostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametrePost){
+  updateGetObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
     //on doit dabord remplir les champs manquants
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
@@ -354,12 +556,121 @@ export class SousDemandePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://192.168.43.85:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
 
-      if( property != parametrePost){
+
+      // on doit recuperer les informations du mapping
+      for(let i = 1; i < tableauMappingBDD.length; i++){
+
+        if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+
+
+
+          //si on trouve les informations du mapping
+          if( property == tableauMappingBDD[i][0]){
+
+
+
+            if(tableauMappingBDD[i][2] == "text"){
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = '" + objetAEnregistrer[property] + "',";
+            }
+
+            else if(tableauMappingBDD[i][2] == "date"){
+              if(objetAEnregistrer[property] != "NULL"){
+                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+              }
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+            }
+
+            //les autres cas se traitent de la meme facon
+            else{
+              requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
+            }
+
+          }
+
+        }
+
+      }
+
+
+    }
+
+
+
+
+
+    //on doit enlever la derniere virgule
+    let requeteUpdateGet = requeteUpdate.substring(0, requeteUpdate.length - 1);
+
+
+    requeteUpdateGet = requeteUpdateGet + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+    //enregistrement des parametres attributaires
+    this.httpClient.get(requeteUpdateGet).subscribe(data => {
+
+      console.log(data);
+
+    },err => {
+
+      let messageGetToast = "Informations attributaires enregistrées";
+
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-success"
+        });
+
+        toast.present();
+
+
+
+      }
+      else{
+        messageGetToast = "Informations attributaires non enregistrées";
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-echec"
+        });
+
+        toast.present();
+
+      }
+
+
+    });
+
+
+
+
+
+
+
+  }
+
+  updatePostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
+    //on doit dabord remplir les champs manquants
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
+
+    console.log(objetAEnregistrer);
+
+    //debut de la construction de la requete
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+
+    //apres on doit parcourir tout les champs de notre objet
+    for (var property in objetAEnregistrer) {
+
+      if( ! parametresPost.includes(property) ){
 
         // on doit recuperer les informations du mapping
         for(let i = 1; i < tableauMappingBDD.length; i++){
@@ -399,61 +710,142 @@ export class SousDemandePage {
 
     }
 
-    //parametre post
-    requeteUpdate = requeteUpdate + " " + parametrePost + " = " + "'postBody'" + ",";
+
+
+
 
     //on doit enlever la derniere virgule
-    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    let requeteUpdateGet = requeteUpdate.substring(0, requeteUpdate.length - 1);
 
 
-    requeteUpdate = requeteUpdate + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+    requeteUpdateGet = requeteUpdateGet + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+    //enregistrement des parametres attributaires
+    this.httpClient.get(requeteUpdateGet).subscribe(data => {
+
+      console.log(data);
+
+    },err => {
+
+      let messageGetToast = "Informations attributaires enregistrées";
+
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-success"
+        });
+
+        toast.present();
 
 
 
+      }
+      else{
+        messageGetToast = "Informations attributaires non enregistrées";
 
-    let body = objetAEnregistrer[parametrePost];
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-echec"
+        });
+
+        toast.present();
+
+      }
 
 
-    if(!body){
-      body = "NULL";
-      console.log("aucune photo");
+    });
+
+
+    //enregistrement des parametres post
+    for(let i = 0; i < parametresPost.length; i++){
+
+      //on doit enlever la derniere virgule
+      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+
+      //preparation de la requete
+      requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+      //recuperation des informations du post
+      let body = objetAEnregistrer[parametresPost[i]];
+
+      if(!body){
+        body = "NULL";
+        console.log("aucune photo");
+      }
+
+
+      this.httpClient.post(requeteUpdatePost,
+
+        body)
+
+        .subscribe(data => {
+
+          console.log(data);
+
+        },err => {
+
+          let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+
+            this.httpClient.post( requeteUpdate,
+
+              body)
+
+              .subscribe(data2 => {
+
+                console.log(data2);
+
+              },err2 => {
+
+
+
+              });
+
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+          }
+          else{
+
+            messageToastPost = "Informations " + parametresPostLibelle[i] +  " non enregistrées";
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+
+          }
+
+        });
+
+
     }
 
 
-    this.httpClient.post(requeteUpdate,
 
-      body)
 
-      .subscribe(data => {
 
-        console.log(data);
 
-      },err => {
 
-        let messageToast = "Informations enregistrées";
 
-        if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
-
-          this.toast.show(messageToast, '3000', 'top').subscribe(
-            toast => {
-              console.log(toast);
-
-            }
-          );
-
-        }
-        else{
-          messageToast = "Erreur d'envoi"
-
-          this.toast.show(messageToast, '3000', 'top').subscribe(
-            toast => {
-              console.log(toast);
-            }
-          );
-
-        }
-
-      });
 
 
   }
@@ -526,6 +918,10 @@ export class SousDemandePage {
 
     }
 
+
+
+    bodyHTML = bodyHTML + '<img src="data:image/jpeg;base64,' + (this.sousdemandeActuelle as any).photobl + '" />' ;
+
     console.log("file:/" + (this.informationsActuelles as any).photoblnat);
 
     let email = {
@@ -533,7 +929,7 @@ export class SousDemandePage {
       cc: 'mhassni.mohammed@gmail.com',
       //bcc: ['john@doe.com', 'jane@doe.com'],
       attachments: [
-        (this.informationsActuelles as any).photobl
+        (this.sousdemandeActuelle as any).photobl
         //'file://README.pdf'
       ],
       subject: 'Bonjour ' + (this.informationsActuelles as any).raisonsocialefournisseur,

@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { ProjetDetailComponent } from './projet-detail/projet-detail';
 @NgModule({
-	declarations: [ProjetDetailComponent],
+	declarations: [ProjetDetailComponent
+    ],
 	imports: [],
-	exports: [ProjetDetailComponent]
+	exports: [ProjetDetailComponent
+    ]
 })
 export class ComponentsModule {}

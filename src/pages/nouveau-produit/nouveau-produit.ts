@@ -38,7 +38,7 @@ export class NouveauProduitPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient: HttpClient) {
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/select%20*%20from%20unites")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select%20*%20from%20unites")
       .subscribe(data => {
         console.log(data);
 
@@ -54,7 +54,7 @@ export class NouveauProduitPage {
 
   creerNouveauProduit() {
 
-    this.httpClient.get("http://192.168.43.85:9090/requestAny/insert%20into%20produitfournisseur%20" +
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert%20into%20produitfournisseur%20" +
       "(%22reffournisseur%22,%22auteurduproduit%22,%22nomproduit%22,%22prixht%22,%22tvaenpourcentage%22,%22unite%22)%20" +
       " values%20(null,null,'"+ this.produitActuel.nomduproduit +"',"+ this.produitActuel.prixht + "," + this.produitActuel.tvaenpourcentage +",'"+ this.produitActuel.unite +"')")
       .subscribe(data => {
