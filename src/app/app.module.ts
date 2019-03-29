@@ -36,6 +36,14 @@ import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/sui
 import {SuiviGasoilListeChantierPage} from "../pages/suivi-gasoil-liste-chantier/suivi-gasoil-liste-chantier";
 import {SuiviGasoilListeBonGasoilPage} from "../pages/suivi-gasoil-liste-bon-gasoil/suivi-gasoil-liste-bon-gasoil";
 import {SuiviGasoilAjouterBonGasoilPage} from "../pages/suivi-gasoil-ajouter-bon-gasoil/suivi-gasoil-ajouter-bon-gasoil";
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { CameraProvider } from '../providers/camera/camera';
+import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet/gestion-projet-liste-projet";
+import {GestionProjetChoixActionPage} from "../pages/gestion-projet-choix-action/gestion-projet-choix-action";
+import {GestionProjetListeEnginPage} from "../pages/gestion-projet-liste-engin/gestion-projet-liste-engin";
+import {GestionProjetListeChantierPage} from "../pages/gestion-projet-liste-chantier/gestion-projet-liste-chantier";
+import {GestionProjetChoixActionChantierPage} from "../pages/gestion-projet-choix-action-chantier/gestion-projet-choix-action-chantier";
+import {GestionProjetAjouterEnginPage} from "../pages/gestion-projet-ajouter-engin/gestion-projet-ajouter-engin";
 
 @NgModule({
   declarations: [
@@ -62,7 +70,13 @@ import {SuiviGasoilAjouterBonGasoilPage} from "../pages/suivi-gasoil-ajouter-bon
     SuiviGasoilListeProjetPage,
     SuiviGasoilListeChantierPage,
     SuiviGasoilListeBonGasoilPage,
-    SuiviGasoilAjouterBonGasoilPage
+    SuiviGasoilAjouterBonGasoilPage,
+    GestionProjetListeProjetPage,
+    GestionProjetChoixActionPage,
+    GestionProjetListeEnginPage,
+    GestionProjetListeChantierPage,
+    GestionProjetChoixActionChantierPage,
+    GestionProjetAjouterEnginPage
 
   ],
   imports: [
@@ -95,7 +109,13 @@ import {SuiviGasoilAjouterBonGasoilPage} from "../pages/suivi-gasoil-ajouter-bon
     SuiviGasoilListeProjetPage,
     SuiviGasoilListeChantierPage,
     SuiviGasoilListeBonGasoilPage,
-    SuiviGasoilAjouterBonGasoilPage
+    SuiviGasoilAjouterBonGasoilPage,
+    GestionProjetListeProjetPage,
+    GestionProjetChoixActionPage,
+    GestionProjetListeEnginPage,
+    GestionProjetListeChantierPage,
+    GestionProjetChoixActionChantierPage,
+    GestionProjetAjouterEnginPage
 
 
   ],
@@ -107,8 +127,10 @@ import {SuiviGasoilAjouterBonGasoilPage} from "../pages/suivi-gasoil-ajouter-bon
     EmailComposer,
     Base64ToGallery,
     Toast,
+    Diagnostic,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UtilisateurProvider
+    UtilisateurProvider,
+    CameraProvider
   ]
 })
 export class AppModule {}

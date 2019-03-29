@@ -16,7 +16,7 @@
 
   <ion-item>
     <ion-label style="color: #000;" >
-      Raison sociale : {{informationsActuelles?.raisonsocialefournisseur}}
+      Projet : {{informationsActuelles?.nomprojet}}
     </ion-label>
 
   </ion-item>
@@ -33,20 +33,16 @@
 
   <ion-list>
 
-    <button ion-item (click)="listerProduit($event, item)">
-      <ion-icon name="color-fill" item-start></ion-icon>
-      Liste produit
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="bus" item-start></ion-icon>
+      Engins associés
     </button>
 
-    <button ion-item (click)="listerPaiement($event, item)">
-      <ion-icon name="cash" item-start></ion-icon>
-      Liste paiement
+    <button ion-item (click)="clickChoix2($event, item)">
+      <ion-icon name="contacts" item-start></ion-icon>
+      Ouvriers associés
     </button>
 
-    <button ion-item (click)="listerAffectationProjet($event, item)">
-      <ion-icon name="body" item-start></ion-icon>
-      Liste affectation projet
-    </button>
 
   </ion-list>
 

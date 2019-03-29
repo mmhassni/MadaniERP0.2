@@ -39,10 +39,11 @@ export class SuiviGasoilListeBonGasoilPage {
     ["quantitegasoilbongasoil","quantitegasoil","number"],
     ["montantgasoilbongasoil","montantgasoil","number"],
     ["refchantierbongasoil","refchantier","number"],
-    ["reftypevehiculebongasoil","reftypevehicule","number"],
+    ["refvehiculebongasoil","refvehicule","number"],
     ["nompersonnelbongasoil","nompersonnel","text"]
 
   ];
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
@@ -66,31 +67,57 @@ export class SuiviGasoilListeBonGasoilPage {
   detailItemTapped(event, item){
 
     event.stopPropagation();
-    if(this.informationsActuelles != null && this.pageDAjout != null){
-      this.pushInformationsActuelles(item,this.informationsActuelles,this.pageDAjout,"detailler");
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageDAjout, "detailler");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageDAjout, "detailler");
+      }
     }
-
   }
 
   itemTapped(event, item) {
 
-    if(this.informationsActuelles != null && this.pageSuivante != null){
-      this.pushInformationsActuelles(item,this.informationsActuelles,this.pageSuivante,"passer");
+    if(this.pageSuivante){
+      this.pushInformationsActuelles(item,{},this.pageSuivante,"passer");
     }
 
   }
 
   ajouterItem() {
 
-    if(this.pageDAjout){
-      this.pushInformationsActuelles({},{},this.pageDAjout,"ajouter");
+    if(this.pageDAjout) {
+
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles({}, this.informationsActuelles, this.pageDAjout, "ajouter");
+      }
+      else{
+        this.pushInformationsActuelles({}, {}, this.pageDAjout, "ajouter");
+      }
     }
+
+  }
+
+  ajouterItemWithoutPush() {
+
+    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
+      .subscribe(data => {
+        console.log(data);
+        this.refresh();
+
+
+      }, err => {
+        this.refresh();
+
+      });
 
   }
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","bongasoil.refchantier = " + (this.informationsActuelles as any).idchantier,["typevehicule"])
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","bongasoil.refchantier = " + (this.informationsActuelles as any).idchantier,[])
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
         console.log(this.listeObjetActuelle);

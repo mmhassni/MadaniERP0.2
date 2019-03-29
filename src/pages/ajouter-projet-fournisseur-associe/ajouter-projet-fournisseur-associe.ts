@@ -28,7 +28,7 @@ export class AjouterProjetFournisseurAssociePage {
 
   public tableauMappingBDD = [
     ["idprojetfournisseurassocie","id","number"],
-    ["reffournisseur","reffournisseur","number"],
+    ["idfournisseur","reffournisseur","number"],
     ["refprojetprojetfournisseurassocie","refprojet","number"]
   ];
 

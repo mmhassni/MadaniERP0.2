@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {
+  IonicPage,
+  NavController,
+  NavParams,
+  ToastController
+} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
+import {CameraProvider} from "../../providers/camera/camera";
+
 
 /**
  * Generated class for the SuiviGasoilAjouterBonGasoilPage page.
@@ -26,6 +33,16 @@ export class SuiviGasoilAjouterBonGasoilPage {
   //non de la table principale de cette page
   public nomTableActuelle = "bongasoil";
 
+  public champsPredefinis = ["refchantierbongasoil"];
+
+  public havePhotoAttribut = true;
+
+  public parametresPost = ["photobgbongasoil"];
+  public parametresPostLibelle = ["Photo Bon Gasoil"];
+
+
+  public plateformeIsIOS = false;
+
   public tableauMappingBDD = [
     ["idbongasoil","id","id"],
     ["photobgbongasoil","photobg","text"],
@@ -33,18 +50,22 @@ export class SuiviGasoilAjouterBonGasoilPage {
     ["quantitegasoilbongasoil","quantitegasoil","number"],
     ["montantgasoilbongasoil","montantgasoil","number"],
     ["refchantierbongasoil","refchantier","number"],
-    ["reftypevehiculebongasoil","reftypevehicule","number"],
+    ["refvehiculebongasoil","refvehicule","number"],
     ["nompersonnelbongasoil","nompersonnel","text"]
 
   ];
 
   public enregistrementColonneIgnore = [];
 
-  public listeChoixUnites = [];
+  public typeVehicule : any;
+
+  public listeChoixTypesVehicule = [];
+  public listeChoixTypesEngin = [];
+  public listeChoixVehicule = [];
 
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController, public cameraProvider : CameraProvider) {
 
 
     console.log("bienvenu au constructeur");
@@ -52,12 +73,19 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //on recupere les informations recuperees de la bdd
     this.objetActuel = navParams.data.informationsActuelles;
 
+    console.log(navParams.data.informationsActuelles);
 
     //on saisie les champs manquants selon les cas
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
+    //(this.objetActuel as any).refchantier = navParams.data.informationsActuelles.idchantier;
 
     //on initialise les liste de choix
-    this.recupererListeChoix("listeChoixUnites","unites","libelle","description")
+    this.recupererListeChoix("listeChoixTypesVehicule","typevehicule","id","nomtype");
+    this.recupererListeChoix("listeChoixTypesEngin","typeengin","id","nomtypeengin");
+    this.recupererListeChoix("listeChoixVehicule","vehicule","id","matricule");
+
+    console.log(this.objetActuel);
+
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
@@ -69,11 +97,21 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
     }
+    // cad le mode detail ou le mode modification
     else{
+
 
       console.log(this.objetActuel);
       this.modeModificationCreation = false;
       this.modeEditionAffichage = false;
+
+      //si l'objet est vide alors on doit passer directement au mode edition
+      if(this.objectIsFrameworklyNull(this.objetActuel,this.champsPredefinis)){
+
+        this.modeModificationCreation = true;
+        this.modeEditionAffichage = true;
+
+      }
 
     }
 
@@ -100,26 +138,27 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     console.log(this.objetActuel);
 
-    this.updateGetObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[]);
+    this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    this.navCtrl.pop();
+    if(!this.havePhotoAttribut){
+      this.navCtrl.pop();
+    }
 
 
+  }
+
+
+  photoChooser(objetActuel , photobgbongasoil ) {
+    this.cameraProvider.photoChooser(objetActuel,photobgbongasoil);
   }
 
   //retourne une liste de choix contenant l'id et le libelle
   recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe){
 
-    for(let pp in this){
 
-      if(pp == nomListeARemplir){
-
-      }
-
-    }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + " from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -239,6 +278,203 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
   }
+
+  /*
+  insertPostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
+    //on doit dabord remplir les champs manquants
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
+
+    console.log(objetAEnregistrer);
+
+    //debut de la construction de la requete
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
+
+    //on commence par l'indice 1 pour ne pas inclure la cle de la table
+    for (let i = 1; i < tableauMappingBDD.length; i++){
+
+      requeteUpdate = requeteUpdate + tableauMappingBDD[i][1] + ",";
+
+    }
+
+    //on enleve la derniere virgule
+    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    requeteUpdate = requeteUpdate + ") values (";
+
+    //apres on doit parcourir tout les champs de notre objet
+    for (var property in objetAEnregistrer) {
+
+      if( ! parametresPost.includes(property) ){
+
+        // on doit recuperer les informations du mapping
+        for(let i = 1; i < tableauMappingBDD.length; i++){
+
+          if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+
+
+
+            //si on trouve les informations du mapping
+            if( property == tableauMappingBDD[i][0]){
+
+
+
+              if(tableauMappingBDD[i][2] == "text"){
+                requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
+
+              }
+
+              else if(tableauMappingBDD[i][2] == "date"){
+
+                if(objetAEnregistrer[property] != "NULL"){
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                }
+                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+
+              }
+              //les autres cas se traitent de la meme facon
+              else{
+                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+
+    //on doit enlever la derniere virgule
+    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    requeteUpdate = requeteUpdate + ")";
+
+
+
+    //enregistrement des parametres attributaires
+    this.httpClient.get(requeteUpdate).subscribe(data => {
+
+      console.log(data);
+
+    },err => {
+
+      let messageGetToast = "Informations attributaires enregistrées";
+
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-success"
+        });
+
+        toast.present();
+
+
+
+      }
+      else{
+        messageGetToast = "Informations attributaires non enregistrées";
+
+        let toast = this.toastCtrl.create({
+          message: messageGetToast,
+          duration: 1000,
+          position: 'top',
+          cssClass: "toast-echec"
+        });
+
+        toast.present();
+
+      }
+
+
+    });
+
+
+    //enregistrement des parametres post
+    for(let i = 0; i < parametresPost.length; i++){
+
+      //on doit enlever la derniere virgule
+      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+
+      //preparation de la requete
+      requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
+
+      //recuperation des informations du post
+      let body = objetAEnregistrer[parametresPost[i]];
+
+      if(!body){
+        body = "NULL";
+        console.log("aucune photo");
+      }
+
+
+      this.httpClient.post(requeteUpdatePost,
+
+        body)
+
+        .subscribe(data => {
+
+          console.log(data);
+
+        },err => {
+
+          let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+
+            this.httpClient.post( requeteUpdate,
+
+              body)
+
+              .subscribe(data2 => {
+
+                console.log(data2);
+
+              },err2 => {
+
+
+
+              });
+
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+          }
+          else{
+
+            messageToastPost = "Informations " + parametresPostLibelle[i] +  " non enregistrées";
+
+            let toast = this.toastCtrl.create({
+              message: messageToastPost,
+              duration: Number((2*i +3).toString() + '000'),
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+
+          }
+
+        });
+
+
+    }
+
+
+  }
+  */
 
   updateGetObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
@@ -456,8 +692,20 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //enregistrement des parametres post
     for(let i = 0; i < parametresPost.length; i++){
 
+      let parametreFrameworkPhoto = "";
+
+      for(let j = 0; j < this.tableauMappingBDD.length;j++){
+
+        if(this.tableauMappingBDD[j][0] == parametresPost[i]){
+
+          parametreFrameworkPhoto = this.tableauMappingBDD[j][1];
+
+        }
+
+      }
+
       //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+      let requeteUpdatePost = requeteUpdate + " " + parametreFrameworkPhoto + " = " + "'postBody' ";
 
       //preparation de la requete
       requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
@@ -593,6 +841,22 @@ export class SuiviGasoilAjouterBonGasoilPage {
     }
 
     return objetBDDInitialise;
+
+  }
+
+  objectIsFrameworklyNull(objetATester,champsPredefinis){
+
+    let objectIsFrameworklyNull = true;
+    for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+      if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+        objectIsFrameworklyNull = false;
+        console.log(this.tableauMappingBDD[i][0]);
+      }
+    }
+
+
+    return objectIsFrameworklyNull;
 
   }
 

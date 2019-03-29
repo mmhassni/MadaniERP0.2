@@ -1,0 +1,68 @@
+
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Demande d'achat</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Projet : {{informationsActuelles?.nomprojet}}
+    </ion-label>
+
+  </ion-item>
+
+
+
+  <br>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Consulter :</h1>
+
+  </ion-item>
+
+
+  <ion-list>
+
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Fournisseurs associés
+    </button>
+
+    <button ion-item (click)="clickChoix3($event, item)">
+      <ion-icon name="cash" item-start></ion-icon>
+      Paiements
+    </button>
+
+    <button ion-item (click)="clickChoix4($event, item)">
+      <ion-icon name="list-box" item-start></ion-icon>
+      Articles projet
+    </button>
+
+    <button ion-item (click)="clickChoix2($event, item)">
+      <ion-icon name="bus" item-start></ion-icon>
+      Engins associés
+    </button>
+
+    <button ion-item (click)="clickChoix5($event, item)">
+      <ion-icon name="contacts" item-start></ion-icon>
+      Ouvriers associés
+    </button>
+
+    <button ion-item (click)="clickChoix5($event, item)">
+      <ion-icon name="hammer" item-start></ion-icon>
+      Liste chantiers
+    </button>
+
+  </ion-list>
+
+</ion-content>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
+import {CameraProvider} from "../../providers/camera/camera";
 
 /**
  * Generated class for the ModelAjouterPage page.
@@ -26,6 +27,13 @@ export class ModelAjouterPage {
   //non de la table principale de cette page
   public nomTableActuelle = "produitfournisseur";
 
+  public champsPredefinis = ["refchantierbongasoil"];
+
+  public havePhotoAttribut = true;
+
+  public parametresPost = ["photobgbongasoil"];
+  public parametresPostLibelle = ["Photo Bon Gasoil"];
+
   public tableauMappingBDD = [
     ["idproduitfournisseur","id","number"],
     ["nomproduitfournisseur","nomproduit","text"],
@@ -41,7 +49,7 @@ export class ModelAjouterPage {
 
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController,  public cameraProvider : CameraProvider) {
 
 
     console.log("bienvenu au constructeur");
@@ -72,6 +80,14 @@ export class ModelAjouterPage {
       this.modeModificationCreation = false;
       this.modeEditionAffichage = false;
 
+      //si l'objet est vide alors on doit passer directement au mode edition
+      if(this.objectIsFrameworklyNull(this.objetActuel,this.champsPredefinis)){
+
+        this.modeModificationCreation = true;
+        this.modeEditionAffichage = true;
+
+      }
+
     }
 
   }
@@ -97,11 +113,17 @@ export class ModelAjouterPage {
 
     console.log(this.objetActuel);
 
-    this.updateGetObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[]);
+    this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    this.navCtrl.pop();
+    if(!this.havePhotoAttribut){
+      this.navCtrl.pop();
+    }
 
 
+  }
+
+  photoChooser(objetActuel , photobgbongasoil ) {
+    this.cameraProvider.photoChooser(objetActuel,photobgbongasoil);
   }
 
   //retourne une liste de choix contenant l'id et le libelle
@@ -116,7 +138,7 @@ export class ModelAjouterPage {
     }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + " from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -155,17 +177,34 @@ export class ModelAjouterPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
 
     }
 
-    requeteGetProjet = requeteGetProjet + " * from " + nomTableBDD + " order by " + tableauMappingBDD[0][1] + " desc";
+    //dabord on reference la table principale dans le from
+    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
 
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(filtreWhere != "" ){
+      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
+
+
+    console.log(requeteGetProjet);
     return this.httpClient.get(requeteGetProjet);
 
   }
@@ -453,8 +492,20 @@ export class ModelAjouterPage {
     //enregistrement des parametres post
     for(let i = 0; i < parametresPost.length; i++){
 
+      let parametreFrameworkPhoto = "";
+
+      for(let j = 0; j < this.tableauMappingBDD.length;j++){
+
+        if(this.tableauMappingBDD[j][0] == parametresPost[i]){
+
+          parametreFrameworkPhoto = this.tableauMappingBDD[j][1];
+
+        }
+
+      }
+
       //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+      let requeteUpdatePost = requeteUpdate + " " + parametreFrameworkPhoto + " = " + "'postBody' ";
 
       //preparation de la requete
       requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
@@ -590,6 +641,22 @@ export class ModelAjouterPage {
     }
 
     return objetBDDInitialise;
+
+  }
+
+  objectIsFrameworklyNull(objetATester,champsPredefinis){
+
+    let objectIsFrameworklyNull = true;
+    for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+      if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+        objectIsFrameworklyNull = false;
+        console.log(this.tableauMappingBDD[i][0]);
+      }
+    }
+
+
+    return objectIsFrameworklyNull;
 
   }
 

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
+import {GestionProjetAjouterEnginPage} from "../gestion-projet-ajouter-engin/gestion-projet-ajouter-engin";
 
 /**
- * Generated class for the ModelPage page.
+ * Generated class for the GestionProjetListeEnginPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -11,10 +12,10 @@ import {HttpClient} from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-model-liste',
-  templateUrl: 'model-liste.html',
+  selector: 'page-gestion-projet-liste-engin',
+  templateUrl: 'gestion-projet-liste-engin.html',
 })
-export class ModelPage {
+export class GestionProjetListeEnginPage {
 
 
   //les informations recuperees d'un push a partir d'une page precedente
@@ -25,24 +26,28 @@ export class ModelPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "produitfournisseur";
+  public nomTableActuelle = "vehicule";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
+  public pageDAjout : any = GestionProjetAjouterEnginPage;
   public pageSuivante : any = null;
 
   public tableauMappingBDD = [
-    ["idproduitfournisseur","id","number"],
-    ["auteurduproduitfournisseur","auteurduproduit","text"],
-    ["nomproduitfournisseur","nomproduit","text"],
-    ["prixhtproduitfournisseur","prixht","number"],
-    ["tvaenpourcentageproduitfournisseur","tvaenpourcentage","text"],
-    ["uniteproduitfournisseur","unite","text"]
+    ["idvehicule","id","number"],
+    ["matriculevehicule","matricule","text"],
+    ["marquevehicule","marque","text"],
+    ["modelvehicule","model","number"],
+    ["locationvehicule","location","text"],
+    ["prixlocationvehicule","prixlocation","number"],
+    ["raisonsocialelocationvehicule","raisonsocialelocation","text"],
+    ["reftypeenginvehicule","reftypeengin","number"],
+    ["reftypevehiculevehicule","reftypevehicule","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+    console.log(this.informationsActuelles);
     this.refresh();
 
   }
@@ -82,22 +87,6 @@ export class ModelPage {
 
   }
 
-  ajouterItemWithoutPush() {
-
-    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
-      .subscribe(data => {
-        console.log(data);
-        this.refresh();
-
-
-      }, err => {
-        this.refresh();
-
-      });
-
-  }
-
   ajouterItem() {
 
     if(this.pageDAjout) {
@@ -113,7 +102,7 @@ export class ModelPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[])
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,""," vehicule.id in (select refvehicule from chantierenginassocie where refchantier = " + (this.informationsActuelles as any).idchantier + ") and reftypevehicule = 2",[])
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -601,4 +590,5 @@ export class ModelPage {
     return objetBDDInitialise;
 
   }
+
 }

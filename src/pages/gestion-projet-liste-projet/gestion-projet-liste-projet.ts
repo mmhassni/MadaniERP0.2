@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
+import {AjouterProjetPage} from "../ajouter-projet/ajouter-projet";
+import {GestionProjetChoixActionPage} from "../gestion-projet-choix-action/gestion-projet-choix-action";
 
 /**
- * Generated class for the ModelPage page.
+ * Generated class for the GestionProjetListeProjetPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -11,10 +13,10 @@ import {HttpClient} from "@angular/common/http";
 
 @IonicPage()
 @Component({
-  selector: 'page-model-liste',
-  templateUrl: 'model-liste.html',
+  selector: 'page-gestion-projet-liste-projet',
+  templateUrl: 'gestion-projet-liste-projet.html',
 })
-export class ModelPage {
+export class GestionProjetListeProjetPage {
 
 
   //les informations recuperees d'un push a partir d'une page precedente
@@ -25,19 +27,26 @@ export class ModelPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "produitfournisseur";
+  public nomTableActuelle = "projet";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = null;
+  public pageDAjout : any = AjouterProjetPage;
+  public pageSuivante : any = GestionProjetChoixActionPage;
 
   public tableauMappingBDD = [
-    ["idproduitfournisseur","id","number"],
-    ["auteurduproduitfournisseur","auteurduproduit","text"],
-    ["nomproduitfournisseur","nomproduit","text"],
-    ["prixhtproduitfournisseur","prixht","number"],
-    ["tvaenpourcentageproduitfournisseur","tvaenpourcentage","text"],
-    ["uniteproduitfournisseur","unite","text"]
+    ["idprojet","id","number"],
+    ["nomprojet","nomprojet","text"],
+    ["montantprojet","montantprojet","number"],
+    ["delaisrealisationprojet","delaisrealisation","number"],
+    ["idregion","refregion","number"],
+    ["numeromarcheprojet","numeromarche","text"],
+    ["maitredouvrageprojet","maitredouvrage","text"],
+    ["bureaudetudeprojet","bureaudetude","text"],
+    ["bureaudecontroleprojet","bureaudecontrole","text"],
+    ["laboratoireprojet","laboratoire","text"],
+    ["dateordreservice","dateordreservice","date"],
+    ["chefdeprojet","chefdeprojet","number"],
+    ["objetprojet","objetprojet","text"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -72,29 +81,8 @@ export class ModelPage {
   itemTapped(event, item) {
 
     if(this.pageSuivante){
-      if(this.informationsActuelles){
-        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageSuivante, "passer");
-      }
-      else{
-        this.pushInformationsActuelles(item, {}, this.pageSuivante, "passer");
-      }
+      this.pushInformationsActuelles(item,{},this.pageSuivante,"passer");
     }
-
-  }
-
-  ajouterItemWithoutPush() {
-
-    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
-      .subscribe(data => {
-        console.log(data);
-        this.refresh();
-
-
-      }, err => {
-        this.refresh();
-
-      });
 
   }
 
@@ -116,6 +104,7 @@ export class ModelPage {
     this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[])
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
+        console.log(this.listeObjetActuelle);
       });
   }
 
@@ -125,6 +114,7 @@ export class ModelPage {
 
 
     let objetFusion = Object.assign(objetComplement,objetInformationsActuelles);
+
 
     console.log(objetFusion);
     this.navCtrl.push(PageSuivante, {

@@ -38,44 +38,61 @@
     <ion-label style="color: #000;font-weight: bold">
       Prix unitaire :
     </ion-label>
-    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.prixunitaire"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.prixunitairebongasoil"  ></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label style="color: #000;font-weight: bold">
       Quantité gasoil :
     </ion-label>
-    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.quantitegasoil"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.quantitegasoilbongasoil"  ></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label style="color: #000;font-weight: bold">
       Montant gasoil :
     </ion-label>
-    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.montantgasoil"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.montantgasoilbongasoil"  ></ion-input>
   </ion-item>
 
 
   <ion-item>
     <ion-label style="opacity:1; color: #000;font-weight: bold">Type véhicule:</ion-label>
-    <ion-select  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.uniteproduitfournisseur">
-      <ion-option *ngFor="let item of listeChoixUnites" [value]="item.libelle">{{item.description}}</ion-option>
+    <ion-select #TypeVehicule  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="typevehicule">
+      <ion-option *ngFor="let item of listeChoixTypesVehicule" [value]="item.id">{{item.nomtype}}</ion-option>
       <ion-option value="">Aucune</ion-option>
     </ion-select>
   </ion-item>
 
-  <ion-item style="padding-bottom:4px;padding-top: 4px">
+  <ion-item *ngIf="TypeVehicule.value == '2'">
+  <ion-label  style="opacity:1; color: #000;font-weight: bold">Type engin:</ion-label>
+  <ion-select #TypeEngin  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refchantierbongasoil">
+    <ion-option *ngFor="let item of listeChoixTypesEngin" [value]="item.id">{{item.nomtypeengin}}</ion-option>
+    <ion-option value="">Aucune</ion-option>
+  </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="TypeVehicule.value">
+    <ion-label  style="opacity:1; color: #000;font-weight: bold">Matricule:</ion-label>
+    <ion-select  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculebongasoil">
+      <div *ngFor="let item of listeChoixVehicule">
+        <ion-option *ngIf="item.refprojet == navParams.data.informationsActuelles.refprojet && (TypeVehicule.value == item.reftypevehicule) && (objetActuel.reftypeenginbongasoil == item.reftypeengin)" [value]="item.id">{{item.matricule}}</ion-option>
+      </div>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item style="color: #000;font-weight: bold">
     <ion-label>Photo Bon gasoil:</ion-label>
 
   </ion-item>
 
-  <img  [(src)]="'data:image/jpeg;base64,' + objetActuel.photobgbongasoil" *ngIf="objetActuel.photofourniture"/>
+  <img  [(src)]="objetActuel.photobgbongasoil" *ngIf="objetActuel.photobgbongasoil"/>
 
-  <br>
   <br>
 
   <div text-center>
-    <button ion-button round (click)="photoFournitureChooser()">
+    <button ion-button round *ngIf="modeModificationCreation" (click)="photoChooser(objetActuel,'photobgbongasoil')">
       Charger Photo  <ion-icon padding name="camera"></ion-icon>
     </button>
   </div>
@@ -83,7 +100,7 @@
 
   <br><br>
   <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
-    Créer Projet
+    Ajouter Bon Gasoil
   </button>
 
   <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
@@ -94,20 +111,5 @@
 
 
 
-
-</ion-content>
-<!--
-  Generated template for the SuiviGasoilAjouterBonGasoilPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
-<ion-header>
-  <ion-navbar>
-    <ion-title>suiviGasoilAjouterBonGasoil</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
 
 </ion-content>

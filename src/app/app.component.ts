@@ -10,6 +10,7 @@ import {UtilisateurProvider} from "../providers/utilisateur/utilisateur";
 import {Subscription} from "rxjs";
 import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
 import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/suivi-gasoil-liste-projet";
+import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet/gestion-projet-liste-projet";
 
 @Component({
   templateUrl: 'app.html'
@@ -17,7 +18,7 @@ import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/sui
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = SuiviGasoilListeProjetPage;
+  rootPage: any = GestionProjetListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -37,7 +38,7 @@ export class MyApp {
       { title: "Suivi Main d'oeuvre", component: ListPage },
       { title: "Location des engins", component: ListPage },
       { title: 'Paiement', component: ListPage },
-      { title: 'Projets', component: ListPage },
+      { title: 'Gestion Projet', component: GestionProjetListeProjetPage },
       { title: 'Utilisateurs', component: HomePage }
 
     ];

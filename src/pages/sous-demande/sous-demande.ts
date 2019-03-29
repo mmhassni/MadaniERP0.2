@@ -18,6 +18,7 @@ import { AlertController } from 'ionic-angular';
 
 
 
+
 /**
  * Generated class for the SousDemandePage page.
  *
@@ -43,6 +44,7 @@ export class SousDemandePage {
   public listeArticles = [];
 
 
+
   public tableauMappingBDD = [
     ["idsousdemande","id","number"],
     ["idfournisseur","reffournisseur","number"],
@@ -66,7 +68,6 @@ export class SousDemandePage {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
-
     console.log(this.informationsActuelles);
 
 
@@ -74,7 +75,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/select fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from fournisseur")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/select projetfournisseurassocie.reffournisseur as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from projetfournisseurassocie LEFT JOIN fournisseur ON fournisseur.id = projetfournisseurassocie.reffournisseur where projetfournisseurassocie.refprojet = " + (this.informationsActuelles as any).refprojet)
       .subscribe(data => {
         console.log(data);
 
@@ -85,6 +86,9 @@ export class SousDemandePage {
     console.log(this.informationsActuelles);
 
     this.refreshArticles();
+
+
+
 
   }
 
@@ -113,7 +117,7 @@ export class SousDemandePage {
   }
 
 
-  public takeBLPicture(sourceType) {
+  takeBLPicture(sourceType) {
 
     // Create options for the Camera Dialog
     var options = {
@@ -178,7 +182,7 @@ export class SousDemandePage {
 
   }
 
-  public takeFourniturePicture(sourceType) {
+  takeFourniturePicture(sourceType) {
 
     // Create options for the Camera Dialog
     var options = {
@@ -243,7 +247,7 @@ export class SousDemandePage {
 
   }
 
-  public photoBLChooser() :void{
+  photoBLChooser() :void{
     /*
     const options: CameraOptions = {
       quality: 100,
@@ -282,7 +286,7 @@ export class SousDemandePage {
 
   }
 
-  public photoFournitureChooser() :void{
+  photoFournitureChooser() :void{
     /*
     const options: CameraOptions = {
       quality: 100,
@@ -326,7 +330,7 @@ export class SousDemandePage {
     if((this.sousdemandeActuelle as any).idfournisseur != "NULL"){
 
       this.navCtrl.push(AjouterNouvelArticlePage, {
-        informationsActuelles: this.informationsActuelles,
+        informationsActuelles: this.sousdemandeActuelle,
         action: "ajouter"
       });
 
@@ -349,8 +353,9 @@ export class SousDemandePage {
 
   }
 
-  verifierListeArticleVide(){
+  verifierListeArticleVide($event){
 
+    console.log($event);
     if(this.listeArticles.length != 0){
 
       let alert = this.alertCtrl.create({
@@ -359,7 +364,6 @@ export class SousDemandePage {
         buttons: ['Cancel']
       });
       alert.present();
-
     }
 
 

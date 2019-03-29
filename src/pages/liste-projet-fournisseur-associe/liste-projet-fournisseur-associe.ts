@@ -32,7 +32,7 @@ export class ListeProjetFournisseurAssociePage {
 
   public tableauMappingBDD = [
     ["idprojetfournisseurassocie","id","number"],
-    ["fournisseurassocieprojetfournisseurassocie","reffournisseur","number"],
+    ["idfournisseur","reffournisseur","number"],
     ["refprojetprojetfournisseurassocie","refprojet","number"]
   ];
 
@@ -57,8 +57,14 @@ export class ListeProjetFournisseurAssociePage {
   detailItemTapped(event, item){
 
     event.stopPropagation();
-    this.pushInformationsActuelles(item,{},this.pageDAjout,"detailler");
-
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageDAjout, "detailler");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageDAjout, "detailler");
+      }
+    }
   }
 
   itemTapped(event, item) {
@@ -71,8 +77,13 @@ export class ListeProjetFournisseurAssociePage {
 
   ajouterItem() {
 
-    if(this.pageDAjout){
-      this.pushInformationsActuelles({},{},this.pageDAjout,"ajouter");
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles({}, this.informationsActuelles, this.pageDAjout, "ajouter");
+      }
+      else{
+        this.pushInformationsActuelles({}, {}, this.pageDAjout, "ajouter");
+      }
     }
 
   }
@@ -129,43 +140,20 @@ export class ListeProjetFournisseurAssociePage {
 
     }
 
+    //dabord on reference la table principale dans le from
     requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
 
 
-    for(let i = 0 ; i < listeJointures.length ; i++ ){
+    for (let i = 0; i < listeJointures.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + ", " + listeJointures[i] + " ";
-
-    }
-
-    if(filtreWhere != "" || listeJointures.length > 0){
-      let permiereConditionsaisie = false;
-      for(let i = 0 ; i < listeJointures.length ; i++ ){
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " where " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        permiereConditionsaisie = true;
-
-      }
-
-      if(filtreWhere != ""){
-
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + filtreWhere ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " where " + filtreWhere ;
-
-        }
-
-      }
-
+      //on reference apres les autre table de la jointure
+      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
 
     }
 
+    if(filtreWhere != "" ){
+      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
 
     requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
 

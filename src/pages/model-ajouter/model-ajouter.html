@@ -58,6 +58,21 @@
     </ion-select>
   </ion-item>
 
+  <ion-item style="color: #000;font-weight: bold">
+    <ion-label>Photo Bon gasoil:</ion-label>
+
+  </ion-item>
+
+  <img  [(src)]="objetActuel.photobgbongasoil" *ngIf="objetActuel.photobgbongasoil"/>
+
+  <br>
+
+  <div text-center>
+    <button ion-button round *ngIf="modeModificationCreation" (click)="photoChooser(objetActuel,'photobgbongasoil')">
+      Charger Photo  <ion-icon padding name="camera"></ion-icon>
+    </button>
+  </div>
+
   <br><br>
   <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
     Créer Projet

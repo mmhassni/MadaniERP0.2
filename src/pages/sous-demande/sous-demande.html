@@ -44,11 +44,11 @@ Ionic pages and navigation.
 
 
 
-  <ion-item>
-    <ion-label style="color: #000;">Fournisseurs:</ion-label>
-    <ion-select (click)="verifierListeArticleVide()" [selectOptions]="selectFournisseursOptions" name = "fournisseurs" [(ngModel)]="sousdemandeActuelle.idfournisseur" [placeholder]="informationsActuelles.raisonsocialefournisseur">
-      <ion-option *ngFor="let item of listeFournisseurs" [value]="item.idfournisseur">{{item.raisonsociale}}</ion-option>
-      <ion-option value="NULL">Aucune</ion-option>
+  <ion-item (click)="verifierListeArticleVide($event)">
+    <ion-label style="opacity:1;color: #000;width: 100%;max-width: 100%; !important">Fournisseurs:</ion-label>
+    <ion-select  [disabled]="listeArticles.length"  [selectOptions]="selectFournisseursOptions" name = "fournisseurs" [(ngModel)]="sousdemandeActuelle.idfournisseur" [placeholder]="informationsActuelles.raisonsocialefournisseur">
+      <ion-option  *ngFor="let item of listeFournisseurs" [value]="item.idfournisseur">{{item.raisonsociale}}</ion-option>
+      <ion-option  value="NULL">Aucune</ion-option>
     </ion-select>
   </ion-item>
 
