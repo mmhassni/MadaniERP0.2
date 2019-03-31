@@ -26,27 +26,23 @@ export class GestionProjetListeEnginPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "vehicule";
+  public nomTableActuelle = "chantierenginassocie";
 
   //la liste des tables suivantes
   public pageDAjout : any = GestionProjetAjouterEnginPage;
   public pageSuivante : any = null;
 
   public tableauMappingBDD = [
-    ["idvehicule","id","number"],
-    ["matriculevehicule","matricule","text"],
-    ["marquevehicule","marque","text"],
-    ["modelvehicule","model","number"],
-    ["locationvehicule","location","text"],
-    ["prixlocationvehicule","prixlocation","number"],
-    ["raisonsocialelocationvehicule","raisonsocialelocation","text"],
-    ["reftypeenginvehicule","reftypeengin","number"],
-    ["reftypevehiculevehicule","reftypevehicule","number"]
+    ["idchantierenginassocie","id","number"],
+    ["refvehiculechantierenginassocie","refvehicule","number"],
+    ["refchantierchantierenginassocie","refchantier","number"]
   ];
+
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+    this.informationsActuelles["refchantierchantierenginassocie"] = this.informationsActuelles["idchantier"];
     console.log(this.informationsActuelles);
     this.refresh();
 
@@ -102,9 +98,10 @@ export class GestionProjetListeEnginPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,""," vehicule.id in (select refvehicule from chantierenginassocie where refchantier = " + (this.informationsActuelles as any).idchantier + ") and reftypevehicule = 2",[])
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,""," refchantier = " + (this.informationsActuelles as any).idchantier + " and reftypevehicule = 2",["vehicule"])
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
+
       });
   }
 

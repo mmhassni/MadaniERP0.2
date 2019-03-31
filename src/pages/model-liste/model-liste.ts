@@ -43,6 +43,9 @@ export class ModelPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+
+    //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
+    //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
     this.refresh();
 
   }
@@ -156,10 +159,10 @@ export class ModelPage {
 
   getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
 
     }
 

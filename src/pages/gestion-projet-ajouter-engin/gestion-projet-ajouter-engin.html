@@ -1,15 +1,121 @@
 <!--
-  Generated template for the GestionProjetAjouterEnginPage page.
+  Generated template for the AjouterProjetPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>gestionProjetAjouterEngin</ion-title>
+    <ion-title>Gestion Projet</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
   </ion-navbar>
+
 </ion-header>
 
+
+
 <ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Vehicule :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Type Engin:</ion-label>
+    <ion-select #TypeEngin  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="typeEngin">
+      <ion-option *ngFor="let item of listeChoixTypeEngin" [value]="item.id">{{item.nomtypeengin}}</ion-option>
+      <ion-option value="">Aucun</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Associé:</ion-label>
+    <ion-select  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="attributAssocie">
+      <ion-option value="oui">Engin associé</ion-option>
+      <ion-option value="non">Engin non associé</ion-option>
+      <ion-option value="">Aucun</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="attributAssocie == 'oui'">
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Engin:</ion-label>
+    <ion-select (ionChange)="actualiserObjetAAssocier()"  name = "Engin" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculechantierenginassocie">
+      <div *ngFor="let item of listeChoixObjetAssocieEtNonAssocie">
+
+        <ion-option *ngIf="(TypeEngin.value == '' || TypeEngin.value == item.id) && item.nombreassociation && item.nombreassociation > 0"  [value]="item.id">
+          {{item.matricule}}
+          <ion-note style="color:red;" item-end> ({{item.nombreassociation}} chantier)</ion-note>
+        </ion-option>
+      </div>
+      <ion-option value="NULL">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+  <ion-item *ngIf="attributAssocie == 'non'">
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Engin:</ion-label>
+    <ion-select (ionChange)="actualiserObjetAAssocier()"  name = "Engin" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculechantierenginassocie">
+      <div *ngFor="let item of listeChoixObjetAssocieEtNonAssocie">
+
+        <ion-option *ngIf="(TypeEngin.value == '' || TypeEngin.value == item.id) && !item.nombreassociation"  [value]="item.id">
+          {{item.matricule}}
+        </ion-option>
+
+      </div>
+      <ion-option value="NULL">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="!attributAssocie">
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Engin:</ion-label>
+    <ion-select (ionChange)="actualiserObjetAAssocier()"  name = "Engin" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculechantierenginassocie">
+      <div *ngFor="let item of listeChoixObjetAssocieEtNonAssocie">
+
+        <ion-option *ngIf="(TypeEngin.value == '' || TypeEngin.value == item.id)"  [value]="item.id">
+          {{item.matricule}}
+          <ion-note *ngIf="!item.nombreassociation"  style="color:red;" item-end> (0 chantier)</ion-note>
+          <ion-note *ngIf="item.nombreassociation && item.nombreassociation > 0"  style="color:red;" item-end> ({{item.nombreassociation}} chantier)</ion-note>
+
+        </ion-option>
+
+      </div>
+      <ion-option value="NULL">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <div *ngIf="informationsObjetAAssocier">
+    <ion-item padding="0">
+      <h1 >Détail:</h1>
+    </ion-item>
+
+    <ion-item *ngFor="let pp of objetToArray(informationsObjetAAssocier)">
+      <ion-label style="color: #000;" >
+        {{pp[0]}} : {{pp[1]}}
+      </ion-label>
+
+    </ion-item>
+  </div>
+
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Associer
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
 
 </ion-content>

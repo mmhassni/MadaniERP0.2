@@ -35,8 +35,7 @@ export class MyApp {
       { title: 'Fournisseurs', component: ListeFournisseurPage },
       { title: 'Sous traitances', component: ListPage },
       { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
-      { title: "Suivi Main d'oeuvre", component: ListPage },
-      { title: "Location des engins", component: ListPage },
+      { title: "Pointage", component: ListPage },
       { title: 'Paiement', component: ListPage },
       { title: 'Gestion Projet', component: GestionProjetListeProjetPage },
       { title: 'Utilisateurs', component: HomePage }

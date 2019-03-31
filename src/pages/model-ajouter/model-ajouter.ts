@@ -62,7 +62,7 @@ export class ModelAjouterPage {
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
 
     //on initialise les liste de choix
-    this.recupererListeChoix("listeChoixUnites","unites","libelle","description")
+    this.recupererListeChoix("listeChoixUnites","unites","libelle","description",[])
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
@@ -127,7 +127,7 @@ export class ModelAjouterPage {
   }
 
   //retourne une liste de choix contenant l'id et le libelle
-  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe){
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures){
 
     for(let pp in this){
 
@@ -138,7 +138,14 @@ export class ModelAjouterPage {
     }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -179,10 +186,10 @@ export class ModelAjouterPage {
 
   getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
 
     }
 
