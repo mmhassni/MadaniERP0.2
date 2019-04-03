@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {AjouterFournisseurPage} from "../ajouter-fournisseur/ajouter-fournisseur";
-import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-action-fournisseur";
-
+import {GestionPointageListeChantierPage} from "../gestion-pointage-liste-chantier/gestion-pointage-liste-chantier";
 
 /**
- * Generated class for the ListeFournisseurPage page.
+ * Generated class for the GestionPointageListeProjetPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -14,102 +12,121 @@ import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-acti
 
 @IonicPage()
 @Component({
-  selector: 'page-liste-fournisseur',
-  templateUrl: 'liste-fournisseur.html',
+  selector: 'page-gestion-pointage-liste-projet',
+  templateUrl: 'gestion-pointage-liste-projet.html',
 })
-export class ListeFournisseurPage {
+export class GestionPointageListeProjetPage {
 
-  public listeFournisseurs = [];
-  public listeFournisseursFiltree = [];
+  //les informations recuperees d'un push a partir d'une page precedente
+  public informationsActuelles = {};
+
+
+  public objetActuel = {};
+  public listeObjetActuelle = [];
+
+  //non de la table principale de cette page
+  public nomTableActuelle = "projet";
+
+  //la liste des tables suivantes
+  public pageDAjout : any = null;
+  public pageSuivante : any = GestionPointageListeChantierPage;
 
   public tableauMappingBDD = [
-    ["idfournisseur","id","number"],
-    ["raisonsocialefournisseur","raisonsociale","text"],
-    ["adressefournisseur","adresse","text"],
-    ["telephonefournisseur","tel","text"],
-    ["faxfournisseur","fax","text"],
-    ["emailfournisseur","email","text"],
-    ["patentefournisseur","patente","text"],
-    ["rcfournisseur","rc","text"],
+    ["idprojet","id","number"],
+    ["nomprojet","nomprojet","text"],
+    ["montantprojet","montantprojet","number"],
+    ["delaisrealisationprojet","delaisrealisation","number"],
+    ["idregion","refregion","number"],
+    ["numeromarcheprojet","numeromarche","text"],
+    ["maitredouvrageprojet","maitredouvrage","text"],
+    ["bureaudetudeprojet","bureaudetude","text"],
+    ["bureaudecontroleprojet","bureaudecontrole","text"],
+    ["laboratoireprojet","laboratoire","text"],
+    ["dateordreservice","dateordreservice","date"],
+    ["chefdeprojet","chefdeprojet","number"],
+    ["objetprojet","objetprojet","text"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
+    this.informationsActuelles = this.navParams.data.informationsActuelles;
 
+    //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
+    //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
     this.refresh();
 
-
   }
-
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListeFournisseurPage');
-
-
-
-  }
-
-  //fonction necessaire pour le filtre des fournisseurs
-  getItems(ev) {
-    // Reset items back to all of the items
-    this.initializeItems();
-
-    // set val to the value of the ev target
-    var val = ev.target.value;
-
-    // if the value is an empty string don't filter the items
-    if (val && val.trim() != '') {
-      this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
-        return ( (item.listeproduits + item.raisonsociale).toLowerCase().indexOf(val.toLowerCase()) > -1);
-      })
-    }
+    console.log('ionViewDidLoad ListeProduitFournisseurPage');
   }
 
   ionViewDidEnter() {
     this.refresh();
-  }
-
-  refresh(){
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
-      "select " + this.genererListeAttributRequete("fournisseur",this.tableauMappingBDD) + ", string_agg(produitfournisseur.nomproduit,',') as listeproduits " +
-      "from produitfournisseur LEFT JOIN fournisseur ON fournisseur.id = produitfournisseur.reffournisseur " +
-      "group by fournisseur.id order by fournisseur.id desc")
-      .subscribe(data => {
-
-        this.listeFournisseurs = (data as any).features;
-        this.listeFournisseursFiltree = (data as any).features;
-        console.log(data);
-
-
-      });
-  }
-
-  //fonction necessaire pour le fonctionnement de la fonction precedente
-  initializeItems(){
-
-    this.listeFournisseursFiltree = this.listeFournisseurs;
 
   }
 
   detailItemTapped(event, item){
 
     event.stopPropagation();
-    this.pushInformationsActuelles(item,{},AjouterFournisseurPage,"detailler");
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageDAjout, "detailler");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageDAjout, "detailler");
+      }
+    }
+  }
+
+  itemTapped(event, item) {
+
+    if(this.pageSuivante){
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageSuivante, "passer");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageSuivante, "passer");
+      }
+    }
 
   }
 
-  itemTapped($event, item) {
+  ajouterItemWithoutPush() {
 
-    this.pushInformationsActuelles(item,{},ChoixActionFournisseurPage,"passer");
-    
+    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
+      .subscribe(data => {
+        console.log(data);
+        this.refresh();
+
+
+      }, err => {
+        this.refresh();
+
+      });
+
   }
 
   ajouterItem() {
 
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles({}, this.informationsActuelles, this.pageDAjout, "ajouter");
+      }
+      else{
+        this.pushInformationsActuelles({}, {}, this.pageDAjout, "ajouter");
+      }
+    }
 
-    this.pushInformationsActuelles({},{},AjouterFournisseurPage,"ajouter");
+  }
 
+  refresh(){
 
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[],true)
+      .subscribe(data => {
+        this.listeObjetActuelle = (data as any).features;
+      });
   }
 
   pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
@@ -147,53 +164,37 @@ export class ListeFournisseurPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
 
     }
 
-    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
-
-    for(let i = 0 ; i < listeJointures.length ; i++ ){
-
-      requeteGetProjet = requeteGetProjet + ", " + listeJointures[i] + " ";
-
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
     }
-
-    if(filtreWhere != "" || listeJointures.length > 0){
-      let permiereConditionsaisie = false;
-      for(let i = 0 ; i < listeJointures.length ; i++ ){
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        permiereConditionsaisie = true;
-
-      }
-
-      if(filtreWhere != ""){
-
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + filtreWhere ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " " + filtreWhere ;
-
-        }
-
-      }
-
-
+    else{
+      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
     }
 
 
-    requeteGetProjet = requeteGetProjet + " order by " + tableauMappingBDD[0][1] + " desc";
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(filtreWhere != "" ){
+      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
 
 
     console.log(requeteGetProjet);
@@ -558,13 +559,6 @@ export class ListeFournisseurPage {
 
 
     }
-
-
-
-
-
-
-
 
 
 

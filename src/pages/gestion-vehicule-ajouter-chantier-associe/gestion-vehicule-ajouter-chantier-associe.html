@@ -1,0 +1,80 @@
+
+<ion-header>
+  <ion-navbar>
+    <ion-title>Gestion Véhicule</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Vehicule :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Projet:</ion-label>
+    <ion-select #Projet  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="projetAssocie">
+      <ion-option *ngFor="let item of listeChoixProjet" [value]="item.id">{{item.nomprojet}}</ion-option>
+      <ion-option value="">Aucun</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+
+  <ion-item *ngIf="Projet.value">
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Engin:</ion-label>
+    <ion-select #Chantier (ionChange)="actualiserObjetAAssocier()"  name = "Engin" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refchantierchantierenginassocie">
+
+      <div *ngFor="let item of listeChoixChantier">
+        <ion-option *ngIf="(Projet.value == '' || Projet.value == item.idprojet)"  [value]="item.id">
+          {{item.nomchantier}}
+        </ion-option>
+      </div>
+
+      <ion-option value="NULL">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+
+
+  <div *ngIf="informationsObjetAAssocier">
+    <ion-item padding="0">
+      <h1 >Détail:</h1>
+    </ion-item>
+
+    <ion-item *ngFor="let pp of objetToArray(informationsObjetAAssocier)">
+      <ion-label style="color: #000;" >
+        {{pp[0]}} : {{pp[1]}}
+      </ion-label>
+
+    </ion-item>
+  </div>
+
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Associer
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

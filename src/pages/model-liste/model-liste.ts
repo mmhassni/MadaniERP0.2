@@ -116,7 +116,7 @@ export class ModelPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[])
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -157,7 +157,7 @@ export class ModelPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -166,8 +166,14 @@ export class ModelPage {
 
     }
 
-    //dabord on reference la table principale dans le from
-    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+    }
+    else{
+      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+    }
+
 
 
     for (let i = 0; i < listeJointures.length; i++) {

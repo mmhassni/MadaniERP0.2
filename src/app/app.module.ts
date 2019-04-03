@@ -44,6 +44,14 @@ import {GestionProjetListeEnginPage} from "../pages/gestion-projet-liste-engin/g
 import {GestionProjetListeChantierPage} from "../pages/gestion-projet-liste-chantier/gestion-projet-liste-chantier";
 import {GestionProjetChoixActionChantierPage} from "../pages/gestion-projet-choix-action-chantier/gestion-projet-choix-action-chantier";
 import {GestionProjetAjouterEnginPage} from "../pages/gestion-projet-ajouter-engin/gestion-projet-ajouter-engin";
+import {GestionVehiculeListeVehiculePage} from "../pages/gestion-vehicule-liste-vehicule/gestion-vehicule-liste-vehicule";
+import {GestionVehiculeChoixActionPage} from "../pages/gestion-vehicule-choix-action/gestion-vehicule-choix-action";
+import {GestionVehiculeListeChantierAssociePage} from "../pages/gestion-vehicule-liste-chantier-associe/gestion-vehicule-liste-chantier-associe";
+import {GestionVehiculeAjouterChantierAssociePage} from "../pages/gestion-vehicule-ajouter-chantier-associe/gestion-vehicule-ajouter-chantier-associe";
+import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-projet/gestion-pointage-liste-projet";
+import {GestionPointageListeChantierPage} from "../pages/gestion-pointage-liste-chantier/gestion-pointage-liste-chantier";
+import {GestionVehiculeAjouterVehiculePage} from "../pages/gestion-vehicule-ajouter-vehicule/gestion-vehicule-ajouter-vehicule";
+import {GestionPointageChoixActionPage} from "../pages/gestion-pointage-choix-action/gestion-pointage-choix-action";
 
 @NgModule({
   declarations: [
@@ -76,7 +84,15 @@ import {GestionProjetAjouterEnginPage} from "../pages/gestion-projet-ajouter-eng
     GestionProjetListeEnginPage,
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
-    GestionProjetAjouterEnginPage
+    GestionProjetAjouterEnginPage,
+    GestionVehiculeListeVehiculePage,
+    GestionVehiculeAjouterVehiculePage,
+    GestionVehiculeChoixActionPage,
+    GestionVehiculeListeChantierAssociePage,
+    GestionVehiculeAjouterChantierAssociePage,
+    GestionPointageListeProjetPage,
+    GestionPointageListeChantierPage,
+    GestionPointageChoixActionPage
 
   ],
   imports: [
@@ -115,7 +131,16 @@ import {GestionProjetAjouterEnginPage} from "../pages/gestion-projet-ajouter-eng
     GestionProjetListeEnginPage,
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
-    GestionProjetAjouterEnginPage
+    GestionProjetAjouterEnginPage,
+    GestionVehiculeListeVehiculePage,
+    GestionVehiculeAjouterVehiculePage,
+    GestionVehiculeChoixActionPage,
+    GestionVehiculeListeChantierAssociePage,
+    GestionVehiculeAjouterChantierAssociePage,
+    GestionPointageListeProjetPage,
+    GestionPointageListeChantierPage,
+    GestionPointageChoixActionPage
+
 
 
   ],

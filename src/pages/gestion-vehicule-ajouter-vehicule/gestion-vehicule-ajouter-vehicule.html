@@ -1,0 +1,104 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Gestion Fournisseur</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Véhicule :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Matricule :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.matriculevehicule"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Marque :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.marquevehicule"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Model :
+    </ion-label>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.modelvehicule"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Location:</ion-label>
+    <ion-select #Location  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.locationvehicule">
+      <ion-option value="t">Oui</ion-option>
+      <ion-option value="f">Non</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="Location.value == 't'">
+    <ion-label style="color: #000;font-weight: bold">
+      Raison sociale location :
+    </ion-label>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.raisonsocialelocationvehicule"  ></ion-input>
+  </ion-item>
+
+  <ion-item *ngIf="Location.value == 't'">
+    <ion-label style="color: #000;font-weight: bold">
+      Prix location :
+    </ion-label>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.prixlocationvehicule"  ></ion-input>
+  </ion-item>
+
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Type véhicule:</ion-label>
+    <ion-select #TypeVehicule  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="reftypevehiculevehicule">
+      <ion-option *ngFor="let item of listeChoixTypesVehicule" [value]="item.id">{{item.nomtype}}</ion-option>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="TypeVehicule.value == '2'">
+    <ion-label  style="opacity:1; color: #000;font-weight: bold">Type engin:</ion-label>
+    <ion-select  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.reftypeenginvehicule">
+      <ion-option *ngFor="let item of listeChoixTypesEngin" [value]="item.id">{{item.nomtypeengin}}</ion-option>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Créer Projet
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

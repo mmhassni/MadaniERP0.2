@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {AjouterFournisseurPage} from "../ajouter-fournisseur/ajouter-fournisseur";
-import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-action-fournisseur";
-
+import {GestionVehiculeChoixActionPage} from "../gestion-vehicule-choix-action/gestion-vehicule-choix-action";
+import {GestionVehiculeAjouterVehiculePage} from "../gestion-vehicule-ajouter-vehicule/gestion-vehicule-ajouter-vehicule";
 
 /**
- * Generated class for the ListeFournisseurPage page.
+ * Generated class for the GestionVehiculeListeVehiculePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -14,39 +13,44 @@ import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-acti
 
 @IonicPage()
 @Component({
-  selector: 'page-liste-fournisseur',
-  templateUrl: 'liste-fournisseur.html',
+  selector: 'page-gestion-vehicule-liste-vehicule',
+  templateUrl: 'gestion-vehicule-liste-vehicule.html',
 })
-export class ListeFournisseurPage {
+export class GestionVehiculeListeVehiculePage {
+
 
   public listeFournisseurs = [];
   public listeFournisseursFiltree = [];
 
+  //non de la table principale de cette page
+  public nomTableActuelle = "vehicule";
+
+  //la liste des tables suivantes
+  public pageDAjout : any = GestionVehiculeAjouterVehiculePage;
+  public pageSuivante : any = GestionVehiculeChoixActionPage;
+
   public tableauMappingBDD = [
-    ["idfournisseur","id","number"],
-    ["raisonsocialefournisseur","raisonsociale","text"],
-    ["adressefournisseur","adresse","text"],
-    ["telephonefournisseur","tel","text"],
-    ["faxfournisseur","fax","text"],
-    ["emailfournisseur","email","text"],
-    ["patentefournisseur","patente","text"],
-    ["rcfournisseur","rc","text"],
+    ["idvehicule","id","number"],
+    ["matriculevehicule","matricule","text"],
+    ["marquevehicule","marque","text"],
+    ["modelvehicule","model","number"],
+    ["locationvehicule","location","text"],
+    ["prixlocationvehicule","prixlocation","number"],
+    ["raisonsocialelocationvehicule","raisonsocialelocation","text"],
+    ["reftypeenginvehicule","reftypeengin","number"],
+    ["reftypevehiculevehicule","reftypevehicule","number"],
   ];
+
+  public informationsActuelles = {};
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
-
     this.refresh();
-
 
   }
 
-
   ionViewDidLoad() {
     console.log('ionViewDidLoad ListeFournisseurPage');
-
-
-
   }
 
   //fonction necessaire pour le filtre des fournisseurs
@@ -60,20 +64,24 @@ export class ListeFournisseurPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
-        return ( (item.listeproduits + item.raisonsociale).toLowerCase().indexOf(val.toLowerCase()) > -1);
+        return ( (item.nomtype + item.nomtypeengin + item.matricule).toLowerCase().indexOf(val.toLowerCase()) > -1);
       })
     }
   }
 
-  ionViewDidEnter() {
-    this.refresh();
-  }
-
   refresh(){
     this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
-      "select " + this.genererListeAttributRequete("fournisseur",this.tableauMappingBDD) + ", string_agg(produitfournisseur.nomproduit,',') as listeproduits " +
-      "from produitfournisseur LEFT JOIN fournisseur ON fournisseur.id = produitfournisseur.reffournisseur " +
-      "group by fournisseur.id order by fournisseur.id desc")
+      "select " + this.genererListeAttributRequete("vehicule",this.tableauMappingBDD) + ", * "+
+      "from vehicule  " +
+      "LEFT JOIN typeengin ON typeengin.id = vehicule.reftypeengin " +
+      "LEFT JOIN typevehicule ON typevehicule.id = vehicule.reftypevehicule " +
+      "LEFT JOIN (" +
+        "select refvehicule , count(*) as nombrechantierassocie " +
+        "from chantierenginassocie " +
+        "where not chantierenginassocie.refchantier is null " +
+        "group by chantierenginassocie.refvehicule) as RF " +
+      "ON RF.refvehicule = vehicule.id " +
+      "order by vehicule.id desc")
       .subscribe(data => {
 
         this.listeFournisseurs = (data as any).features;
@@ -91,24 +99,63 @@ export class ListeFournisseurPage {
 
   }
 
-  detailItemTapped(event, item){
-
-    event.stopPropagation();
-    this.pushInformationsActuelles(item,{},AjouterFournisseurPage,"detailler");
+  ionViewDidEnter() {
+    this.refresh();
 
   }
 
-  itemTapped($event, item) {
+  detailItemTapped(event, item){
 
-    this.pushInformationsActuelles(item,{},ChoixActionFournisseurPage,"passer");
-    
+    event.stopPropagation();
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageDAjout, "detailler");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageDAjout, "detailler");
+      }
+    }
+  }
+
+  itemTapped(event, item) {
+
+    if(this.pageSuivante){
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageSuivante, "passer");
+      }
+      else{
+        this.pushInformationsActuelles(item, {}, this.pageSuivante, "passer");
+      }
+    }
+
+  }
+
+  ajouterItemWithoutPush() {
+
+    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
+      .subscribe(data => {
+        console.log(data);
+        this.refresh();
+
+
+      }, err => {
+        this.refresh();
+
+      });
+
   }
 
   ajouterItem() {
 
-
-    this.pushInformationsActuelles({},{},AjouterFournisseurPage,"ajouter");
-
+    if(this.pageDAjout) {
+      if(this.informationsActuelles){
+        this.pushInformationsActuelles({}, this.informationsActuelles, this.pageDAjout, "ajouter");
+      }
+      else{
+        this.pushInformationsActuelles({}, {}, this.pageDAjout, "ajouter");
+      }
+    }
 
   }
 

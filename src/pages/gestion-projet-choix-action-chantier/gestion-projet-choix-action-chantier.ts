@@ -54,6 +54,7 @@ export class GestionProjetChoixActionChantierPage {
     let objetFusion = Object.assign(objetComplement, objetInformationsActuelles);
 
     console.log(objetFusion);
+
     this.navCtrl.push(PageSuivante, {
       informationsActuelles: objetFusion,
       action: action

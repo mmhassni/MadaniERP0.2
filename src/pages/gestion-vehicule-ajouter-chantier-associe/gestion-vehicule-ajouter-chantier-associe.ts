@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {AjouterFournisseurPage} from "../ajouter-fournisseur/ajouter-fournisseur";
-import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-action-fournisseur";
-
+import {CameraProvider} from "../../providers/camera/camera";
 
 /**
- * Generated class for the ListeFournisseurPage page.
+ * Generated class for the GestionVehiculeAjouterChantierAssociePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -14,115 +12,209 @@ import {ChoixActionFournisseurPage} from "../choix-action-fournisseur/choix-acti
 
 @IonicPage()
 @Component({
-  selector: 'page-liste-fournisseur',
-  templateUrl: 'liste-fournisseur.html',
+  selector: 'page-gestion-vehicule-ajouter-chantier-associe',
+  templateUrl: 'gestion-vehicule-ajouter-chantier-associe.html',
 })
-export class ListeFournisseurPage {
+export class GestionVehiculeAjouterChantierAssociePage {
+  //le mode edition se divise en deux modes : le mode modification et le mode creation
+  public modeModificationCreation = false; //modeModification est l'opposé du mode Creation
+  public modeEditionAffichage = false; //modeAffichage est l'opposé du mode Affichage
 
-  public listeFournisseurs = [];
-  public listeFournisseursFiltree = [];
 
+  public objetActuel = {};
+
+  //non de la table principale de cette page
+  public nomTableActuelle = "chantierenginassocie";
+
+  public tableObjetAAssocier = "chantier";
+  public informationsObjetAAssocier = {};
+
+
+  public champsPredefinis = [];
+
+  public havePhotoAttribut = false;
+
+  public parametresPost = [];
+  public parametresPostLibelle = [];
+
+
+  //dans l ordre le premier element doit etre l id de la table des associations
+  //le second element doit etre la reference de l objet qu'on veut associer a une entitee
+  //le troisieme element doit etre la reference de l entitee
   public tableauMappingBDD = [
-    ["idfournisseur","id","number"],
-    ["raisonsocialefournisseur","raisonsociale","text"],
-    ["adressefournisseur","adresse","text"],
-    ["telephonefournisseur","tel","text"],
-    ["faxfournisseur","fax","text"],
-    ["emailfournisseur","email","text"],
-    ["patentefournisseur","patente","text"],
-    ["rcfournisseur","rc","text"],
+    ["idchantierenginassocie","id","number"],
+    ["refchantierchantierenginassocie","refchantier","number"],
+    ["refvehiculechantierenginassocie","refvehicule","number"]
   ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
+
+  public tableauMappingBDDObjetAAssocier = [
+    ["Chantier","nom","text"],
+    ["Zone","zone","text"]
+  ];
 
 
-    this.refresh();
+  public enregistrementColonneIgnore = [];
 
+  public listeChoixProjet = [];
+  public listeChoixChantier = [];
+
+  public projetAssocie = "";
+
+
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController,  public cameraProvider : CameraProvider) {
+
+
+    console.log("bienvenu au constructeur");
+
+    //on recupere les informations recuperees de la bdd
+    this.objetActuel = navParams.data.informationsActuelles;
+
+    this.projetAssocie = (navParams.data.informationsActuelles as any).refprojet;
+
+
+    //on saisie les champs manquants selon les cas
+    (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
+
+    console.log(this.objetActuel);
+
+
+    //on initialise les liste de choix
+    this.recupererListeChoix("listeChoixProjet","projet","id","nomprojet",[],"",[]);
+    this.recupererListeChoix("listeChoixChantier","chantier","id","nom",["projet"],"",["projet.id","chantier.nom"]);
+
+
+    //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
+    if(navParams.data.action &&  navParams.data.action == "ajouter"){
+
+
+      console.log(this.objetActuel);
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = true;
+
+
+    }
+    else{
+
+      console.log(this.objetActuel);
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = false;
+
+      //si l'objet est vide alors on doit passer directement au mode edition
+      if(this.objectIsFrameworklyNull(this.objetActuel,this.champsPredefinis)){
+
+        this.modeModificationCreation = true;
+        this.modeEditionAffichage = true;
+
+      }
+
+    }
+
+    this.actualiserObjetAAssocier();
 
   }
-
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListeFournisseurPage');
+    console.log('ionViewDidLoad AjouterChantierPage');
+  }
 
+  enregistrerNouvelObjet(){
+
+    this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+
+    //console.log(this.navParams.data.parentPage);
+
+    //this.navParams.data.parentPage.refresh();
+
+    this.navCtrl.pop();
 
 
   }
 
-  //fonction necessaire pour le filtre des fournisseurs
-  getItems(ev) {
-    // Reset items back to all of the items
-    this.initializeItems();
+  enregistrerModificationObjet(){
 
-    // set val to the value of the ev target
-    var val = ev.target.value;
+    console.log(this.objetActuel);
 
-    // if the value is an empty string don't filter the items
-    if (val && val.trim() != '') {
-      this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
-        return ( (item.listeproduits + item.raisonsociale).toLowerCase().indexOf(val.toLowerCase()) > -1);
-      })
+    this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
+
+    if(!this.havePhotoAttribut){
+      this.navCtrl.pop();
     }
-  }
-
-  ionViewDidEnter() {
-    this.refresh();
-  }
-
-  refresh(){
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
-      "select " + this.genererListeAttributRequete("fournisseur",this.tableauMappingBDD) + ", string_agg(produitfournisseur.nomproduit,',') as listeproduits " +
-      "from produitfournisseur LEFT JOIN fournisseur ON fournisseur.id = produitfournisseur.reffournisseur " +
-      "group by fournisseur.id order by fournisseur.id desc")
-      .subscribe(data => {
-
-        this.listeFournisseurs = (data as any).features;
-        this.listeFournisseursFiltree = (data as any).features;
-        console.log(data);
 
 
-      });
-  }
-
-  //fonction necessaire pour le fonctionnement de la fonction precedente
-  initializeItems(){
-
-    this.listeFournisseursFiltree = this.listeFournisseurs;
-
-  }
-
-  detailItemTapped(event, item){
-
-    event.stopPropagation();
-    this.pushInformationsActuelles(item,{},AjouterFournisseurPage,"detailler");
-
-  }
-
-  itemTapped($event, item) {
-
-    this.pushInformationsActuelles(item,{},ChoixActionFournisseurPage,"passer");
-    
-  }
-
-  ajouterItem() {
-
-
-    this.pushInformationsActuelles({},{},AjouterFournisseurPage,"ajouter");
 
 
   }
 
-  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
+  photoChooser(objetActuel , photobgbongasoil ) {
+    this.cameraProvider.photoChooser(objetActuel,photobgbongasoil);
+  }
 
-    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
+  //retourne une liste de choix contenant l'id et le libelle
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
+
+    for(let pp in this){
+
+      if(pp == nomListeARemplir){
+
+      }
+
+    }
+
+    let listeARemplir = [];
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
+
+      }
+    }
+    else{
+
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
 
 
-    let objetFusion = Object.assign(objetComplement,objetInformationsActuelles);
+    this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
-    console.log(objetFusion);
-    this.navCtrl.push(PageSuivante, {
-      informationsActuelles: objetFusion,
-      action: action
+      listeARemplir = (data as any).features;
+      console.log(listeARemplir);
+
+      for(let pp in this){
+        if(pp == nomListeARemplir){
+
+          console.log(pp);
+          console.log(this[pp]);
+          this[pp] = listeARemplir;
+          console.log(this[pp]);
+
+        }
+      }
+
+
     });
 
   }
@@ -131,69 +223,49 @@ export class ListeFournisseurPage {
     return Object.assign(objetComplement,objetInformationsActuelles);
   }
 
-  genererListeAttributRequete(nomTableBDD, tableauMappingBDD){
+  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
 
-    let attributsRequete = "";
-    for (let i = 0; i < tableauMappingBDD.length; i++) {
-
-      attributsRequete = attributsRequete + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
 
 
-    }
-
-    attributsRequete = attributsRequete.substring(0,attributsRequete.length-1);
-
-    return attributsRequete;
+    this.navCtrl.push(PageSuivante, {
+      informationsActuelles: objetComplement,
+      action: action
+    });
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
 
     }
 
-    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
-
-    for(let i = 0 ; i < listeJointures.length ; i++ ){
-
-      requeteGetProjet = requeteGetProjet + ", " + listeJointures[i] + " ";
-
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
     }
-
-    if(filtreWhere != "" || listeJointures.length > 0){
-      let permiereConditionsaisie = false;
-      for(let i = 0 ; i < listeJointures.length ; i++ ){
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
-        }
-        permiereConditionsaisie = true;
-
-      }
-
-      if(filtreWhere != ""){
-
-        if(permiereConditionsaisie){
-          requeteGetProjet = requeteGetProjet + " and " + filtreWhere ;
-        }
-        else{
-          requeteGetProjet = requeteGetProjet + " " + filtreWhere ;
-
-        }
-
-      }
-
-
+    else{
+      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
     }
 
 
-    requeteGetProjet = requeteGetProjet + " order by " + tableauMappingBDD[0][1] + " desc";
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(filtreWhere != "" ){
+      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
 
 
     console.log(requeteGetProjet);
@@ -484,8 +556,20 @@ export class ListeFournisseurPage {
     //enregistrement des parametres post
     for(let i = 0; i < parametresPost.length; i++){
 
+      let parametreFrameworkPhoto = "";
+
+      for(let j = 0; j < this.tableauMappingBDD.length;j++){
+
+        if(this.tableauMappingBDD[j][0] == parametresPost[i]){
+
+          parametreFrameworkPhoto = this.tableauMappingBDD[j][1];
+
+        }
+
+      }
+
       //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+      let requeteUpdatePost = requeteUpdate + " " + parametreFrameworkPhoto + " = " + "'postBody' ";
 
       //preparation de la requete
       requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
@@ -623,4 +707,72 @@ export class ListeFournisseurPage {
     return objetBDDInitialise;
 
   }
+
+  objectIsFrameworklyNull(objetATester,champsPredefinis){
+
+    let objectIsFrameworklyNull = true;
+    for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+      if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+        objectIsFrameworklyNull = false;
+        console.log(this.tableauMappingBDD[i][0]);
+      }
+    }
+
+
+    return objectIsFrameworklyNull;
+
+  }
+
+  modeEdition() {
+    this.modeModificationCreation = true;
+    this.modeEditionAffichage = true;
+  }
+
+  supprimerDoublonsSelonColonnes(tableau,listeColonnesRetenues) {
+
+    let tableauRetour = [];
+
+    for (let i = 0; i < tableau.length; i++) {
+
+      let ligneActuelle = [];
+
+      for (let j = 0; j < listeColonnesRetenues.length; j++) {
+
+        ligneActuelle[listeColonnesRetenues[j]]=tableau[listeColonnesRetenues[j]];
+
+      }
+
+      if(tableauRetour.indexOf(tableau[i])){
+        tableauRetour.push(ligneActuelle);
+      }
+
+
+    }
+
+    console.log(tableauRetour);
+    return tableauRetour;
+
+  }
+
+  actualiserObjetAAssocier(){
+    this.getListObjet(this.tableObjetAAssocier,this.tableauMappingBDDObjetAAssocier,[],this.tableObjetAAssocier + ".id = " + this.objetActuel[this.tableauMappingBDD[1][0]],[],false)
+      .subscribe( data => {
+        this.informationsObjetAAssocier = (data as any).features[0];
+      });
+  }
+
+  objetToArray(objet){
+    let objetRetour = [];
+    for(let pp in objet){
+      let T = [pp,objet[pp]];
+      objetRetour.push(T);
+    }
+    console.log(objetRetour);
+    return objetRetour;
+  }
+
+
+
 }
+

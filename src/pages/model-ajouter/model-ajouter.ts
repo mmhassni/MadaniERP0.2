@@ -62,7 +62,7 @@ export class ModelAjouterPage {
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
 
     //on initialise les liste de choix
-    this.recupererListeChoix("listeChoixUnites","unites","libelle","description",[])
+    this.recupererListeChoix("listeChoixUnites","unites","libelle","description",[],"",[]);
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
@@ -127,7 +127,7 @@ export class ModelAjouterPage {
   }
 
   //retourne une liste de choix contenant l'id et le libelle
-  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures){
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
 
     for(let pp in this){
 
@@ -138,7 +138,28 @@ export class ModelAjouterPage {
     }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
+
+      }
+    }
+    else{
+
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
 
     for (let i = 0; i < listeJointures.length; i++) {
 
@@ -146,6 +167,11 @@ export class ModelAjouterPage {
       requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
 
     }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
+
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -184,7 +210,7 @@ export class ModelAjouterPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -193,8 +219,14 @@ export class ModelAjouterPage {
 
     }
 
-    //dabord on reference la table principale dans le from
-    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+    }
+    else{
+      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+    }
+
 
 
     for (let i = 0; i < listeJointures.length; i++) {
@@ -654,18 +686,27 @@ export class ModelAjouterPage {
   objectIsFrameworklyNull(objetATester,champsPredefinis){
 
     let objectIsFrameworklyNull = true;
-    for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
 
-      if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
-        objectIsFrameworklyNull = false;
-        console.log(this.tableauMappingBDD[i][0]);
+    //si els champs predefinis sont null alors l utilisateur ne veut meme pas tester cet objet
+    if(champsPredefinis){
+      for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+        if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+          objectIsFrameworklyNull = false;
+          console.log(this.tableauMappingBDD[i][0]);
+        }
       }
     }
+    else{
+      objectIsFrameworklyNull = false;
+    }
+
 
 
     return objectIsFrameworklyNull;
 
   }
+
 
   modeEdition() {
     this.modeModificationCreation = true;

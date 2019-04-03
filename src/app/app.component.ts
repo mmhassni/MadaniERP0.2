@@ -11,6 +11,8 @@ import {Subscription} from "rxjs";
 import {ListeFournisseurPage} from "../pages/liste-fournisseur/liste-fournisseur";
 import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/suivi-gasoil-liste-projet";
 import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet/gestion-projet-liste-projet";
+import {GestionVehiculeListeVehiculePage} from "../pages/gestion-vehicule-liste-vehicule/gestion-vehicule-liste-vehicule";
+import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-projet/gestion-pointage-liste-projet";
 
 @Component({
   templateUrl: 'app.html'
@@ -18,7 +20,7 @@ import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = GestionProjetListeProjetPage;
+  rootPage: any = GestionPointageListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -33,9 +35,10 @@ export class MyApp {
 
       { title: "Demandes d'achats", component: ListeProjetPage },
       { title: 'Fournisseurs', component: ListeFournisseurPage },
+      { title: 'Véhicules', component: GestionVehiculeListeVehiculePage },
       { title: 'Sous traitances', component: ListPage },
       { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
-      { title: "Pointage", component: ListPage },
+      { title: "Pointage", component: GestionPointageListeProjetPage },
       { title: 'Paiement', component: ListPage },
       { title: 'Gestion Projet', component: GestionProjetListeProjetPage },
       { title: 'Utilisateurs', component: HomePage }
