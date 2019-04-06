@@ -1,0 +1,71 @@
+
+
+<!--
+  Generated template for the ListeFournisseurPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Gestion Fournisseurs</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Projet : {{informationsActuelles?.nomprojet}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Chantier : {{informationsActuelles?.nomchantier}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Ouvrier : {{informationsActuelles?.nomouvrier}} {{informationsActuelles?.prenomouvrier}}
+    </ion-label>
+  </ion-item>
+
+  <div *ngIf="1==2">
+
+    <ion-item padding="0">
+      <h1 >Pointage:</h1>
+      <ion-icon name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
+    </ion-item>
+
+    <ion-list>
+      <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
+        {{item?.date}}
+        <p>présence : {{item?.datepointageouvrier}}</p>
+        <p>heures : {{item?.nombreheurepointageouvrier}}</p>
+
+        <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+      </button>
+    </ion-list>
+
+  </div>
+
+
+
+
+
+  <ion-calendar #calendar lang="en"></ion-calendar>
+
+
+</ion-content>
+

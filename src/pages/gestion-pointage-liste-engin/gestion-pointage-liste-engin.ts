@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionPointageListeEnginPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +11,11 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-pointage-liste-engin',
+  templateUrl: 'gestion-pointage-liste-engin.html',
 })
-export class GestionPointageListeChantierPage {
+export class GestionPointageListeEnginPage {
+
 
   //les informations recuperees d'un push a partir d'une page precedente
   public informationsActuelles = {};
@@ -25,16 +25,23 @@ export class GestionPointageListeChantierPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  public nomTableActuelle = "vehicule";
 
   //la liste des tables suivantes
   public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public pageSuivante : any = null;
+
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idvehicule","id","number"],
+    ["matriculevehicule","matricule","text"],
+    ["marquevehicule","marque","text"],
+    ["modelvehicule","model","number"],
+    ["locationvehicule","location","text"],
+    ["prixlocationvehicule","prixlocation","number"],
+    ["raisonsocialelocationvehicule","raisonsocialelocation","text"],
+    ["reftypeenginvehicule","reftypeengin","number"],
+    ["reftypevehiculevehicule","reftypevehicule","number"],
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -113,7 +120,7 @@ export class GestionPointageListeChantierPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","reftypevehicule = 2 and vehicule.id in (select refvehicule from chantierenginassocie where (not refchantier is null) and refchantier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });

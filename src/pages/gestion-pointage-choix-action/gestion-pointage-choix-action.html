@@ -1,15 +1,48 @@
-<!--
-  Generated template for the GestionPointageChoixActionPage page.
 
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
   <ion-navbar>
-    <ion-title>gestionPointageChoixAction</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Gestion Véhicule</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Chantier : {{informationsActuelles?.nomchantier}}
+    </ion-label>
+
+  </ion-item>
+
+
+
+  <br>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Consulter :</h1>
+
+  </ion-item>
+
+
+  <ion-list>
+
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Pointage ouvrier
+    </button>
+
+    <button ion-item (click)="clickChoix2($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Pointage engin
+    </button>
+
+  </ion-list>
 
 </ion-content>

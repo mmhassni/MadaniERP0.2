@@ -52,7 +52,21 @@ import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-pr
 import {GestionPointageListeChantierPage} from "../pages/gestion-pointage-liste-chantier/gestion-pointage-liste-chantier";
 import {GestionVehiculeAjouterVehiculePage} from "../pages/gestion-vehicule-ajouter-vehicule/gestion-vehicule-ajouter-vehicule";
 import {GestionPointageChoixActionPage} from "../pages/gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {GestionPointageListeOuvrierPage} from "../pages/gestion-pointage-liste-ouvrier/gestion-pointage-liste-ouvrier";
+import {GestionPointageListeEnginPage} from "../pages/gestion-pointage-liste-engin/gestion-pointage-liste-engin";
+import {GestionOuvrierListeOuvrierPage} from "../pages/gestion-ouvrier-liste-ouvrier/gestion-ouvrier-liste-ouvrier";
+import {GestionOuvrierAjouterOuvrierPage} from "../pages/gestion-ouvrier-ajouter-ouvrier/gestion-ouvrier-ajouter-ouvrier";
+import {GestionOuvrierListeChantierAssociePage} from "../pages/gestion-ouvrier-liste-chantier-associe/gestion-ouvrier-liste-chantier-associe";
+import {GestionOuvrierAjouterChantierAssociePage} from "../pages/gestion-ouvrier-ajouter-chantier-associe/gestion-ouvrier-ajouter-chantier-associe";
+import {GestionPointageListePointageOuvrierPage} from "../pages/gestion-pointage-liste-pointage-ouvrier/gestion-pointage-liste-pointage-ouvrier";
+import {GestionPointageListePointageEnginPage} from "../pages/gestion-pointage-liste-pointage-engin/gestion-pointage-liste-pointage-engin";
+import {GestionPointageAjouterPointageEnginPage} from "../pages/gestion-pointage-ajouter-pointage-engin/gestion-pointage-ajouter-pointage-engin";
+import {GestionPointageAjouterPointageOuvrierPage} from "../pages/gestion-pointage-ajouter-pointage-ouvrier/gestion-pointage-ajouter-pointage-ouvrier";
 
+
+import { CalendarModule } from 'ionic3-calendar-en';
+
+//@ts-ignore
 @NgModule({
   declarations: [
     MyApp,
@@ -75,29 +89,45 @@ import {GestionPointageChoixActionPage} from "../pages/gestion-pointage-choix-ac
     AjouterProduitFournisseurPage,
     ListeProjetFournisseurAssociePage,
     AjouterProjetFournisseurAssociePage,
+
     SuiviGasoilListeProjetPage,
     SuiviGasoilListeChantierPage,
     SuiviGasoilListeBonGasoilPage,
     SuiviGasoilAjouterBonGasoilPage,
+
     GestionProjetListeProjetPage,
     GestionProjetChoixActionPage,
     GestionProjetListeEnginPage,
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
     GestionProjetAjouterEnginPage,
+
     GestionVehiculeListeVehiculePage,
     GestionVehiculeAjouterVehiculePage,
     GestionVehiculeChoixActionPage,
     GestionVehiculeListeChantierAssociePage,
     GestionVehiculeAjouterChantierAssociePage,
+
     GestionPointageListeProjetPage,
     GestionPointageListeChantierPage,
-    GestionPointageChoixActionPage
+    GestionPointageChoixActionPage,
+    GestionPointageListeOuvrierPage,
+    GestionPointageListeEnginPage,
+    GestionPointageListePointageOuvrierPage,
+    GestionPointageListePointageEnginPage,
+    GestionPointageAjouterPointageOuvrierPage,
+    GestionPointageAjouterPointageEnginPage,
+
+    GestionOuvrierListeOuvrierPage,
+    GestionOuvrierAjouterOuvrierPage,
+    GestionOuvrierListeChantierAssociePage,
+    GestionOuvrierAjouterChantierAssociePage
 
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
+    CalendarModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
@@ -122,24 +152,39 @@ import {GestionPointageChoixActionPage} from "../pages/gestion-pointage-choix-ac
     AjouterProduitFournisseurPage,
     ListeProjetFournisseurAssociePage,
     AjouterProjetFournisseurAssociePage,
+
     SuiviGasoilListeProjetPage,
     SuiviGasoilListeChantierPage,
     SuiviGasoilListeBonGasoilPage,
     SuiviGasoilAjouterBonGasoilPage,
+
     GestionProjetListeProjetPage,
     GestionProjetChoixActionPage,
     GestionProjetListeEnginPage,
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
     GestionProjetAjouterEnginPage,
+
     GestionVehiculeListeVehiculePage,
     GestionVehiculeAjouterVehiculePage,
     GestionVehiculeChoixActionPage,
     GestionVehiculeListeChantierAssociePage,
     GestionVehiculeAjouterChantierAssociePage,
+
     GestionPointageListeProjetPage,
     GestionPointageListeChantierPage,
-    GestionPointageChoixActionPage
+    GestionPointageChoixActionPage,
+    GestionPointageListeOuvrierPage,
+    GestionPointageListeEnginPage,
+    GestionPointageListePointageOuvrierPage,
+    GestionPointageListePointageEnginPage,
+    GestionPointageAjouterPointageOuvrierPage,
+    GestionPointageAjouterPointageEnginPage,
+
+    GestionOuvrierListeOuvrierPage,
+    GestionOuvrierAjouterOuvrierPage,
+    GestionOuvrierListeChantierAssociePage,
+    GestionOuvrierAjouterChantierAssociePage
 
 
 

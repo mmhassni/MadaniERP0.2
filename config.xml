@@ -128,4 +128,8 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="your usage message" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="your usage message" />
     </plugin>
+    <plugin name="cordova-plugin-calendar" spec="5.1.4">
+        <variable name="CALENDAR_USAGE_DESCRIPTION" value=" " />
+        <variable name="CONTACTS_USAGE_DESCRIPTION" value=" " />
+    </plugin>
 </widget>

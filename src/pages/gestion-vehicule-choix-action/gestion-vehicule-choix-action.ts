@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionVehiculeChantierAssociePage} from "../gestion-vehicule-chantier-associe/gestion-vehicule-chantier-associe";
 import {GestionVehiculeListeChantierAssociePage} from "../gestion-vehicule-liste-chantier-associe/gestion-vehicule-liste-chantier-associe";
 
 /**

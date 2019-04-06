@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {GestionVehiculeAjouterVehiculePage} from "../gestion-vehicule-ajouter-vehicule/gestion-vehicule-ajouter-vehicule";
+import {GestionVehiculeChoixActionPage} from "../gestion-vehicule-choix-action/gestion-vehicule-choix-action";
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {GestionOuvrierAjouterOuvrierPage} from "../gestion-ouvrier-ajouter-ouvrier/gestion-ouvrier-ajouter-ouvrier";
+import {GestionOuvrierListeChantierAssociePage} from "../gestion-ouvrier-liste-chantier-associe/gestion-ouvrier-liste-chantier-associe";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionOuvrierListeOuvrierPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,43 +15,90 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-ouvrier-liste-ouvrier',
+  templateUrl: 'gestion-ouvrier-liste-ouvrier.html',
 })
-export class GestionPointageListeChantierPage {
-
-  //les informations recuperees d'un push a partir d'une page precedente
-  public informationsActuelles = {};
+export class GestionOuvrierListeOuvrierPage {
 
 
-  public objetActuel = {};
-  public listeObjetActuelle = [];
+
+  public listeFournisseurs = [];
+  public listeFournisseursFiltree = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  public nomTableActuelle = "ouvrier";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public pageDAjout : any = GestionOuvrierAjouterOuvrierPage;
+  public pageSuivante : any = GestionOuvrierListeChantierAssociePage;
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idouvrier","id","number"],
+    ["nomouvrier","nom","text"],
+    ["prenomouvrier","prenom","text"],
+    ["cinouvrier","cin","text"],
+    ["ribouvrier","rib","text"],
+    ["cnssouvrier","cnss","text"],
+    ["professionouvrier","profession","text"],
+    ["salairejournalierouvrier","salairejournalier","number"],
+    ["reglementmensuelouvrier","reglementmensuel","text"],
+    ["salairemensuelouvrier","salairemensuel","number"]
   ];
+
+  public informationsActuelles = {};
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
-    this.informationsActuelles = this.navParams.data.informationsActuelles;
-
-    //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
-    //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
     this.refresh();
 
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListeProduitFournisseurPage');
+    console.log('ionViewDidLoad ListeFournisseurPage');
+  }
+
+  //fonction necessaire pour le filtre des fournisseurs
+  getItems(ev) {
+    // Reset items back to all of the items
+    this.initializeItems();
+
+    // set val to the value of the ev target
+    var val = ev.target.value;
+
+    // if the value is an empty string don't filter the items
+    if (val && val.trim() != '') {
+      this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
+        return ( (item.nomouvrier + item.prenomouvrier + item.cinouvrier).toLowerCase().indexOf(val.toLowerCase()) > -1);
+      })
+    }
+  }
+
+  refresh(){
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
+      "select " + this.genererListeAttributRequete(this.nomTableActuelle,this.tableauMappingBDD) + ", * "+
+      "from " + this.nomTableActuelle + " " +
+      "LEFT JOIN (" +
+      "select refouvrier , count(*) as nombreouvrierassocie " +
+      "from chantierouvrierassocie " +
+      "where not chantierouvrierassocie.refchantier is null " +
+      "group by chantierouvrierassocie.refouvrier) as RF " +
+      "ON RF.refouvrier = ouvrier.id " +
+      "order by ouvrier.id desc")
+      .subscribe(data => {
+
+        this.listeFournisseurs = (data as any).features;
+        this.listeFournisseursFiltree = (data as any).features;
+        console.log(data);
+
+
+      });
+  }
+
+  //fonction necessaire pour le fonctionnement de la fonction precedente
+  initializeItems(){
+
+    this.listeFournisseursFiltree = this.listeFournisseurs;
+
   }
 
   ionViewDidEnter() {
@@ -111,14 +161,6 @@ export class GestionPointageListeChantierPage {
 
   }
 
-  refresh(){
-
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
-      .subscribe(data => {
-        this.listeObjetActuelle = (data as any).features;
-      });
-  }
-
   pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
 
     //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
@@ -154,37 +196,53 @@ export class GestionPointageListeChantierPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
+    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
 
     }
 
-    if(importerLesAttributsEtoile){
-      //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
-    }
-    else{
-      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
-    }
+    requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
 
+    for(let i = 0 ; i < listeJointures.length ; i++ ){
 
-
-    for (let i = 0; i < listeJointures.length; i++) {
-
-      //on reference apres les autre table de la jointure
-      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+      requeteGetProjet = requeteGetProjet + ", " + listeJointures[i] + " ";
 
     }
 
-    if(filtreWhere != "" ){
-      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    if(filtreWhere != "" || listeJointures.length > 0){
+      let permiereConditionsaisie = false;
+      for(let i = 0 ; i < listeJointures.length ; i++ ){
+        if(permiereConditionsaisie){
+          requeteGetProjet = requeteGetProjet + " and " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
+        }
+        else{
+          requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[0][1] + " = " + listeJointures[i] + ".id" ;
+        }
+        permiereConditionsaisie = true;
+
+      }
+
+      if(filtreWhere != ""){
+
+        if(permiereConditionsaisie){
+          requeteGetProjet = requeteGetProjet + " and " + filtreWhere ;
+        }
+        else{
+          requeteGetProjet = requeteGetProjet + " " + filtreWhere ;
+
+        }
+
+      }
+
+
     }
 
-    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
+
+    requeteGetProjet = requeteGetProjet + " order by " + tableauMappingBDD[0][1] + " desc";
 
 
     console.log(requeteGetProjet);
@@ -549,6 +607,13 @@ export class GestionPointageListeChantierPage {
 
 
     }
+
+
+
+
+
+
+
 
 
 

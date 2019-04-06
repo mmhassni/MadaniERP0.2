@@ -34,8 +34,8 @@
 
   <ion-item *ngIf="Projet.value">
     <ion-label style="opacity:1; color: #000;font-weight: bold">Chantier:</ion-label>
-    <ion-select #Chantier (ionChange)="actualiserObjetAAssocier()"  name = "Engin" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refchantierchantierenginassocie">
-
+    <ion-select #Chantier (ionChange)="actualiserObjetAAssocier()"  name = "Chantier" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refchantierchantierouvrierassocie">
+C
       <div *ngFor="let item of listeChoixChantier">
         <ion-option *ngIf="(Projet.value == '' || Projet.value == item.idprojet)"  [value]="item.id">
           {{item.nomchantier}}

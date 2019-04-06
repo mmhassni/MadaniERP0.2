@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {GestionOuvrierAjouterChantierAssociePage} from "../gestion-ouvrier-ajouter-chantier-associe/gestion-ouvrier-ajouter-chantier-associe";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionOuvrierListeChantierAssociePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +12,10 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-ouvrier-liste-chantier-associe',
+  templateUrl: 'gestion-ouvrier-liste-chantier-associe.html',
 })
-export class GestionPointageListeChantierPage {
+export class GestionOuvrierListeChantierAssociePage {
 
   //les informations recuperees d'un push a partir d'une page precedente
   public informationsActuelles = {};
@@ -25,16 +25,16 @@ export class GestionPointageListeChantierPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  public nomTableActuelle = "chantierouvrierassocie";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public pageDAjout : any = GestionOuvrierAjouterChantierAssociePage;
+  public pageSuivante : any = null;
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idchantierenginassocie","id","number"],
+    ["refchantierchantierouvrierassocie","refchantier","number"],
+    ["refouvrierchantierouvrierassocie","refouvrier","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -42,7 +42,7 @@ export class GestionPointageListeChantierPage {
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
     //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
-    //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
+    this.informationsActuelles["refouvrierchantierouvrierassocie"] = this.informationsActuelles["idouvrier"];
     this.refresh();
 
   }
@@ -113,7 +113,7 @@ export class GestionPointageListeChantierPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"chantier.nom as nomchantier, chantier.id as idchantier","refouvrier = " + (this.informationsActuelles as any).idouvrier,["chantier"],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -164,8 +164,14 @@ export class GestionPointageListeChantierPage {
     }
 
     if(importerLesAttributsEtoile){
+
       //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+      requeteGetProjet = requeteGetProjet + " * ";
+      if(complementChamps != ""){
+        requeteGetProjet = requeteGetProjet + " ," + complementChamps;
+      }
+      requeteGetProjet = requeteGetProjet + " from " + nomTableBDD;
+
     }
     else{
       requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;

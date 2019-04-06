@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {GestionPointageAjouterPointageOuvrierPage} from "../gestion-pointage-ajouter-pointage-ouvrier/gestion-pointage-ajouter-pointage-ouvrier";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionPointageListePointageOuvrierPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +12,12 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-pointage-liste-pointage-ouvrier',
+  templateUrl: 'gestion-pointage-liste-pointage-ouvrier.html',
 })
-export class GestionPointageListeChantierPage {
+export class GestionPointageListePointageOuvrierPage {
+
+
 
   //les informations recuperees d'un push a partir d'une page precedente
   public informationsActuelles = {};
@@ -25,17 +27,26 @@ export class GestionPointageListeChantierPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  public nomTableActuelle = "pointageouvrier";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public pageDAjout : any = GestionPointageAjouterPointageOuvrierPage;
+  public pageSuivante : any = null;
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idpointageouvrier","id","number"],
+    ["datepointageouvrier","date","date"],
+    ["nombreheurepointageouvrier","nombreheure","number"],
+    ["refouvrierpointageouvrier","refouvrier","number"],
+    ["datedajoutpointageouvrier","datedajout","date"],
+    ["refmotifabsencepointagepointageouvrier","refmotifabsencepointage","number"]
   ];
+
+
+  calendar = {
+    mode: 'month',
+    currentDate: new Date()
+  };
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
@@ -45,7 +56,9 @@ export class GestionPointageListeChantierPage {
     //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
     this.refresh();
 
+
   }
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ListeProduitFournisseurPage');
@@ -113,11 +126,23 @@ export class GestionPointageListeChantierPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
+      "select * from (select " + this.genererListeAttributRequete(this.nomTableActuelle,this.tableauMappingBDD) + ",* " +
+      "from " + this.nomTableActuelle +  "  " +
+      this.genererLeftJoin(this.nomTableActuelle,"motifabsencepointage") + ") as tp " +
+      "where tp.datedajout = (select max(datedajout) from pointageouvrier where date = tp.date)")
       .subscribe(data => {
+
         this.listeObjetActuelle = (data as any).features;
+        console.log(data);
+
+
       });
   }
+
+  genererLeftJoin(nomTableBDD,tableRef){
+    return "LEFT JOIN " + tableRef + " ON " + tableRef + ".id = " + nomTableBDD + ".ref" + tableRef;
+   }
 
   pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
 
@@ -154,7 +179,7 @@ export class GestionPointageListeChantierPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -163,14 +188,21 @@ export class GestionPointageListeChantierPage {
 
     }
 
-    if(importerLesAttributsEtoile){
-      //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
-    }
-    else{
-      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+    //on enleve la derniere virgule de la boucle precedente
+    requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1);
+
+
+    if(complementChamps != ""){
+      requeteGetProjet = requeteGetProjet + complementChamps;
     }
 
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + " , * " ;
+    }
+
+
+    requeteGetProjet = requeteGetProjet + " from " + nomTableBDD + " as tp";
 
 
     for (let i = 0; i < listeJointures.length; i++) {
@@ -184,7 +216,14 @@ export class GestionPointageListeChantierPage {
       requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
     }
 
-    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
+    if(groupBy != "" ){
+      requeteGetProjet = requeteGetProjet + " group by " + groupBy;
+    }
+    else{
+      requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
+
+    }
+
 
 
     console.log(requeteGetProjet);

@@ -76,10 +76,10 @@ export class GestionVehiculeListeVehiculePage {
       "LEFT JOIN typeengin ON typeengin.id = vehicule.reftypeengin " +
       "LEFT JOIN typevehicule ON typevehicule.id = vehicule.reftypevehicule " +
       "LEFT JOIN (" +
-        "select refvehicule , count(*) as nombrechantierassocie " +
-        "from chantierenginassocie " +
-        "where not chantierenginassocie.refchantier is null " +
-        "group by chantierenginassocie.refvehicule) as RF " +
+      "select refvehicule , count(*) as nombrechantierassocie " +
+      "from chantierenginassocie " +
+      "where not chantierenginassocie.refchantier is null " +
+      "group by chantierenginassocie.refvehicule) as RF " +
       "ON RF.refvehicule = vehicule.id " +
       "order by vehicule.id desc")
       .subscribe(data => {
@@ -91,6 +91,8 @@ export class GestionVehiculeListeVehiculePage {
 
       });
   }
+
+
 
   //fonction necessaire pour le fonctionnement de la fonction precedente
   initializeItems(){

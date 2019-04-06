@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {CameraProvider} from "../../providers/camera/camera";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionOuvrierAjouterOuvrierPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,124 +12,186 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-ouvrier-ajouter-ouvrier',
+  templateUrl: 'gestion-ouvrier-ajouter-ouvrier.html',
 })
-export class GestionPointageListeChantierPage {
-
-  //les informations recuperees d'un push a partir d'une page precedente
-  public informationsActuelles = {};
+export class GestionOuvrierAjouterOuvrierPage {
+  //le mode edition se divise en deux modes : le mode modification et le mode creation
+  public modeModificationCreation = false; //modeModification est l'opposé du mode Creation
+  public modeEditionAffichage = false; //modeAffichage est l'opposé du mode Affichage
 
 
   public objetActuel = {};
-  public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  public nomTableActuelle = "ouvrier";
 
-  //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public champsPredefinis = [];
+
+  public havePhotoAttribut = false;
+
+  public parametresPost = [];
+  public parametresPostLibelle = [];
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idouvrier","id","number"],
+    ["nomouvrier","nom","text"],
+    ["prenomouvrier","prenom","text"],
+    ["cinouvrier","cin","text"],
+    ["ribouvrier","rib","text"],
+    ["cnssouvrier","cnss","text"],
+    ["professionouvrier","profession","text"],
+    ["salairejournalierouvrier","salairejournalier","number"],
+    ["reglementmensuelouvrier","reglementmensuel","text"],
+    ["salairemensuelouvrier","salairemensuel","number"]
   ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
+  public enregistrementColonneIgnore = [];
 
-    this.informationsActuelles = this.navParams.data.informationsActuelles;
 
-    //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
-    //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
-    this.refresh();
+
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController,  public cameraProvider : CameraProvider) {
+
+
+    console.log("bienvenu au constructeur");
+
+    //on recupere les informations recuperees de la bdd
+    this.objetActuel = navParams.data.informationsActuelles;
+
+
+    //on saisie les champs manquants selon les cas
+    (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
+
+
+    (this.objetActuel as any).reglementmensuelouvrier = 'f';
+
+    //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
+    if(navParams.data.action &&  navParams.data.action == "ajouter"){
+
+
+      console.log(this.objetActuel);
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = true;
+
+
+    }
+    else{
+
+      console.log(this.objetActuel);
+      this.modeModificationCreation = false;
+      this.modeEditionAffichage = false;
+
+      //si l'objet est vide alors on doit passer directement au mode edition
+      if(this.objectIsFrameworklyNull(this.objetActuel,this.champsPredefinis)){
+
+        this.modeModificationCreation = true;
+        this.modeEditionAffichage = true;
+
+      }
+
+    }
 
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListeProduitFournisseurPage');
+    console.log('ionViewDidLoad AjouterChantierPage');
   }
 
-  ionViewDidEnter() {
-    this.refresh();
+  enregistrerNouvelObjet(){
+
+    this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+
+    //console.log(this.navParams.data.parentPage);
+
+    //this.navParams.data.parentPage.refresh();
+
+    this.navCtrl.pop();
+
 
   }
 
-  detailItemTapped(event, item){
+  enregistrerModificationObjet(){
 
-    event.stopPropagation();
-    if(this.pageDAjout) {
-      if(this.informationsActuelles){
-        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageDAjout, "detailler");
-      }
-      else{
-        this.pushInformationsActuelles(item, {}, this.pageDAjout, "detailler");
-      }
-    }
-  }
+    console.log(this.objetActuel);
 
-  itemTapped(event, item) {
+    this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    if(this.pageSuivante){
-      if(this.informationsActuelles){
-        this.pushInformationsActuelles(item, this.informationsActuelles, this.pageSuivante, "passer");
-      }
-      else{
-        this.pushInformationsActuelles(item, {}, this.pageSuivante, "passer");
-      }
+    if(!this.havePhotoAttribut){
+      this.navCtrl.pop();
     }
 
-  }
-
-  ajouterItemWithoutPush() {
-
-    this.httpClient.get("insert into " + this.nomTableActuelle + " (");
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
-      .subscribe(data => {
-        console.log(data);
-        this.refresh();
-
-
-      }, err => {
-        this.refresh();
-
-      });
 
   }
 
-  ajouterItem() {
+  photoChooser(objetActuel , photobgbongasoil ) {
+    this.cameraProvider.photoChooser(objetActuel,photobgbongasoil);
+  }
 
-    if(this.pageDAjout) {
-      if(this.informationsActuelles){
-        this.pushInformationsActuelles({}, this.informationsActuelles, this.pageDAjout, "ajouter");
+  //retourne une liste de choix contenant l'id et le libelle
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
+
+    for(let pp in this){
+
+      if(pp == nomListeARemplir){
+
       }
-      else{
-        this.pushInformationsActuelles({}, {}, this.pageDAjout, "ajouter");
-      }
+
     }
 
-  }
+    let listeARemplir = [];
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
 
-  refresh(){
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
-      .subscribe(data => {
-        this.listeObjetActuelle = (data as any).features;
-      });
-  }
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
 
-  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
+      }
+    }
+    else{
 
-    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
 
 
-    let objetFusion = Object.assign(objetComplement,objetInformationsActuelles);
+    this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
-    console.log(objetFusion);
-    this.navCtrl.push(PageSuivante, {
-      informationsActuelles: objetFusion,
-      action: action
+      listeARemplir = (data as any).features;
+      console.log(listeARemplir);
+
+      for(let pp in this){
+        if(pp == nomListeARemplir){
+
+          console.log(pp);
+          console.log(this[pp]);
+          this[pp] = listeARemplir;
+          console.log(this[pp]);
+
+        }
+      }
+
+
     });
 
   }
@@ -138,19 +200,15 @@ export class GestionPointageListeChantierPage {
     return Object.assign(objetComplement,objetInformationsActuelles);
   }
 
-  genererListeAttributRequete(nomTableBDD, tableauMappingBDD){
+  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
 
-    let attributsRequete = "";
-    for (let i = 0; i < tableauMappingBDD.length; i++) {
-
-      attributsRequete = attributsRequete + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
 
 
-    }
-
-    attributsRequete = attributsRequete.substring(0,attributsRequete.length-1);
-
-    return attributsRequete;
+    this.navCtrl.push(PageSuivante, {
+      informationsActuelles: objetComplement,
+      action: action
+    });
 
   }
 
@@ -475,8 +533,20 @@ export class GestionPointageListeChantierPage {
     //enregistrement des parametres post
     for(let i = 0; i < parametresPost.length; i++){
 
+      let parametreFrameworkPhoto = "";
+
+      for(let j = 0; j < this.tableauMappingBDD.length;j++){
+
+        if(this.tableauMappingBDD[j][0] == parametresPost[i]){
+
+          parametreFrameworkPhoto = this.tableauMappingBDD[j][1];
+
+        }
+
+      }
+
       //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
+      let requeteUpdatePost = requeteUpdate + " " + parametreFrameworkPhoto + " = " + "'postBody' ";
 
       //preparation de la requete
       requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
@@ -552,6 +622,13 @@ export class GestionPointageListeChantierPage {
 
 
 
+
+
+
+
+
+
+
   }
 
   remplirChampManquant(objetBDD , tableauMappingBDD, tableauChampAIgnorer ){
@@ -607,4 +684,35 @@ export class GestionPointageListeChantierPage {
     return objetBDDInitialise;
 
   }
+
+  objectIsFrameworklyNull(objetATester,champsPredefinis){
+
+    let objectIsFrameworklyNull = true;
+
+    //si els champs predefinis sont null alors l utilisateur ne veut meme pas tester cet objet
+    if(champsPredefinis.length){
+      for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+        if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+          objectIsFrameworklyNull = false;
+          console.log(this.tableauMappingBDD[i][0]);
+        }
+      }
+    }
+    else{
+      objectIsFrameworklyNull = false;
+    }
+
+
+
+    return objectIsFrameworklyNull;
+
+  }
+
+  modeEdition() {
+    this.modeModificationCreation = true;
+    this.modeEditionAffichage = true;
+  }
+
+
 }

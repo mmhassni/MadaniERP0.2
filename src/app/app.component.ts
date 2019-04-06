@@ -13,6 +13,7 @@ import {SuiviGasoilListeProjetPage} from "../pages/suivi-gasoil-liste-projet/sui
 import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet/gestion-projet-liste-projet";
 import {GestionVehiculeListeVehiculePage} from "../pages/gestion-vehicule-liste-vehicule/gestion-vehicule-liste-vehicule";
 import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-projet/gestion-pointage-liste-projet";
+import {GestionOuvrierListeOuvrierPage} from "../pages/gestion-ouvrier-liste-ouvrier/gestion-ouvrier-liste-ouvrier";
 
 @Component({
   templateUrl: 'app.html'
@@ -36,6 +37,7 @@ export class MyApp {
       { title: "Demandes d'achats", component: ListeProjetPage },
       { title: 'Fournisseurs', component: ListeFournisseurPage },
       { title: 'Véhicules', component: GestionVehiculeListeVehiculePage },
+      { title: 'Ouvrier', component:  GestionOuvrierListeOuvrierPage},
       { title: 'Sous traitances', component: ListPage },
       { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
       { title: "Pointage", component: GestionPointageListeProjetPage },

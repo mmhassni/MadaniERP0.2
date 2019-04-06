@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/gestion-pointage-choix-action";
+import {GestionPointageListePointageOuvrierPage} from "../gestion-pointage-liste-pointage-ouvrier/gestion-pointage-liste-pointage-ouvrier";
+import {GestionOuvrierAjouterOuvrierPage} from "../gestion-ouvrier-ajouter-ouvrier/gestion-ouvrier-ajouter-ouvrier";
 
 /**
- * Generated class for the GestionPointageListeChantierPage page.
+ * Generated class for the GestionPointageListeOuvrierPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +13,11 @@ import {GestionPointageChoixActionPage} from "../gestion-pointage-choix-action/g
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-chantier',
-  templateUrl: 'gestion-pointage-liste-chantier.html',
+  selector: 'page-gestion-pointage-liste-ouvrier',
+  templateUrl: 'gestion-pointage-liste-ouvrier.html',
 })
-export class GestionPointageListeChantierPage {
+export class GestionPointageListeOuvrierPage {
+
 
   //les informations recuperees d'un push a partir d'une page precedente
   public informationsActuelles = {};
@@ -24,17 +26,24 @@ export class GestionPointageListeChantierPage {
   public objetActuel = {};
   public listeObjetActuelle = [];
 
-  //non de la table principale de cette page
-  public nomTableActuelle = "chantier";
+  //nom de la table principale de cette page
+  public nomTableActuelle = "ouvrier";
 
   //la liste des tables suivantes
-  public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageChoixActionPage;
+  public pageDAjout : any = GestionOuvrierAjouterOuvrierPage;
+  public pageSuivante : any = GestionPointageListePointageOuvrierPage;
 
   public tableauMappingBDD = [
-    ["idchantier","id","id"],
-    ["nomchantier","nom","number"],
-    ["zonechantier","zone","number"]
+    ["idouvrier","id","number"],
+    ["nomouvrier","nom","text"],
+    ["prenomouvrier","prenom","text"],
+    ["cinouvrier","cin","text"],
+    ["ribouvrier","rib","text"],
+    ["cnssouvrier","cnss","text"],
+    ["professionouvrier","profession","text"],
+    ["salairejournalierouvrier","salairejournalier","number"],
+    ["reglementmensuelouvrier","reglementmensuel","text"],
+    ["salairemensuelouvrier","salairemensuel","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -113,7 +122,7 @@ export class GestionPointageListeChantierPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojet = " + (this.informationsActuelles as any).idprojet,[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","ouvrier.id in (select refouvrier from chantierouvrierassocie where (not refouvrier is null) and refouvrier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });

@@ -157,7 +157,7 @@ export class ModelPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -168,7 +168,7 @@ export class ModelPage {
 
     if(importerLesAttributsEtoile){
       //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+      requeteGetProjet = requeteGetProjet + " *, " + complementChamps +" from " + nomTableBDD ;
     }
     else{
       requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
@@ -185,6 +185,10 @@ export class ModelPage {
 
     if(filtreWhere != "" ){
       requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    if(groupBy != "" ){
+      requeteGetProjet = requeteGetProjet + " group by " + groupBy;
     }
 
     requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
