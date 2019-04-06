@@ -116,7 +116,7 @@ export class ModelPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[],true,"")
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
