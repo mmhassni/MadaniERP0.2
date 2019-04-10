@@ -52,6 +52,8 @@ export class SuiviGasoilListeProjetPage {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
     this.refresh();
+    console.log("ff");
+    console.log("ff");
 
   }
 

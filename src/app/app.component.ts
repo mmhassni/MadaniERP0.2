@@ -14,6 +14,7 @@ import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet
 import {GestionVehiculeListeVehiculePage} from "../pages/gestion-vehicule-liste-vehicule/gestion-vehicule-liste-vehicule";
 import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-projet/gestion-pointage-liste-projet";
 import {GestionOuvrierListeOuvrierPage} from "../pages/gestion-ouvrier-liste-ouvrier/gestion-ouvrier-liste-ouvrier";
+import {Test1Page} from "../pages/test1/test1";
 
 @Component({
   templateUrl: 'app.html'
@@ -21,7 +22,8 @@ import {GestionOuvrierListeOuvrierPage} from "../pages/gestion-ouvrier-liste-ouv
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = GestionPointageListeProjetPage;
+
+  rootPage: any = Test1Page;
 
   pages: Array<{title: string, component: any}>;
 

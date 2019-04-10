@@ -10,6 +10,8 @@ import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+
+
 import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
 import {ListeChantierPage} from "../pages/liste-chantier/liste-chantier";
 import {ListeDemandePage} from "../pages/liste-demande/liste-demande";
@@ -64,7 +66,12 @@ import {GestionPointageAjouterPointageEnginPage} from "../pages/gestion-pointage
 import {GestionPointageAjouterPointageOuvrierPage} from "../pages/gestion-pointage-ajouter-pointage-ouvrier/gestion-pointage-ajouter-pointage-ouvrier";
 
 
-import { CalendarModule } from 'ionic3-calendar-en';
+import { CalendarComponent } from "ap-angular2-fullcalendar/src/calendar/calendar";
+
+
+import {Test1Page} from "../pages/test1/test1";
+
+
 
 //@ts-ignore
 @NgModule({
@@ -121,13 +128,15 @@ import { CalendarModule } from 'ionic3-calendar-en';
     GestionOuvrierListeOuvrierPage,
     GestionOuvrierAjouterOuvrierPage,
     GestionOuvrierListeChantierAssociePage,
-    GestionOuvrierAjouterChantierAssociePage
+    GestionOuvrierAjouterChantierAssociePage,
+    Test1Page,
+    CalendarComponent
+
 
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
-    CalendarModule,
     IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
@@ -184,7 +193,8 @@ import { CalendarModule } from 'ionic3-calendar-en';
     GestionOuvrierListeOuvrierPage,
     GestionOuvrierAjouterOuvrierPage,
     GestionOuvrierListeChantierAssociePage,
-    GestionOuvrierAjouterChantierAssociePage
+    GestionOuvrierAjouterChantierAssociePage,
+    Test1Page
 
 
 
