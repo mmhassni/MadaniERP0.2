@@ -23,7 +23,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
 
-  rootPage: any = Test1Page;
+  rootPage: any = GestionPointageListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
