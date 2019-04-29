@@ -1,0 +1,55 @@
+
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Gestion Paiement</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Véhicule : {{informationsActuelles?.matriculevehicule}}
+    </ion-label>
+
+  </ion-item>
+
+
+
+  <br>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Consulter :</h1>
+
+  </ion-item>
+
+
+  <ion-list>
+
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Paiement Ouvrier
+    </button>
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Paiement Gasoil
+    </button>
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Paiement Fournisseur
+    </button>
+    <button ion-item (click)="clickChoix1($event, item)">
+      <ion-icon name="man" item-start></ion-icon>
+      Paiement Sous traitance
+    </button>
+
+  </ion-list>
+
+</ion-content>

@@ -99,10 +99,15 @@ export class SuiviGasoilListeBonGasoilPage {
 
   }
 
+
   ajouterItemWithoutPush() {
 
+
+
     this.httpClient.get("insert into " + this.nomTableActuelle + " (");
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier) values (" + (this.informationsActuelles as any).idchantier + ")")
+    this.httpClient.get("http://172.20.10.2:9090/requestAny/insert into "+ this.nomTableActuelle +" (refchantier,date) values (" + (this.informationsActuelles as any).idchantier +
+      ",'" + (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19)
+      + "')")
       .subscribe(data => {
         console.log(data);
         this.refresh();

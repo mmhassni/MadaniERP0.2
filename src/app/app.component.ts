@@ -14,7 +14,10 @@ import {GestionProjetListeProjetPage} from "../pages/gestion-projet-liste-projet
 import {GestionVehiculeListeVehiculePage} from "../pages/gestion-vehicule-liste-vehicule/gestion-vehicule-liste-vehicule";
 import {GestionPointageListeProjetPage} from "../pages/gestion-pointage-liste-projet/gestion-pointage-liste-projet";
 import {GestionOuvrierListeOuvrierPage} from "../pages/gestion-ouvrier-liste-ouvrier/gestion-ouvrier-liste-ouvrier";
-import {Test1Page} from "../pages/test1/test1";
+import {GestionArticleProjetListeArticleProjetPage} from "../pages/gestion-article-projet-liste-article-projet/gestion-article-projet-liste-article-projet";
+import {GestionIntervenantListeIntervenantPage} from "../pages/gestion-intervenant-liste-intervenant/gestion-intervenant-liste-intervenant";
+import {GestionIncidentListeProjetPage} from "../pages/gestion-incident-liste-projet/gestion-incident-liste-projet";
+import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
 
 @Component({
   templateUrl: 'app.html'
@@ -23,7 +26,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
 
-  rootPage: any = GestionPointageListeProjetPage;
+  rootPage: any = GestionProjetListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -37,15 +40,22 @@ export class MyApp {
     this.pages = [
 
       { title: "Demandes d'achats", component: ListeProjetPage },
+      { title: 'Achat caisse', component:  GestionCaisseListeProjetPage},
+
       { title: 'Fournisseurs', component: ListeFournisseurPage },
       { title: 'Véhicules', component: GestionVehiculeListeVehiculePage },
       { title: 'Ouvrier', component:  GestionOuvrierListeOuvrierPage},
+      { title: 'Article Projet', component:  GestionArticleProjetListeArticleProjetPage},
+      { title: 'Intervenant', component:  GestionIntervenantListeIntervenantPage},
+      { title: 'Incident', component:  GestionIncidentListeProjetPage},
+
       { title: 'Sous traitances', component: ListPage },
       { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
       { title: "Pointage", component: GestionPointageListeProjetPage },
       { title: 'Paiement', component: ListPage },
       { title: 'Gestion Projet', component: GestionProjetListeProjetPage },
       { title: 'Utilisateurs', component: HomePage }
+
 
     ];
 

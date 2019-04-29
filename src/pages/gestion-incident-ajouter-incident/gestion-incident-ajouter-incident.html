@@ -1,0 +1,76 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Gestion Incident</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Incident :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Objet :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.objetincident"  ></ion-input>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Observations :
+    </ion-label>
+    <ion-textarea type="text" name="observations" placeholder="Observations" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.observationincident"  ></ion-textarea>
+  </ion-item>
+
+
+  <ion-item style="color: #000;font-weight: bold">
+    <ion-label>Photo Bon gasoil:</ion-label>
+
+  </ion-item>
+
+  <img style="width: auto;margin: auto;display: block"  [(src)]="objetActuel.photoincident" *ngIf="objetActuel.photoincident"/>
+
+  <br>
+
+  <div text-center>
+    <button ion-button round *ngIf="modeModificationCreation || (!modeModificationCreation && modeEditionAffichage)" (click)="photoChooser(objetActuel,'photoincident')">
+      Charger Photo  <ion-icon padding name="camera"></ion-icon>
+    </button>
+  </div>
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Créer Projet
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

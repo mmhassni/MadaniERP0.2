@@ -71,6 +71,31 @@ import { CalendarComponent } from "ap-angular2-fullcalendar/src/calendar/calenda
 
 import {Test1Page} from "../pages/test1/test1";
 
+import { Calendar } from '@ionic-native/calendar';
+import {GestionArticleProjetListeArticleProjetPage} from "../pages/gestion-article-projet-liste-article-projet/gestion-article-projet-liste-article-projet";
+import {GestionArticleProjetAjouterArticleProjetPage} from "../pages/gestion-article-projet-ajouter-article-projet/gestion-article-projet-ajouter-article-projet";
+import {GestionArticleProjetListeProjetAssociePage} from "../pages/gestion-article-projet-liste-projet-associe/gestion-article-projet-liste-projet-associe";
+import {GestionArticleProjetAjouterProjetAssociePage} from "../pages/gestion-article-projet-ajouter-projet-associe/gestion-article-projet-ajouter-projet-associe";
+import {GestionArticleProjetListeSousTraitancePage} from "../pages/gestion-article-projet-liste-sous-traitance/gestion-article-projet-liste-sous-traitance";
+import {GestionArticleProjetAjouterSousTraitancePage} from "../pages/gestion-article-projet-ajouter-sous-traitance/gestion-article-projet-ajouter-sous-traitance";
+import {GestionIntervenantListeIntervenantPage} from "../pages/gestion-intervenant-liste-intervenant/gestion-intervenant-liste-intervenant";
+import {GestionIntervenantAjouterIntervenantPage} from "../pages/gestion-intervenant-ajouter-intervenant/gestion-intervenant-ajouter-intervenant";
+
+import {GestionIncidentListeChantierPage} from "../pages/gestion-incident-liste-chantier/gestion-incident-liste-chantier";
+import {GestionIncidentListeProjetPage} from "../pages/gestion-incident-liste-projet/gestion-incident-liste-projet";
+import {GestionIncidentListeIncidentPage} from "../pages/gestion-incident-liste-incident/gestion-incident-liste-incident";
+import {GestionIncidentAjouterIncidentPage} from "../pages/gestion-incident-ajouter-incident/gestion-incident-ajouter-incident";
+import {GestionProjetListeArticleProjetAssociePage} from "../pages/gestion-projet-liste-article-projet-associe/gestion-projet-liste-article-projet-associe";
+import {GestionProjetAjouterArticleProjetAssociePage} from "../pages/gestion-projet-ajouter-article-projet-associe/gestion-projet-ajouter-article-projet-associe";
+import {GestionProjetListeAvancementArticleProjetPage} from "../pages/gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
+import {GestionProjetAjouterAvancementArticleProjetPage} from "../pages/gestion-projet-ajouter-avancement-article-projet/gestion-projet-ajouter-avancement-article-projet";
+import {GestionCaisseListeFournisseurPage} from "../pages/gestion-caisse-liste-fournisseur/gestion-caisse-liste-fournisseur";
+import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
+import {GestionCaisseAjouterFournisseurPage} from "../pages/gestion-caisse-ajouter-fournisseur/gestion-caisse-ajouter-fournisseur";
+import {GestionCaisseListeAchatPage} from "../pages/gestion-caisse-liste-achat/gestion-caisse-liste-achat";
+import {GestionCaisseAjouterAchatPage} from "../pages/gestion-caisse-ajouter-achat/gestion-caisse-ajouter-achat";
+
+
 
 
 //@ts-ignore
@@ -108,6 +133,10 @@ import {Test1Page} from "../pages/test1/test1";
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
     GestionProjetAjouterEnginPage,
+    GestionProjetListeArticleProjetAssociePage,
+    GestionProjetAjouterArticleProjetAssociePage,
+    GestionProjetListeAvancementArticleProjetPage,
+    GestionProjetAjouterAvancementArticleProjetPage,
 
     GestionVehiculeListeVehiculePage,
     GestionVehiculeAjouterVehiculePage,
@@ -130,8 +159,28 @@ import {Test1Page} from "../pages/test1/test1";
     GestionOuvrierListeChantierAssociePage,
     GestionOuvrierAjouterChantierAssociePage,
     Test1Page,
-    CalendarComponent
+    CalendarComponent,
 
+    GestionArticleProjetListeArticleProjetPage,
+    GestionArticleProjetAjouterArticleProjetPage,
+    GestionArticleProjetListeProjetAssociePage,
+    GestionArticleProjetAjouterProjetAssociePage,
+    GestionArticleProjetListeSousTraitancePage,
+    GestionArticleProjetAjouterSousTraitancePage,
+
+    GestionIntervenantListeIntervenantPage,
+    GestionIntervenantAjouterIntervenantPage,
+
+    GestionIncidentListeProjetPage,
+    GestionIncidentListeChantierPage,
+    GestionIncidentListeIncidentPage,
+    GestionIncidentAjouterIncidentPage,
+
+    GestionCaisseListeProjetPage,
+    GestionCaisseListeFournisseurPage,
+    GestionCaisseAjouterFournisseurPage,
+    GestionCaisseListeAchatPage,
+    GestionCaisseAjouterAchatPage
 
   ],
   imports: [
@@ -173,6 +222,11 @@ import {Test1Page} from "../pages/test1/test1";
     GestionProjetListeChantierPage,
     GestionProjetChoixActionChantierPage,
     GestionProjetAjouterEnginPage,
+    GestionProjetListeArticleProjetAssociePage,
+    GestionProjetAjouterArticleProjetAssociePage,
+    GestionProjetListeAvancementArticleProjetPage,
+    GestionProjetAjouterAvancementArticleProjetPage,
+
 
     GestionVehiculeListeVehiculePage,
     GestionVehiculeAjouterVehiculePage,
@@ -194,8 +248,28 @@ import {Test1Page} from "../pages/test1/test1";
     GestionOuvrierAjouterOuvrierPage,
     GestionOuvrierListeChantierAssociePage,
     GestionOuvrierAjouterChantierAssociePage,
-    Test1Page
+    Test1Page,
 
+    GestionArticleProjetListeArticleProjetPage,
+    GestionArticleProjetAjouterArticleProjetPage,
+    GestionArticleProjetListeProjetAssociePage,
+    GestionArticleProjetAjouterProjetAssociePage,
+    GestionArticleProjetListeSousTraitancePage,
+    GestionArticleProjetAjouterSousTraitancePage,
+
+    GestionIntervenantListeIntervenantPage,
+    GestionIntervenantAjouterIntervenantPage,
+
+    GestionIncidentListeProjetPage,
+    GestionIncidentListeChantierPage,
+    GestionIncidentListeIncidentPage,
+    GestionIncidentAjouterIncidentPage,
+
+    GestionCaisseListeProjetPage,
+    GestionCaisseListeFournisseurPage,
+    GestionCaisseAjouterFournisseurPage,
+    GestionCaisseListeAchatPage,
+    GestionCaisseAjouterAchatPage
 
 
   ],
@@ -210,7 +284,9 @@ import {Test1Page} from "../pages/test1/test1";
     Diagnostic,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UtilisateurProvider,
-    CameraProvider
+    CameraProvider,
+      Calendar
   ]
 })
+
 export class AppModule {}

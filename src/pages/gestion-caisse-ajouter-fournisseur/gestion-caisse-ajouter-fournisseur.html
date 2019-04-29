@@ -1,0 +1,73 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Gestion Fournisseur</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Fournisseur :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Nom :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.nomfournisseurcaisse"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Adresse :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.adressefournisseurcaisse"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Contact :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.contactfournisseurcaisse"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Patente :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.patentefournisseurcaisse"  ></ion-input>
+  </ion-item>
+
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Créer Fournisseur
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

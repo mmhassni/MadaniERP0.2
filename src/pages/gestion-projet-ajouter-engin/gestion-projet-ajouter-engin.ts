@@ -23,6 +23,7 @@ export class GestionProjetAjouterEnginPage {
 
 
   public objetActuel = {};
+  
 
   //non de la table principale de cette page
   public nomTableActuelle = "chantierenginassocie";

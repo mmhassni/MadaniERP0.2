@@ -105,3 +105,4 @@ export class Test1Page {
     console.log($event);
   }
 }
+

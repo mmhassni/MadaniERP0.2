@@ -166,13 +166,21 @@ export class ModelPage {
 
     }
 
+    //on enleve la derniere virgule
+    requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) ;
+
     if(importerLesAttributsEtoile){
       //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " *, " + complementChamps +" from " + nomTableBDD ;
+      requeteGetProjet = requeteGetProjet + ", *";
     }
-    else{
-      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+
+
+    if(complementChamps){
+      requeteGetProjet = requeteGetProjet + ", " + complementChamps;
     }
+
+    requeteGetProjet = requeteGetProjet + " from " + nomTableBDD;
+
 
 
 
@@ -198,6 +206,7 @@ export class ModelPage {
     return this.httpClient.get(requeteGetProjet);
 
   }
+
 
   insertObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 

@@ -63,12 +63,12 @@
 
   </ion-item>
 
-  <img  [(src)]="objetActuel.photobgbongasoil" *ngIf="objetActuel.photobgbongasoil"/>
+  <img style="width: auto;margin: auto;display: block"  [(src)]="objetActuel.photobgbongasoil" *ngIf="objetActuel.photobgbongasoil"/>
 
   <br>
 
   <div text-center>
-    <button ion-button round *ngIf="modeModificationCreation" (click)="photoChooser(objetActuel,'photobgbongasoil')">
+    <button ion-button round *ngIf="modeModificationCreation || (!modeModificationCreation && modeEditionAffichage)" (click)="photoChooser(objetActuel,'photobgbongasoil')">
       Charger Photo  <ion-icon padding name="camera"></ion-icon>
     </button>
   </div>

@@ -122,7 +122,7 @@ export class GestionPointageListeOuvrierPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","ouvrier.id in (select refouvrier from chantierouvrierassocie where (not refouvrier is null) and refouvrier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","ouvrier.id in (select refouvrier from chantierouvrierassocie where (not refouvrier is null) and refchantier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -179,6 +179,8 @@ export class GestionPointageListeOuvrierPage {
     else{
       requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
     }
+
+
 
 
 
@@ -616,4 +618,111 @@ export class GestionPointageListeOuvrierPage {
     return objetBDDInitialise;
 
   }
+
+
+  ajouterPointageAutomatiqueCasPresence() {
+    let values = "";
+    if(this.listeObjetActuelle.length){
+      for (let i = 0; i < this.listeObjetActuelle.length; i++) {
+        values = values + "('" + (new Date()).toISOString().substring(0,10) + "',"+ 8+ "," + this.listeObjetActuelle[i]["idouvrier"] + ",'" + (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19) + "',NULL),";
+      }
+      values = values.substring(0,values.length-1);
+      this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
+        "insert into pointageouvrier " +
+        "(date,nombreheure,refouvrier,datedajout,refmotifabsencepointage) " +
+        "values "+
+        values)
+        .subscribe(data => {
+
+
+        },err => {
+
+          let messageGetToast = "Pointage enregistré";
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+
+
+          }
+          else{
+            messageGetToast = "Pointage non enregistré";
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+
+          }
+
+        });
+
+    }
+
+  }
+
+  ajouterPointageAutomatiqueCasAbsence() {
+    let values = "";
+    if(this.listeObjetActuelle.length){
+      for (let i = 0; i < this.listeObjetActuelle.length; i++) {
+        values = values +  "('" + (new Date()).toISOString().substring(0,10) + "',"+ 0+ "," + this.listeObjetActuelle[i]["idouvrier"] + ",'" + (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19) + "',2),";
+      }
+      values = values.substring(0,values.length-1);
+      this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
+        "insert into pointageouvrier " +
+        "(date,nombreheure,refouvrier,datedajout,refmotifabsencepointage) " +
+        "values "+
+        values)
+        .subscribe(data => {
+
+        },err => {
+
+          let messageGetToast = "Pointage enregistré";
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-success"
+            });
+
+            toast.present();
+
+
+
+          }
+          else{
+            messageGetToast = "Pointage non enregistré";
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+
+          }
+
+        });
+
+    }
+
+  }
+
 }

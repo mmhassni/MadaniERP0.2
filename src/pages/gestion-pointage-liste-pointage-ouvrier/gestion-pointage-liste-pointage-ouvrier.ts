@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AlertController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import {GestionPointageAjouterPointageOuvrierPage} from "../gestion-pointage-ajouter-pointage-ouvrier/gestion-pointage-ajouter-pointage-ouvrier";
+
+import interactionPlugin from '@fullcalendar/interaction';
+
+import * as $ from 'jquery';
+import {Toast} from "@ionic-native/toast";
 
 /**
  * Generated class for the GestionPointageListePointageOuvrierPage page.
@@ -15,7 +20,7 @@ import {GestionPointageAjouterPointageOuvrierPage} from "../gestion-pointage-ajo
   selector: 'page-gestion-pointage-liste-pointage-ouvrier',
   templateUrl: 'gestion-pointage-liste-pointage-ouvrier.html',
 })
-export class GestionPointageListePointageOuvrierPage {
+export class GestionPointageListePointageOuvrierPage implements OnInit{
 
 
 
@@ -24,10 +29,12 @@ export class GestionPointageListePointageOuvrierPage {
 
 
   public objetActuel = {};
+
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
   public nomTableActuelle = "pointageouvrier";
+
 
   //la liste des tables suivantes
   public pageDAjout : any = null;
@@ -43,105 +50,33 @@ export class GestionPointageListePointageOuvrierPage {
   ];
 
 
-  calendar = {
-    mode: 'month',
-    currentDate: new Date()
-  };
+  public calendarOptions : Object;
+  public listeChoixMotifAbsencePointage = [];
 
-  calendarOptions:Object = {
-    fixedWeekCount : true,
-    defaultDate: '2016-09-12',
-    header: { center: 'month,agendaWeek' },
-    views: {
-      dayGridMonth: { // name of view
-        titleFormat: 'YYYY, MM, DD'
-        // other view-specific options here
-      }
-    },
-
-    editable: true,
-    monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre'],
-    monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'],
-    dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
-    dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
-    height: 600,
-    contentHeight: 350,
-    aspectRatio:0.8, //permet de definir le rapport entre le height et le width d une seule case correspondant a un jour
-    eventLimit: true, // allow "more" link when too many events
-    handleWindowResize: true,
-
-    dayRender: function (date, cell) {
-
-      if(date._d.toString() == new Date(Date.UTC(2016, 8, 1))){
-        cell.css("background-color", "#ff0000a3");
-
-      }
-    },
+  public oldDay = {};
+  public oldDayUpdateHeure = {};
+  public oldDayUpdateMotif = {};
 
 
-    events: [
-      {
-        title: 'Mrid',
-        start: '2016-09-01',
-        backgroundColor: "red"
-      },
-      {
-        title: 'Long Event',
-        start: '2016-09-07',
-        end: '2016-09-10'
-      },
-      {
-        id: 999,
-        title: "Ka3i",
-        start: '2016-09-09T16:00:00'
-      },
-      {
-        id: 999,
-        title: 'Repeating Event',
-        start: '2016-09-16T16:00:00'
-      },
-      {
-        title: 'Conference',
-        start: '2016-09-11',
-        end: '2016-09-13'
-      },
-      {
-        title: 'Meeting',
-        start: '2016-09-12T10:30:00',
-        end: '2016-09-12T12:30:00'
-      },
-      {
-        title: 'Lunch',
-        start: '2016-09-12T12:00:00'
-      },
-      {
-        title: 'Meeting',
-        start: '2016-09-12T14:30:00'
-      },
-      {
-        title: 'Happy Hour',
-        start: '2016-09-12T17:30:00'
-      },
-      {
-        title: 'Dinner',
-        start: '2016-09-12T20:00:00'
-      },
-      {
-        title: 'Chta bezaf',
-        start: '2016-09-13T07:00:00'
-      },
-      {
-        title: 'Click for Google',
-        url: 'http://google.com/',
-        start: '2016-09-28'
-      }
-    ]
-  };
+  @ViewChild('hashCalendar', { read: ElementRef }) calendar: ElementRef;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
+  public jourActuel = null;
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              public httpClient: HttpClient,
+              public toastCtrl : ToastController,
+              public alertCtrl: AlertController) {
+
+    //on recupere les informations recuperees de la bdd
+    this.objetActuel = navParams.data.informationsActuelles;
+
+
+    //on saisie les champs manquants selon les cas
+    (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
+    this.recupererListeChoix("listeChoixMotifAbsencePointage","motifabsencepointage","id","motif",[],"",["motifabsencepointage.typepointage"]);
 
     //declaration des atributs qui doivent etre passer aux autres vues (precisement la page Ajouter
     //this.informationsActuelles["proprieterNecessairePourLaVueSuivante"] = this.informationsActuelles["nomDeLaPPDansCetteVue"];
@@ -220,13 +155,59 @@ export class GestionPointageListePointageOuvrierPage {
 
     //permet de selectionner le pointage selon la derniere date de modification
     this.httpClient.get("http://172.20.10.2:9090/requestAny/" +
-      "select * from (select " + this.genererListeAttributRequete(this.nomTableActuelle,this.tableauMappingBDD) + ",* " +
+      "select * from (select "+this.nomTableActuelle+".id as idpointage, " + this.genererListeAttributRequete(this.nomTableActuelle,this.tableauMappingBDD) + ",* " +
       "from " + this.nomTableActuelle +  "  " +
       this.genererLeftJoin(this.nomTableActuelle,"motifabsencepointage") + ") as tp " +
-      "where tp.datedajout = (select max(datedajout) from pointageouvrier where date = tp.date)")
+      "where tp.idpointage = (select max(P.id) from pointageouvrier as p where p.date = tp.date  " +
+      "and p.refouvrier = " + (this.informationsActuelles as any).idouvrier + ")"
+    )
       .subscribe(data => {
 
         this.listeObjetActuelle = (data as any).features;
+        let listeEvent = [];
+
+        for(let i = 0; i < this.listeObjetActuelle.length ; i++){
+          let objetTemp ={};
+          objetTemp  = this.listeObjetActuelle[i];
+          objetTemp["start"] = this.listeObjetActuelle[i]["datepointageouvrier"];
+          if(this.listeObjetActuelle[i]["nombreheurepointageouvrier"] == "0" || this.listeObjetActuelle[i]["nombreheurepointageouvrier"] == "4"){
+            objetTemp["title"] = this.listeObjetActuelle[i]["nombreheurepointageouvrier"] + "H";
+            objetTemp["color"] = "red";
+            listeEvent.push(objetTemp);
+            if(this.listeObjetActuelle[i]["motif"]){
+              objetTemp = Object.assign({}, objetTemp);
+              objetTemp["title"] = this.listeObjetActuelle[i]["motif"];
+              listeEvent.push(objetTemp);
+
+            }
+
+
+          }
+          if(this.listeObjetActuelle[i]["nombreheurepointageouvrier"] >= 8){
+
+            objetTemp["title"] = this.listeObjetActuelle[i]["nombreheurepointageouvrier"] + "H";
+            objetTemp["color"] = "green";
+            listeEvent.push(objetTemp);
+
+
+            objetTemp = Object.assign({}, objetTemp);
+            objetTemp["title"] = "présent";
+            listeEvent.push(objetTemp);
+
+          }
+
+
+
+        }
+
+        //this.calendarOptions["events"] = listeEvent;
+        console.log(this.calendarOptions["events"] );
+        $(this.calendar.nativeElement).fullCalendar( 'removeEvents');
+        $(this.calendar.nativeElement).fullCalendar('addEventSource',listeEvent);
+
+        $(this.calendar.nativeElement).fullCalendar("next");
+        $(this.calendar.nativeElement).fullCalendar("prev");
+
         console.log(data);
 
 
@@ -234,6 +215,74 @@ export class GestionPointageListePointageOuvrierPage {
 
 
   }
+
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
+
+    for(let pp in this){
+
+      if(pp == nomListeARemplir){
+
+      }
+
+    }
+
+    let listeARemplir = [];
+    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
+
+      }
+    }
+    else{
+
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
+
+
+    this.httpClient.get(requeteGetListChoix).subscribe( data => {
+
+      listeARemplir = (data as any).features;
+      console.log(listeARemplir);
+
+      for(let pp in this){
+        if(pp == nomListeARemplir){
+
+          console.log(pp);
+          console.log(this[pp]);
+          this[pp] = listeARemplir;
+          console.log(this[pp]);
+
+        }
+      }
+
+
+    });
+
+  }
+
 
   genererLeftJoin(nomTableBDD,tableRef){
     return "LEFT JOIN " + tableRef + " ON " + tableRef + ".id = " + nomTableBDD + ".ref" + tableRef;
@@ -387,6 +436,9 @@ export class GestionPointageListePointageOuvrierPage {
     this.httpClient.get(requeteUpdate)
       .subscribe(data => {
         console.log(data);
+
+      },err => {
+        this.refresh();
 
       });
 
@@ -694,7 +746,7 @@ export class GestionPointageListePointageOuvrierPage {
 
     let objetBDDRempli = new Object();
 
-    objetBDDRempli = this.initialiserObjetBDD(objetBDD,tableauMappingBDD);
+    objetBDDRempli = this.initialiserObjetBDD(tableauMappingBDD);
 
     for(let i = 0; i < tableauMappingBDD.length; i++){
 
@@ -717,7 +769,7 @@ export class GestionPointageListePointageOuvrierPage {
 
   }
 
-  initialiserObjetBDD(objetBDD, tableauMappingBDDPar ){
+  initialiserObjetBDD(tableauMappingBDDPar ){
 
 
 
@@ -745,4 +797,227 @@ export class GestionPointageListePointageOuvrierPage {
   onCalendarInit($event: boolean) {
     console.log("bien initilise");
   }
+
+  ngOnInit(): void {
+
+    let _this = this;
+
+    this.calendarOptions = {
+      plugins: [ interactionPlugin],
+      fixedWeekCount : true,
+      defaultDate: (new Date()).toISOString().substring(0,10),
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      views: {
+        dayGridMonth: { // name of view
+          titleFormat: 'YYYY, MM, DD'
+          // other view-specific options here
+        }
+      },
+
+      editable: true,
+      selectable: true,
+      monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre'],
+      monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'],
+      dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+      dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+      height: 600,
+      contentHeight: 300,
+      aspectRatio:1, //permet de definir le rapport entre le height et le width d une seule case correspondant a un jour
+      eventLimit: false, // allow "more" link when too many events
+      handleWindowResize: true,
+      dayRender: function (date, cell) {
+
+
+
+        console.log(date._d.getFullYear());
+        console.log((new Date()).getFullYear());
+        if( date._d.getFullYear() == (new Date()).getFullYear() && date._d.getMonth() == (new Date()).getMonth() && date._d.getDate() == (new Date()).getDate()){
+          cell.css('background-color', '#ffc800c2');
+          console.log("cooool");
+
+        }
+
+
+      }
+
+    };
+
+    $(this.calendar.nativeElement).fullCalendar({
+
+          dayClick: function(date, allDay, jsEvent, view) {
+
+
+            //On enleve d'abord la selection du jour precedement selectionné
+            if(_this.oldDay && (_this.oldDay as any).day && !((_this.oldDay as any).day.getFullYear() == (new Date()).getFullYear() && (_this.oldDay as any).day.getMonth() == (new Date()).getMonth() && (_this.oldDay as any).day.getDate() == (new Date()).getDate())){
+              $((_this.oldDay as any).htmlElement).css('background-color', '#ffffff8f');
+
+            }
+            if(_this.oldDay && (_this.oldDay as any).day && ((_this.oldDay as any).day.getFullYear() == (new Date()).getFullYear() && (_this.oldDay as any).day.getMonth() == (new Date()).getMonth() && (_this.oldDay as any).day.getDate() == (new Date()).getDate())){
+              $((_this.oldDay as any).htmlElement).css('background-color', '#ffc800c2');
+
+            }
+
+
+            let nouvelObjetActuelTemp = _this.remplirChampManquant({},_this.tableauMappingBDD,[]);
+
+
+
+            for(let i = 0; i < _this.listeObjetActuelle.length; i++){
+
+
+              //on doit trouver s'il y a un objet correspondant dans la tableActuelle
+              if(_this.listeObjetActuelle[i]["datepointageouvrier"] == date._d.toISOString().substring(0,10)){
+                console.log("yes");
+                nouvelObjetActuelTemp = _this.remplirChampManquant(_this.listeObjetActuelle[i],_this.tableauMappingBDD,[]);
+              }
+
+            }
+
+            //remarque tres importante: lorsqu'on change la valueur
+            // de l objet actuel alors le fonction update du la ion-select se refraichi aussi
+            //si on a trouve l'objet en question
+            if((nouvelObjetActuelTemp as any).idpointageouvrier != 'NULL'){
+              _this.objetActuel= Object.assign({},nouvelObjetActuelTemp);
+            }
+            //sinon
+            else{
+
+              _this.objetActuel["datepointageouvrier"] = date._d.toISOString().substring(0,10);
+              _this.objetActuel["refouvrierpointageouvrier"] = (_this.informationsActuelles as any).idouvrier;
+              _this.objetActuel["nombreheurepointageouvrier"] = 'NULL';
+              _this.objetActuel["refmotifabsencepointagepointageouvrier"] = 'NULL';
+              _this.objetActuel["idpointageouvrier"] = 'NULL';
+              _this.objetActuel["datedajoutpointageouvrier"] = '';
+            }
+
+
+            console.log(_this.objetActuel);
+
+
+            console.log(date);
+            console.log(allDay);
+            console.log(jsEvent);
+            console.log(view);
+
+
+            // change the day's background color just for fun
+
+            $(this).css('background-color', '#0000ff8f');
+            _this.oldDay["htmlElement"] = this;
+
+            if(_this.oldDay["day"] == date._d){
+              _this.oldDayUpdateHeure["day"] = _this.oldDay["day"];
+            }
+
+
+            _this.oldDay["day"] = date._d;
+
+            $(this).css('background-color', '#0000ff8f');
+
+
+      }
+
+    });
+
+
+
+  }
+
+  refrechCalendar() {
+
+    let _this = this;
+    console.log($(this.calendar.nativeElement));
+
+
+    $(this.calendar.nativeElement).fullCalendar("next");
+    $(this.calendar.nativeElement).fullCalendar("prev");
+
+
+
+
+  }
+
+  updateHeurePointage($event) {
+
+
+    let _this = this;
+
+
+    for(let i=0 ; i<this.listeObjetActuelle.length;i++){
+      if(this.listeObjetActuelle[i]["datedajoutpointageouvrier"] == this.objetActuel["datedajoutpointageouvrier"]){
+        if(this.listeObjetActuelle[i]["nombreheurepointageouvrier"] != this.objetActuel["nombreheurepointageouvrier"]){
+          (this.objetActuel as any).datedajoutpointageouvrier = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+          console.log(this.objetActuel);
+          this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+        }
+
+      }
+    }
+
+//    _this.oldDayUpdateHeure["day"] = _this.oldDay["day"];
+
+
+
+
+  }
+
+  updateMotifPointage($event) {
+
+    for(let i=0 ; i<this.listeObjetActuelle.length;i++){
+      if(this.listeObjetActuelle[i]["datedajoutpointageouvrier"] == this.objetActuel["datedajoutpointageouvrier"]){
+        if(this.listeObjetActuelle[i]["refmotifabsencepointagepointageouvrier"] != this.objetActuel["refmotifabsencepointagepointageouvrier"]){
+          (this.objetActuel as any).datedajoutpointageouvrier = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+          console.log(this.objetActuel);
+          this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+        }
+
+      }
+    }
+
+  }
+
+
+  marquerAbsent() {
+    if(new Date((this.objetActuel as any).datepointageouvrier) <= new Date((new Date()).toISOString().substring(0,10))){
+      (this.objetActuel as any).datedajoutpointageouvrier = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+      (this.objetActuel as any).nombreheurepointageouvrier = 0;
+      (this.objetActuel as any).refmotifabsencepointagepointageouvrier = 1;
+      (this.objetActuel as any).refouvrierpointageouvrier = (this.informationsActuelles as any).idouvrier;
+      this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    }
+    else{
+      let alert = this.alertCtrl.create({
+        title: 'Attention',
+        subTitle: "Date ultérieure à celle d'aujourd'hui!",
+        buttons: ['Cancel']
+      });
+      alert.present();
+    }
+
+
+  }
+
+  marquerPresent() {
+
+
+    if(new Date((this.objetActuel as any).datepointageouvrier) <= new Date((new Date()).toISOString().substring(0,10))){
+      (this.objetActuel as any).datedajoutpointageouvrier = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+      (this.objetActuel as any).nombreheurepointageouvrier = 8;
+      (this.objetActuel as any).refouvrierpointageouvrier = (this.informationsActuelles as any).idouvrier;
+      this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    }
+    else{
+      let alert = this.alertCtrl.create({
+        title: 'Attention',
+        subTitle: "Date ultérieure à celle d'aujourd'hui!",
+        buttons: ['Cancel']
+      });
+      alert.present();
+    }
+  }
+
 }

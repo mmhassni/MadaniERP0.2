@@ -62,10 +62,50 @@
 
   <br>
   <br>
-  <angular2-fullcalendar id="myCalendar"  [options]="calendarOptions"  (initialized)="onCalendarInit($event)"></angular2-fullcalendar>
+  <angular2-fullcalendar #hashCalendar  [(options)]="calendarOptions"  (initialized)="onCalendarInit($event)"></angular2-fullcalendar>
+
+
+  <button (click)="refrechCalendar()" >refrech</button>
+
+  <div *ngIf="objetActuel && objetActuel.idpointageouvrier != 'NULL'">
+    <ion-item *ngIf="objetActuel && objetActuel.nombreheurepointageouvrier && (objetActuel.nombreheurepointageouvrier == '12' || objetActuel.nombreheurepointageouvrier == '8' || objetActuel.nombreheurepointageouvrier == '4' || objetActuel.nombreheurepointageouvrier == '0') ">
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Nombre d'heure:</ion-label>
+      <ion-select (ionChange) = "updateHeurePointage($event)"   name = "unites" [(ngModel)]="objetActuel.nombreheurepointageouvrier">
+        <ion-option value="12">12H</ion-option>
+        <ion-option value="8">8H</ion-option>
+        <ion-option value="4">4H</ion-option>
+        <ion-option value="0">0H</ion-option>
+      </ion-select>
+    </ion-item>
 
 
 
+
+    <ion-item *ngIf="objetActuel && objetActuel.nombreheurepointageouvrier && objetActuel.nombreheurepointageouvrier < 8">
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Motif Absence:</ion-label>
+      <ion-select (ionChange) = "updateMotifPointage($event)"  #Projet  name = "unites" [(ngModel)]="objetActuel.refmotifabsencepointagepointageouvrier">
+        <ion-option *ngFor="let item of listeChoixMotifAbsencePointage" [value]="item.id">{{item.motif}}</ion-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div *ngIf="objetActuel && objetActuel.idpointageouvrier == 'NULL'">
+
+    <button color="secondary" ion-button  block (click)="marquerAbsent()">
+      Marquer Absent
+    </button>
+
+    <button  color="tertiary" ion-button  block (click)="marquerPresent()">
+      Marquer Présent
+    </button>
+
+  </div>
+
+
+
+  <br><br><br>
+  <br><br><br>
+  <br><br><br>
 
 </ion-content>
 

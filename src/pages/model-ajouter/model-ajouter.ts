@@ -98,13 +98,19 @@ export class ModelAjouterPage {
 
   enregistrerNouvelObjet(){
 
-    this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+
+    if(this.havePhotoAttribut){
+      this.insertPostObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
+    }
+    else{
+      this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    }
 
     //console.log(this.navParams.data.parentPage);
 
     //this.navParams.data.parentPage.refresh();
 
-    this.navCtrl.pop();
 
 
   }
@@ -113,11 +119,11 @@ export class ModelAjouterPage {
 
     console.log(this.objetActuel);
 
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    if(!this.havePhotoAttribut){
-      this.navCtrl.pop();
-    }
+
 
 
   }
@@ -210,7 +216,7 @@ export class ModelAjouterPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
     let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -219,13 +225,21 @@ export class ModelAjouterPage {
 
     }
 
+    //on enleve la derniere virgule
+    requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) ;
+
     if(importerLesAttributsEtoile){
       //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+      requeteGetProjet = requeteGetProjet + ", *";
     }
-    else{
-      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+
+
+    if(complementChamps){
+      requeteGetProjet = requeteGetProjet + ", " + complementChamps;
     }
+
+    requeteGetProjet = requeteGetProjet + " from " + nomTableBDD;
+
 
 
 
@@ -238,6 +252,10 @@ export class ModelAjouterPage {
 
     if(filtreWhere != "" ){
       requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    if(groupBy != "" ){
+      requeteGetProjet = requeteGetProjet + " group by " + groupBy;
     }
 
     requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
@@ -312,6 +330,124 @@ export class ModelAjouterPage {
 
       });
 
+
+  }
+
+  insertPostObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
+
+    //on doit dabord remplir les champs manquants
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
+
+    //debut de la construction de la requete
+    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
+
+    //on commence par l'indice 1 pour ne pas inclure la cle de la table
+    for (let i = 1; i < tableauMappingBDD.length; i++){
+
+      requeteUpdate = requeteUpdate + tableauMappingBDD[i][1] + ",";
+
+    }
+
+    //on enleve la derniere virgule
+    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    requeteUpdate = requeteUpdate + ") values (";
+
+    //apres on doit parcourir tout les champs de notre objet
+    for (var property in objetAEnregistrer) {
+
+      if( ! parametresPost.includes(property) ) {
+
+        // on doit recuperer les informations du mapping
+        for(let i = 1; i < tableauMappingBDD.length; i++){
+
+          if( property == tableauMappingBDD[i][0]){
+
+            if(tableauMappingBDD[i][2] == "text"){
+
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
+
+            }
+
+            else if(tableauMappingBDD[i][2] == "date"){
+
+              if(objetAEnregistrer[property] != "NULL"){
+                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+              }
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+
+            }
+            else if(tableauMappingBDD[i][2] == "number"){
+
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+
+            }
+            //les autres cas se traitent de la meme facon
+            else{
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
+
+            }
+
+          }
+
+        }
+
+      }
+      else{
+
+        requeteUpdate = requeteUpdate + "'"  + "',";
+
+
+      }
+
+
+
+    }
+
+    //on doit enlever la derniere virgule
+    requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
+    requeteUpdate = requeteUpdate + ")";
+
+
+
+    this.httpClient.get(requeteUpdate)
+      .subscribe(data => {
+
+
+        },
+        err => {
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+
+            this.httpClient.get("http://172.20.10.2:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
+              .subscribe( dataMax =>{
+                (this.objetActuel as any)[this.tableauMappingBDD[0][0]]=(dataMax as any).features.maxid;
+                this.updatePostObjet(objetAEnregistrer, nomTableBDD, (dataMax as any).features[0].maxid, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle);
+
+                this.navCtrl.pop();
+
+              });
+
+
+
+          }
+          else{
+            let messageGetToast = "Objet non enregistré";
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+          }
+
+
+
+        }
+      );
 
   }
 
@@ -396,6 +532,9 @@ export class ModelAjouterPage {
 
         toast.present();
 
+        this.navCtrl.pop();
+
+
 
 
       }
@@ -457,7 +596,7 @@ export class ModelAjouterPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }
@@ -596,6 +735,8 @@ export class ModelAjouterPage {
             });
 
             toast.present();
+
+
 
           }
           else{

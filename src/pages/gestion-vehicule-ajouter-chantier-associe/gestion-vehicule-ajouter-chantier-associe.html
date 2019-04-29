@@ -22,13 +22,13 @@
 
   </ion-item>
 
-  <ion-item>
-    <ion-label style="opacity:1; color: #000;font-weight: bold">Projet:</ion-label>
-    <ion-select #Projet  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="projetAssocie">
-      <ion-option *ngFor="let item of listeChoixProjet" [value]="item.id">{{item.nomprojet}}</ion-option>
-      <ion-option value="">Aucun</ion-option>
-    </ion-select>
-  </ion-item>
+    <ion-item>
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Projet:</ion-label>
+      <ion-select #Projet  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="projetAssocie">
+        <ion-option *ngFor="let item of listeChoixProjet" [value]="item.id">{{item.nomprojet}}</ion-option>
+        <ion-option value="">Aucun</ion-option>
+      </ion-select>
+    </ion-item>
 
 
 

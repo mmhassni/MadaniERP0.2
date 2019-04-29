@@ -15,10 +15,31 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class GestionPointageAjouterPointageOuvrierPage {
 
+  calendarOptions ={
+    plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+    selectable: true,
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    dateClick: function(info) {
+      alert('clicked ' + info.dateStr);
+    },
+    select: function(info) {
+      alert('selected ' + info.startStr + ' to ' + info.endStr);
+    }
+  };
+/*
   calendarOptions:Object = {
+    plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
     fixedWeekCount : true,
     defaultDate: '2016-09-12',
-    header: { center: 'month,agendaWeek' },
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
     views: {
       dayGridMonth: { // name of view
         titleFormat: 'YYYY, MM, DD'
@@ -27,6 +48,7 @@ export class GestionPointageAjouterPointageOuvrierPage {
     },
 
     editable: true,
+    selectable: true,
     monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Décembre'],
     monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun','Jul','Aou','Sep','Oct','Nov','Dec'],
     dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
@@ -42,6 +64,13 @@ export class GestionPointageAjouterPointageOuvrierPage {
         cell.css("background-color", "#ff0000a3");
 
       }
+    },
+    select: function(info) {
+      alert('Clicked on: ' + info.dateStr);
+      alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+      alert('Current view: ' + info.view.type);
+      // change the day's background color just for fun
+      info.dayEl.style.backgroundColor = 'red';
     },
     events: [
       {
@@ -101,6 +130,7 @@ export class GestionPointageAjouterPointageOuvrierPage {
       }
     ]
   };
+*/
 
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {

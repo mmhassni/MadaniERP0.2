@@ -47,10 +47,12 @@ export class SuiviGasoilAjouterBonGasoilPage {
     ["idbongasoil","id","id"],
     ["photobgbongasoil","photobg","text"],
     ["prixunitairebongasoil","prixunitaire","number"],
+    //["datebongasoil","date","date"],
     ["quantitegasoilbongasoil","quantitegasoil","number"],
     ["montantgasoilbongasoil","montantgasoil","number"],
     ["refchantierbongasoil","refchantier","number"],
     ["refvehiculebongasoil","refvehicule","number"],
+    ["refstationbongasoil","refstation","number"],
     ["nompersonnelbongasoil","nompersonnel","text"]
 
   ];
@@ -62,6 +64,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
   public listeChoixTypesVehicule = [];
   public listeChoixTypesEngin = [];
   public listeChoixVehicule = [];
+  public listeChoixStation = [];
 
 
 
@@ -83,6 +86,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
     this.recupererListeChoix("listeChoixTypesVehicule","typevehicule","id","nomtype");
     this.recupererListeChoix("listeChoixTypesEngin","typeengin","id","nomtypeengin");
     this.recupererListeChoix("listeChoixVehicule","vehicule","id","matricule");
+    this.recupererListeChoix("listeChoixStation","station","id","nom");
 
     console.log(this.objetActuel);
 
@@ -123,6 +127,9 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   enregistrerNouvelObjet(){
 
+    (this.objetActuel as any).datebongasoil = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+
+
     this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
 
     //console.log(this.navParams.data.parentPage);
@@ -140,9 +147,8 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    if(!this.havePhotoAttribut){
-      this.navCtrl.pop();
-    }
+    this.navCtrl.pop();
+
 
 
   }

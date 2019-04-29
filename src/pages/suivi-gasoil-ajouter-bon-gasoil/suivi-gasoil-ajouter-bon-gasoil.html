@@ -57,6 +57,13 @@
 
 
   <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Station:</ion-label>
+    <ion-select   name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refstationbongasoil">
+      <ion-option *ngFor="let item of listeChoixStation" [value]="item.id">{{item.nom}}</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
     <ion-label style="opacity:1; color: #000;font-weight: bold">Type véhicule:</ion-label>
     <ion-select #TypeVehicule  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="typevehicule">
       <ion-option *ngFor="let item of listeChoixTypesVehicule" [value]="item.id">{{item.nomtype}}</ion-option>

@@ -5,6 +5,7 @@ import {ListeProduitFournisseurPage} from "../liste-produit-fournisseur/liste-pr
 import {ListeProjetFournisseurAssociePage} from "../liste-projet-fournisseur-associe/liste-projet-fournisseur-associe";
 import {GestionProjetListeEnginPage} from "../gestion-projet-liste-engin/gestion-projet-liste-engin";
 import {GestionProjetListeChantierPage} from "../gestion-projet-liste-chantier/gestion-projet-liste-chantier";
+import {GestionProjetListeArticleProjetAssociePage} from "../gestion-projet-liste-article-projet-associe/gestion-projet-liste-article-projet-associe";
 
 /**
  * Generated class for the GestionProjetChoixActionPage page.
@@ -63,7 +64,7 @@ export class GestionProjetChoixActionPage {
   }
 
   clickChoix4($event , item ) {
-    this.pushInformationsActuelles(this.informationsActuelles,{},ListeProjetFournisseurAssociePage,"passer")
+    this.pushInformationsActuelles(this.informationsActuelles,{},GestionProjetListeArticleProjetAssociePage,"passer")
 
 
   }
