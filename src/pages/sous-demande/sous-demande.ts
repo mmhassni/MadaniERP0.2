@@ -75,7 +75,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/select projetfournisseurassocie.reffournisseur as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from projetfournisseurassocie LEFT JOIN fournisseur ON fournisseur.id = projetfournisseurassocie.reffournisseur where projetfournisseurassocie.refprojet = " + (this.informationsActuelles as any).refprojet)
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select projetfournisseurassocie.reffournisseur as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from projetfournisseurassocie LEFT JOIN fournisseur ON fournisseur.id = projetfournisseurassocie.reffournisseur where projetfournisseurassocie.refprojet = " + (this.informationsActuelles as any).refprojet)
       .subscribe(data => {
         console.log(data);
 
@@ -378,7 +378,7 @@ export class SousDemandePage {
 
   refreshArticles(){
 
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/select article.datereception as datereception, produitfournisseur.prixht as prixarticle, produitfournisseur.tvaenpourcentage as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select article.datereception as datereception, produitfournisseur.prixht as prixarticle, produitfournisseur.tvaenpourcentage as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
       .subscribe(data => {
         console.log(data);
 
@@ -472,7 +472,7 @@ export class SousDemandePage {
 
   getListObjet(nomTableBDD, tableauMappingBDD){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
       requeteGetProjet = requeteGetProjet + " " + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
@@ -491,7 +491,7 @@ export class SousDemandePage {
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -560,7 +560,7 @@ export class SousDemandePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
@@ -669,7 +669,7 @@ export class SousDemandePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {

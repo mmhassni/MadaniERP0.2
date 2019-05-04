@@ -18,6 +18,7 @@ import {GestionArticleProjetListeArticleProjetPage} from "../pages/gestion-artic
 import {GestionIntervenantListeIntervenantPage} from "../pages/gestion-intervenant-liste-intervenant/gestion-intervenant-liste-intervenant";
 import {GestionIncidentListeProjetPage} from "../pages/gestion-incident-liste-projet/gestion-incident-liste-projet";
 import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
+import {GestionPaiementChoixActionPage} from "../pages/gestion-paiement-choix-action/gestion-paiement-choix-action";
 
 @Component({
   templateUrl: 'app.html'
@@ -26,7 +27,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
 
-  rootPage: any = GestionProjetListeProjetPage;
+  rootPage: any = GestionPaiementChoixActionPage;
 
   pages: Array<{title: string, component: any}>;
 
@@ -49,10 +50,9 @@ export class MyApp {
       { title: 'Intervenant', component:  GestionIntervenantListeIntervenantPage},
       { title: 'Incident', component:  GestionIncidentListeProjetPage},
 
-      { title: 'Sous traitances', component: ListPage },
       { title: 'Suivi gasoil', component: SuiviGasoilListeProjetPage },
       { title: "Pointage", component: GestionPointageListeProjetPage },
-      { title: 'Paiement', component: ListPage },
+      { title: 'Paiement', component: GestionPaiementChoixActionPage },
       { title: 'Gestion Projet', component: GestionProjetListeProjetPage },
       { title: 'Utilisateurs', component: HomePage }
 

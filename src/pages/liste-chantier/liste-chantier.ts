@@ -42,7 +42,7 @@ export class ListeChantierPage {
 
   getTable(nomTable){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select";
+    let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select";
     for (let i = 0; i < this.chantierTableauMappingBDD.length; i++) {
 
       requeteGetProjet = requeteGetProjet + " " + this.chantierTableauMappingBDD[i][1] + " as " + this.chantierTableauMappingBDD[i][0] + ",";

@@ -89,11 +89,30 @@ import {GestionProjetListeArticleProjetAssociePage} from "../pages/gestion-proje
 import {GestionProjetAjouterArticleProjetAssociePage} from "../pages/gestion-projet-ajouter-article-projet-associe/gestion-projet-ajouter-article-projet-associe";
 import {GestionProjetListeAvancementArticleProjetPage} from "../pages/gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
 import {GestionProjetAjouterAvancementArticleProjetPage} from "../pages/gestion-projet-ajouter-avancement-article-projet/gestion-projet-ajouter-avancement-article-projet";
-import {GestionCaisseListeFournisseurPage} from "../pages/gestion-caisse-liste-fournisseur/gestion-caisse-liste-fournisseur";
-import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
+import {GestionCaisseListeFournisseurPage} from "../pages/gestion-caisse-liste-fournisseur/gestion-caisse-liste-fournisseur";import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
 import {GestionCaisseAjouterFournisseurPage} from "../pages/gestion-caisse-ajouter-fournisseur/gestion-caisse-ajouter-fournisseur";
 import {GestionCaisseListeAchatPage} from "../pages/gestion-caisse-liste-achat/gestion-caisse-liste-achat";
 import {GestionCaisseAjouterAchatPage} from "../pages/gestion-caisse-ajouter-achat/gestion-caisse-ajouter-achat";
+
+import {GestionPaiementChoixActionPage} from "../pages/gestion-paiement-choix-action/gestion-paiement-choix-action";
+import {GestionPaiementOuvrierListeProjetPage} from "../pages/gestion-paiement-ouvrier-liste-projet/gestion-paiement-ouvrier-liste-projet";
+import {GestionPaiementOuvrierListeChantierPage} from "../pages/gestion-paiement-ouvrier-liste-chantier/gestion-paiement-ouvrier-liste-chantier";
+import {GestionPaiementOuvrierSelectionDatePage} from "../pages/gestion-paiement-ouvrier-selection-date/gestion-paiement-ouvrier-selection-date";
+import {GestionPaiementOuvrieListeSommePointageOuvrierPage} from "../pages/gestion-paiement-ouvrie-liste-somme-pointage-ouvrier/gestion-paiement-ouvrie-liste-somme-pointage-ouvrier";
+
+import {GestionPaiementFournisseurListeChantierPage} from "../pages/gestion-paiement-fournisseur-liste-chantier/gestion-paiement-fournisseur-liste-chantier";
+import {GestionPaiementFournisseurListeProjetPage} from "../pages/gestion-paiement-fournisseur-liste-projet/gestion-paiement-fournisseur-liste-projet";
+import {GestionPaiementFournisseurSelectionDatePage} from "../pages/gestion-paiement-fournisseur-selection-date/gestion-paiement-fournisseur-selection-date";
+import {GestionPaiementFournisseurListeSommeSituationPage} from "../pages/gestion-paiement-fournisseur-liste-somme-situation/gestion-paiement-fournisseur-liste-somme-situation";
+import {GestionPaiementFournisseurAjouterPaiementPage} from "../pages/gestion-paiement-fournisseur-ajouter-paiement/gestion-paiement-fournisseur-ajouter-paiement";
+import {GestionPaiementFournisseurListePaiementPage} from "../pages/gestion-paiement-fournisseur-liste-paiement/gestion-paiement-fournisseur-liste-paiement";
+import {GestionPaiementFournisseurListeChantierPageModule} from "../pages/gestion-paiement-fournisseur-liste-chantier/gestion-paiement-fournisseur-liste-chantier.module";
+import {GestionPaiementGasoilListePaiementPage} from "../pages/gestion-paiement-gasoil-liste-paiement/gestion-paiement-gasoil-liste-paiement";
+import {GestionPaiementGasoilListeProjetPage} from "../pages/gestion-paiement-gasoil-liste-projet/gestion-paiement-gasoil-liste-projet";
+import {GestionPaiementGasoilListeChantierPage} from "../pages/gestion-paiement-gasoil-liste-chantier/gestion-paiement-gasoil-liste-chantier";
+import {GestionPaiementGasoilListeSommeSituationPage} from "../pages/gestion-paiement-gasoil-liste-somme-situation/gestion-paiement-gasoil-liste-somme-situation";
+import {GestionPaiementGasoilAjouterPaiementPage} from "../pages/gestion-paiement-gasoil-ajouter-paiement/gestion-paiement-gasoil-ajouter-paiement";
+import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-gasoil-selection-date/gestion-paiement-gasoil-selection-date";
 
 
 
@@ -180,7 +199,28 @@ import {GestionCaisseAjouterAchatPage} from "../pages/gestion-caisse-ajouter-ach
     GestionCaisseListeFournisseurPage,
     GestionCaisseAjouterFournisseurPage,
     GestionCaisseListeAchatPage,
-    GestionCaisseAjouterAchatPage
+    GestionCaisseAjouterAchatPage,
+
+    GestionPaiementChoixActionPage,
+    GestionPaiementOuvrierListeProjetPage,
+    GestionPaiementOuvrierListeChantierPage,
+    GestionPaiementOuvrierSelectionDatePage,
+    GestionPaiementOuvrieListeSommePointageOuvrierPage,
+
+    GestionPaiementFournisseurListeProjetPage,
+    GestionPaiementFournisseurListeChantierPage,
+    GestionPaiementFournisseurSelectionDatePage,
+    GestionPaiementFournisseurListeSommeSituationPage,
+    GestionPaiementFournisseurAjouterPaiementPage,
+    GestionPaiementFournisseurListePaiementPage,
+
+    GestionPaiementGasoilListeProjetPage,
+    GestionPaiementGasoilListeChantierPage,
+    GestionPaiementGasoilSelectionDatePage,
+    GestionPaiementGasoilListeSommeSituationPage,
+    GestionPaiementGasoilAjouterPaiementPage,
+    GestionPaiementGasoilListePaiementPage
+
 
   ],
   imports: [
@@ -269,11 +309,32 @@ import {GestionCaisseAjouterAchatPage} from "../pages/gestion-caisse-ajouter-ach
     GestionCaisseListeFournisseurPage,
     GestionCaisseAjouterFournisseurPage,
     GestionCaisseListeAchatPage,
-    GestionCaisseAjouterAchatPage
+    GestionCaisseAjouterAchatPage,
+
+    GestionPaiementChoixActionPage,
+    GestionPaiementOuvrierListeProjetPage,
+    GestionPaiementOuvrierListeChantierPage,
+    GestionPaiementOuvrierSelectionDatePage,
+    GestionPaiementOuvrieListeSommePointageOuvrierPage,
+
+    GestionPaiementFournisseurListeProjetPage,
+    GestionPaiementFournisseurListeChantierPage,
+    GestionPaiementFournisseurSelectionDatePage,
+    GestionPaiementFournisseurListeSommeSituationPage,
+    GestionPaiementFournisseurAjouterPaiementPage,
+    GestionPaiementFournisseurListePaiementPage,
+
+    GestionPaiementGasoilListeProjetPage,
+    GestionPaiementGasoilListeChantierPage,
+    GestionPaiementGasoilSelectionDatePage,
+    GestionPaiementGasoilListeSommeSituationPage,
+    GestionPaiementGasoilAjouterPaiementPage,
+    GestionPaiementGasoilListePaiementPage
 
 
   ],
   providers: [
+
     StatusBar,
     SplashScreen,
     Camera,

@@ -60,13 +60,13 @@ export class UtilisateurProvider {
 
     if((this.utilisateur as any).login  && (this.utilisateur as any).mdp){
 
-      let requeteAuthentification = "http://172.20.10.2:9090/requestAny/select * from utilisateur " +
+      let requeteAuthentification = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select * from utilisateur " +
         "where login = '" + (this.utilisateur as any).login + "' " +
         "and mdp = '" + (this.utilisateur as any).mdp + "' " +
         "and active = 'TRUE' " +
         "and login != '' " +
         "and mdp != ''";
-      //let requete1Emei = "http://172.20.10.2:9090/requestAny/select%20refutilisateur,etat%20from%20emei%20where%20emei%20=%20'" + d + "'%20and%20etat='accepted'%20order%20by%20datechangement%20desc";
+      //let requete1Emei = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select%20refutilisateur,etat%20from%20emei%20where%20emei%20=%20'" + d + "'%20and%20etat='accepted'%20order%20by%20datechangement%20desc";
 
       this.httpClient.get(requeteAuthentification)
         .subscribe(data => {

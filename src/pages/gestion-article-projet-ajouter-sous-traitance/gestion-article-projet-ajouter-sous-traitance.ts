@@ -137,7 +137,7 @@ export class GestionArticleProjetAjouterSousTraitancePage {
     }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://172.20.10.2:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+    let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
 
     if(listeAttributsSupplementaires.length){
       for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
@@ -211,7 +211,7 @@ export class GestionArticleProjetAjouterSousTraitancePage {
 
   getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
-    let requeteGetProjet = "http://172.20.10.2:9090/requestAny/select distinct";
+    let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
       requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
@@ -265,7 +265,7 @@ export class GestionArticleProjetAjouterSousTraitancePage {
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -334,7 +334,7 @@ export class GestionArticleProjetAjouterSousTraitancePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
@@ -443,7 +443,7 @@ export class GestionArticleProjetAjouterSousTraitancePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {

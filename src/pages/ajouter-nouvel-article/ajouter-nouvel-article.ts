@@ -52,7 +52,7 @@ export class AjouterNouvelArticlePage {
     console.log(this.articleActuel);
 
 
-    this.httpClient.get("http://172.20.10.2:9090/requestAny/select produitfournisseur.id as idproduitfournisseur ,* from produitfournisseur, fournisseur  where produitfournisseur.reffournisseur = fournisseur.id and produitfournisseur.reffournisseur = " + navParams.data.informationsActuelles.idfournisseur)
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select produitfournisseur.id as idproduitfournisseur ,* from produitfournisseur, fournisseur  where produitfournisseur.reffournisseur = fournisseur.id and produitfournisseur.reffournisseur = " + navParams.data.informationsActuelles.idfournisseur)
       .subscribe(data => {
         console.log(data);
         this.listeArticles = (data as any).features;
@@ -141,7 +141,7 @@ export class AjouterNouvelArticlePage {
     objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/insert into " + nomTableBDD + " (";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/insert into " + nomTableBDD + " (";
 
     //on commence par l'indice 1 pour ne pas inclure la cle de la table
     for (let i = 1; i < tableauMappingBDD.length; i++){
@@ -210,7 +210,7 @@ export class AjouterNouvelArticlePage {
     console.log(objetAEnregistrer);
 
     //debut de la construction de la requete
-    let requeteUpdate = "http://172.20.10.2:9090/requestAny/Update " + nomTableBDD + " set";
+    let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
 
     //apres on doit parcourir tout les champs de notre objet

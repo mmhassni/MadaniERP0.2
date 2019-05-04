@@ -1,0 +1,73 @@
+
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Paiement Fournisseur</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Projet : {{informationsActuelles?.nomprojet}}
+    </ion-label>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Chantier : {{informationsActuelles?.nomchantier}}
+    </ion-label>
+
+  </ion-item>
+
+  <br>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Generer Paiement :</h1>
+
+  </ion-item>
+
+
+  <ion-list>
+
+
+    <ion-item>
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Du :</ion-label>
+      <ion-datetime displayFormat="MMMM, YYYY" pickerFormat="MMMM YYYY" [(ngModel)]="moisdebut"
+                    monthNames="Janvier,février, mars, Avril, Mai, Juin, Juillet, Aout, Septembre, Octobre, Novembre, Décembre"
+                    monthShortNames="jan, fev, mar, avr, mai, jun , jul, aou, sep, oct, nov ,dec"
+      >
+
+      </ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Au :</ion-label>
+      <ion-datetime displayFormat="MMMM, YYYY" pickerFormat="MMMM YYYY" [(ngModel)]="moisfin"
+                    monthNames="Janvier,février, mars, Avril, Mai, Juin, Juillet, Aout, Septembre, Octobre, Novembre, Décembre"
+                    monthShortNames="jan, fev, mar, avr, mai, jun , jul, aou, sep, oct, nov ,dec"
+      >
+
+      </ion-datetime>
+    </ion-item>
+
+
+
+
+
+    <button type="submit" color="secondary" ion-button  block (click)="genererPaiement()">
+      Generer
+    </button>
+
+
+  </ion-list>
+
+</ion-content>

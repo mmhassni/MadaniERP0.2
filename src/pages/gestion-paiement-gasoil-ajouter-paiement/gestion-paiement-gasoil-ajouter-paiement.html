@@ -1,0 +1,98 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Paiement fournisseur</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Paiement :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Num piece :
+    </ion-label>
+    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.numpiecepaiement"  ></ion-input>
+  </ion-item>
+
+
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Montant :
+    </ion-label>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.montantpaiement"  ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Type paiement :</ion-label>
+    <ion-select   name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.typepaiementpaiement">
+      <ion-option value="espece">Espece</ion-option>
+      <ion-option value="cheque">Cheque</ion-option>
+      <ion-option value="virement">Virement</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="objetActuel.typepaiementpaiement == 'cheque' || objetActuel.typepaiementpaiement == 'virement'" >
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Banque :</ion-label>
+    <ion-select   name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refbanquepaiement">
+      <ion-option *ngFor="let item of listeChoixBanque" [value]="item.id">{{item.nom}}</ion-option>
+      <ion-option value="NULL">Autre</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Du :</ion-label>
+    <ion-datetime displayFormat="MMMM, YYYY" pickerFormat="MMMM YYYY" [(ngModel)]="objetActuel.datedebutpaiement"
+                  monthNames="Janvier,février, mars, Avril, Mai, Juin, Juillet, Aout, Septembre, Octobre, Novembre, Décembre"
+                  monthShortNames="jan, fev, mar, avr, mai, jun , jul, aou, sep, oct, nov ,dec">
+
+    </ion-datetime>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Au :</ion-label>
+    <ion-datetime displayFormat="MMMM, YYYY" pickerFormat="MMMM YYYY" [(ngModel)]="objetActuel.datefinpaiement"
+                  monthNames="Janvier,février, mars, Avril, Mai, Juin, Juillet, Aout, Septembre, Octobre, Novembre, Décembre"
+                  monthShortNames="jan, fev, mar, avr, mai, jun , jul, aou, sep, oct, nov ,dec">
+
+    </ion-datetime>
+  </ion-item>
+
+
+
+  <br><br>
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Ajouter
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>
