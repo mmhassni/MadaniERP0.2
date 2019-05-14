@@ -27,7 +27,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
 
-  rootPage: any = GestionPaiementChoixActionPage;
+  rootPage: any = ListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
