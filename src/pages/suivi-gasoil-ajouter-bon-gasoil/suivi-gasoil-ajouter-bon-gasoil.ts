@@ -176,7 +176,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
           console.log(pp);
           console.log(this[pp]);
-          this[pp] = listeARemplir;
+          this[pp.toString()] = listeARemplir;
           console.log(this[pp]);
 
         }

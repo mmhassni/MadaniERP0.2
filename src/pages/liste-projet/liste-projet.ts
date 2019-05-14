@@ -109,7 +109,7 @@ export class ListeProjetPage {
 
   itemTapped(event, item) {
     // That's right, we're pushing to ourselves!
-    if(this.utilisateur != {}){
+  //if(this.utilisateur != {}){
 
       item["utilisateur"]=this.utilisateur;
       item["nomprojet"]=item.nomprojet;
@@ -118,7 +118,7 @@ export class ListeProjetPage {
         informationsActuelles: item
       });
 
-    }
+    //} //fin if
 
   }
 

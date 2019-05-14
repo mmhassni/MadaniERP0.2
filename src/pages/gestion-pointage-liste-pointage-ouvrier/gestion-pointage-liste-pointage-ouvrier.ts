@@ -272,7 +272,7 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
 
           console.log(pp);
           console.log(this[pp]);
-          this[pp] = listeARemplir;
+          this[pp.toString()] = listeARemplir;
           console.log(this[pp]);
 
         }
@@ -872,7 +872,7 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
 
 
               //on doit trouver s'il y a un objet correspondant dans la tableActuelle
-              if(_this.listeObjetActuelle[i]["datepointageouvrier"] == date._d.toISOString().substring(0,10)){
+              if(_this.listeObjetActuelle[i]["datepointageouvrier"] == (date as any)._d.toISOString().substring(0,10)){
                 console.log("yes");
                 nouvelObjetActuelTemp = _this.remplirChampManquant(_this.listeObjetActuelle[i],_this.tableauMappingBDD,[]);
               }
@@ -888,7 +888,7 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
             //sinon
             else{
 
-              _this.objetActuel["datepointageouvrier"] = date._d.toISOString().substring(0,10);
+              _this.objetActuel["datepointageouvrier"] = (date as any)._d.toISOString().substring(0,10);
               _this.objetActuel["refouvrierpointageouvrier"] = (_this.informationsActuelles as any).idouvrier;
               _this.objetActuel["nombreheurepointageouvrier"] = 'NULL';
               _this.objetActuel["refmotifabsencepointagepointageouvrier"] = 'NULL';
@@ -911,12 +911,12 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
             $(this).css('background-color', '#0000ff8f');
             _this.oldDay["htmlElement"] = this;
 
-            if(_this.oldDay["day"] == date._d){
+            if(_this.oldDay["day"] == (date as any)._d){
               _this.oldDayUpdateHeure["day"] = _this.oldDay["day"];
             }
 
 
-            _this.oldDay["day"] = date._d;
+            _this.oldDay["day"] = (date as any)._d;
 
             $(this).css('background-color', '#0000ff8f');
 

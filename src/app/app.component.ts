@@ -4,7 +4,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 import {ListeProjetPage} from "../pages/liste-projet/liste-projet";
 import {UtilisateurProvider} from "../providers/utilisateur/utilisateur";
 import {Subscription} from "rxjs";
@@ -41,15 +40,6 @@ export class MyApp {
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public utilisateurProvider: UtilisateurProvider) {
     this.initializeApp();
 
-    Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
-
-      this.getVersionInfo();
-
-      this.checkChannel();
-
-      this.performManualUpdate();
-
-    })
 
     // used for an example of ngFor and navigation
     this.pages = [
@@ -148,6 +138,9 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+
+
     });
   }
 
