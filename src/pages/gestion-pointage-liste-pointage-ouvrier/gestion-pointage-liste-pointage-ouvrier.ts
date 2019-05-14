@@ -798,6 +798,8 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
     console.log("bien initilise");
   }
 
+
+
   ngOnInit(): void {
 
     let _this = this;
@@ -926,6 +928,7 @@ export class GestionPointageListePointageOuvrierPage implements OnInit{
 
 
   }
+
 
   refrechCalendar() {
 

@@ -572,6 +572,7 @@ export class ModelAjouterPage {
 
     console.log(objetAEnregistrer);
 
+
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
@@ -584,6 +585,7 @@ export class ModelAjouterPage {
         for(let i = 1; i < tableauMappingBDD.length; i++){
 
           if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+
 
 
 

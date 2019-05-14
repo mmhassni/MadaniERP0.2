@@ -124,16 +124,7 @@ export class AjouterProduitFournisseurPage {
       listeARemplir = (data as any).features;
       console.log(listeARemplir);
 
-      for(let pp in this){
-        if(pp == nomListeARemplir){
 
-          console.log(pp);
-          console.log(this[pp]);
-          this[pp] = listeARemplir;
-          console.log(this[pp]);
-
-        }
-      }
 
 
     });

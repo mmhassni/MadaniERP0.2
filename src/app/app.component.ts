@@ -19,6 +19,7 @@ import {GestionIntervenantListeIntervenantPage} from "../pages/gestion-intervena
 import {GestionIncidentListeProjetPage} from "../pages/gestion-incident-liste-projet/gestion-incident-liste-projet";
 import {GestionCaisseListeProjetPage} from "../pages/gestion-caisse-liste-projet/gestion-caisse-liste-projet";
 import {GestionPaiementChoixActionPage} from "../pages/gestion-paiement-choix-action/gestion-paiement-choix-action";
+import {Pro} from "@ionic/pro";
 
 @Component({
   templateUrl: 'app.html'
@@ -34,8 +35,21 @@ export class MyApp {
   public utilisateurSubscription : Subscription;
   public utilisateur : any;
 
+  public progressBar = 0;
+
+
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public utilisateurProvider: UtilisateurProvider) {
     this.initializeApp();
+
+    Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
+
+      this.getVersionInfo();
+
+      this.checkChannel();
+
+      this.performManualUpdate();
+
+    })
 
     // used for an example of ngFor and navigation
     this.pages = [
@@ -71,6 +85,60 @@ export class MyApp {
       }
 
     );
+
+  }
+
+  async getVersionInfo(){
+    const versionInfo = await Pro.deploy.getCurrentVersion();
+    alert(JSON.stringify(versionInfo));
+  }
+
+  async checkChannel() {
+    try {
+      const res = await Pro.deploy.getConfiguration();
+      alert(JSON.stringify(res));
+    } catch (err) {
+      // We encountered an error.
+      // Here's how we would log it to Ionic Pro Monitoring while also catching:
+
+      // Pro.monitoring.exception(err);
+    }
+  }
+
+  async performManualUpdate() {
+
+    /*
+      Here we are going through each manual step of the update process:
+      Check, Download, Extract, and Redirect.
+
+      Ex: Check, Download, Extract when a user logs into your app,
+        but Redirect when they logout for an app that is always running
+        but used with multiple users (like at a doctors office).
+    */
+
+    try {
+      const update = await Pro.deploy.checkForUpdate();
+
+      if (update.available){
+        alert("yes we have available update, on va extraire les update et reloader l app");
+      }
+      else{
+        alert("aucune update, mais on va forcer quand meme");
+      }
+
+      await Pro.deploy.downloadUpdate((progress) => {this.progressBar = progress;});
+      await Pro.deploy.extractUpdate();
+      await Pro.deploy.reloadApp();
+
+      alert("c'est bon on a force avec succés");
+
+    } catch (err) {
+      // We encountered an error.
+      // Here's how we would log it to Ionic Pro Monitoring while also catching:
+      alert(JSON.stringify(err));
+
+      // Pro.monitoring.exception(err);
+    }
 
   }
 
