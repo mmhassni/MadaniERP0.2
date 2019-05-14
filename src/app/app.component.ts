@@ -27,7 +27,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
 
-  rootPage: any = ListeProjetPage;
+  rootPage: any = GestionPointageListeProjetPage;
 
   pages: Array<{title: string, component: any}>;
 
