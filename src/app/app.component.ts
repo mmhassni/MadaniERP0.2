@@ -112,9 +112,10 @@ export class MyApp {
       await Pro.deploy.reloadApp();
 
       if (update.available){
+        alert("MAJ Effectué");
+
       }
       else{
-        alert("MAJ Effectué");
       }
 
 
