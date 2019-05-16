@@ -60,7 +60,7 @@ export class ListeFournisseurPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
-        return ( (item.listeproduits + item.raisonsociale).toLowerCase().indexOf(val.toLowerCase()) > -1);
+        return ( (item.listeproduits + item.raisonsocialefournisseur).toLowerCase().indexOf(val.toLowerCase()) > -1);
       })
     }
   }

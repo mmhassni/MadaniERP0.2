@@ -34,7 +34,14 @@ export class ListeDemandePage {
   
   refresh(){
 
-    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select utilisateur.nom as nomdemandeur,  utilisateur.prenom as prenomdemandeur, demande.id as iddemande , *  from chantier, demande, utilisateur where  demande.refutilisateur = utilisateur.id and demande.refchantier = chantier.id  and chantier.id = " + (this.informationsActuelles as any).idchantier)
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+      "select utilisateur.nom as nomdemandeur,  utilisateur.prenom as prenomdemandeur, demande.id as iddemande , *  " +
+      "from chantier, demande, utilisateur " +
+      "where  demande.refutilisateur = utilisateur.id " +
+      "and demande.refchantier = chantier.id  " +
+      "and chantier.id = " + (this.informationsActuelles as any).idchantier +
+      " order by demande.id desc"
+    )
       .subscribe(data => {
         console.log(data);
         this.listeDemandes = (data as any).features;
@@ -82,7 +89,7 @@ export class ListeDemandePage {
     this.informationsActuelles["datedemande"] = item.datedemande;
     this.informationsActuelles["iddemandeur"] = item.iddemandeur;
     this.informationsActuelles["nomdemandeur"] = item.nomdemandeur;
-    this.informationsActuelles["prenomdemandeur"] = item.nomdemandeur;
+    this.informationsActuelles["prenomdemandeur"] = item.prenomdemandeur;
     this.navCtrl.push(ListeSousDemandePage, {
       informationsActuelles: this.informationsActuelles
     });

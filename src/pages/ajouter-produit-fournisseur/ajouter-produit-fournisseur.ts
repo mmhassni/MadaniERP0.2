@@ -32,7 +32,7 @@ export class AjouterProduitFournisseurPage {
     ["nomproduitfournisseur","nomproduit","text"],
     ["reffournisseur","reffournisseur","number"],
     ["prixhtproduitfournisseur","prixht","number"],
-    ["tvaenpourcentageproduitfournisseur","tvaenpourcentage","text"],
+    ["tvaenpourcentageproduitfournisseur","tvaenpourcentage","number"],
     ["uniteproduitfournisseur","unite","text"],
   ];
 
@@ -108,13 +108,7 @@ export class AjouterProduitFournisseurPage {
   //retourne une liste de choix contenant l'id et le libelle
   recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe){
 
-    for(let pp in this){
 
-      if(pp == nomListeARemplir){
-
-      }
-
-    }
 
     let listeARemplir = [];
     let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + " from " + nomTableListeChoix;
@@ -123,6 +117,8 @@ export class AjouterProduitFournisseurPage {
 
       listeARemplir = (data as any).features;
       console.log(listeARemplir);
+
+      this[nomListeARemplir] = listeARemplir;
 
 
 

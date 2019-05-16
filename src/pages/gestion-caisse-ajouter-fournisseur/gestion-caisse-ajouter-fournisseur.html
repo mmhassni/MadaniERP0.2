@@ -6,7 +6,9 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>Gestion Fournisseur</ion-title>
+
+    <ion-title>Achat Caisse</ion-title>
+
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -52,7 +54,7 @@
     <ion-label style="color: #000;font-weight: bold">
       Patente :
     </ion-label>
-    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.patentefournisseurcaisse"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.patentefournisseurcaisse"  ></ion-input>
   </ion-item>
 
 

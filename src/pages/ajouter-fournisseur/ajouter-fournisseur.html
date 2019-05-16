@@ -6,7 +6,7 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>Fournisseur</ion-title>
+    <ion-title>Gestion Fournisseurs</ion-title>
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -47,14 +47,14 @@
     <ion-label style="color: #000;font-weight: bold">
       Telephone :
     </ion-label>
-    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.telephonefournisseur"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.telephonefournisseur"  ></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label style="color: #000;font-weight: bold">
       Fax :
     </ion-label>
-    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.faxfournisseur"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.faxfournisseur"  ></ion-input>
   </ion-item>
 
   <ion-item>
@@ -68,21 +68,21 @@
     <ion-label style="color: #000;font-weight: bold">
       Patente :
     </ion-label>
-    <ion-input text-center type="text" name="patentefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.patentefournisseur"  ></ion-input>
+    <ion-input text-center type="number" name="patentefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.patentefournisseur"  ></ion-input>
   </ion-item>
 
   <ion-item>
     <ion-label style="color: #000;font-weight: bold">
       RC :
     </ion-label>
-    <ion-input text-center type="text" name="rcfournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.rcfournisseur"  ></ion-input>
+    <ion-input text-center type="number" name="rcfournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="fournisseurActuel.rcfournisseur"  ></ion-input>
   </ion-item>
 
 
 
   <br><br>
   <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
-    Créer Projet
+    Ajouter Fournisseur
   </button>
 
   <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">

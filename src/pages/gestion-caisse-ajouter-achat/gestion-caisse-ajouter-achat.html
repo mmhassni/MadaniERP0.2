@@ -6,7 +6,8 @@
 -->
 <ion-header>
   <ion-navbar>
-      <ion-title>Gestion Achat</ion-title>
+
+    <ion-title>Achat Caisse</ion-title>
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -74,7 +75,7 @@
 
   <br><br>
   <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
-    Créer Fournisseur
+    Ajouter Achat
   </button>
 
   <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">

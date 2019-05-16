@@ -11,7 +11,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Gestion Achat</ion-title>
+    <ion-title>Achat Caisse</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -19,18 +19,13 @@
 
 <ion-content padding>
 
-  <ion-item padding="0">
-    <h1 >Informations:</h1>
-  </ion-item>
 
 
 
 
   <ion-item padding="0">
     <h1 >Liste Projet:</h1>
-    <ion-icon name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
   </ion-item>
-
 
   <ion-list>
     <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">

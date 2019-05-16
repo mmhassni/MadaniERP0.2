@@ -6,7 +6,7 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>Gestion Fournisseur</ion-title>
+    <ion-title>Gestion Fournisseurs</ion-title>
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -45,7 +45,7 @@
     <ion-label style="color: #000;font-weight: bold">
       TVA (%) :
     </ion-label>
-    <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.tvaenpourcentageproduitfournisseur"  ></ion-input>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.tvaenpourcentageproduitfournisseur"  ></ion-input>
   </ion-item>
 
 
@@ -60,7 +60,7 @@
 
   <br><br>
   <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
-    Créer Projet
+    Ajouter Produit
   </button>
 
   <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">

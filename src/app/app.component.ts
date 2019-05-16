@@ -138,15 +138,24 @@ export class MyApp {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
-      Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
+      try{
 
-        this.getVersionInfo();
+        Pro.deploy.configure({channel: 'Production',updateMethod:"auto"}).then( onsucces => {
 
-        this.checkChannel();
+          this.getVersionInfo();
 
-        this.performManualUpdate();
+          this.checkChannel();
 
-      })
+          this.performManualUpdate();
+
+        });
+
+      }
+      catch (err) {
+        console.log(err);
+      }
+
+
 
 
 

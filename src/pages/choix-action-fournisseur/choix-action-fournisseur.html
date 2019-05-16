@@ -4,7 +4,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Demande d'achat</ion-title>
+    <ion-title>Gestion Fournisseurs</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -16,7 +16,7 @@
 
   <ion-item>
     <ion-label style="color: #000;" >
-      Raison sociale : {{informationsActuelles?.raisonsocialefournisseur}}
+      R.S : {{informationsActuelles?.raisonsocialefournisseur}}
     </ion-label>
 
   </ion-item>
@@ -38,14 +38,10 @@
       Liste produit
     </button>
 
-    <button ion-item (click)="listerPaiement($event, item)">
-      <ion-icon name="cash" item-start></ion-icon>
-      Liste paiement
-    </button>
 
     <button ion-item (click)="listerAffectationProjet($event, item)">
       <ion-icon name="body" item-start></ion-icon>
-      Liste affectation projet
+      Affectations projet
     </button>
 
   </ion-list>

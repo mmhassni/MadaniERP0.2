@@ -45,7 +45,12 @@ export class ListeSousDemandePage {
 
   refresh(){
 
-    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * from sousdemande LEFT OUTER JOIN fournisseur ON sousdemande.reffournisseur= fournisseur.id LEFT OUTER JOIN demande ON demande.id= sousdemande.refdemande where demande.id = " + (this.informationsActuelles as any).iddemande)
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+      "select fournisseur.adresse as adressefournisseur, fournisseur.email as emailfournisseur, sousdemande.id as idsousdemande, sousdemande.datemodification as datemodificationsousdemande, fournisseur.id as idfournisseur, fournisseur.raisonsociale as raisonsocialefournisseur, * " +
+      "from sousdemande " +
+      "LEFT OUTER JOIN fournisseur ON sousdemande.reffournisseur= fournisseur.id LEFT OUTER JOIN demande ON demande.id= sousdemande.refdemande " +
+      "where demande.id = " + (this.informationsActuelles as any).iddemande +
+    " order by sousdemande.id desc")
       .subscribe(data => {
         console.log(data);
         this.listeSousDemandes = (data as any).features;
