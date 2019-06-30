@@ -419,7 +419,7 @@ export class ModelAjouterPage {
         },
         err => {
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
             this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
               .subscribe( dataMax =>{
@@ -523,7 +523,7 @@ export class ModelAjouterPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -600,7 +600,7 @@ export class ModelAjouterPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }
@@ -639,7 +639,7 @@ export class ModelAjouterPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -713,7 +713,7 @@ export class ModelAjouterPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,

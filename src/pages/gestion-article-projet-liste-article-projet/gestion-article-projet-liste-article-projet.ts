@@ -62,7 +62,7 @@ export class GestionArticleProjetListeArticleProjetPage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
-        return ( (item.nomouvrier + item.prenomouvrier + item.cinouvrier).toLowerCase().indexOf(val.toLowerCase()) > -1);
+        return ( (item.nomarticleprojet).toLowerCase().indexOf(val.toLowerCase()) > -1);
       })
     }
   }
@@ -375,7 +375,7 @@ export class GestionArticleProjetListeArticleProjetPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -486,7 +486,7 @@ export class GestionArticleProjetListeArticleProjetPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -548,7 +548,7 @@ export class GestionArticleProjetListeArticleProjetPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,

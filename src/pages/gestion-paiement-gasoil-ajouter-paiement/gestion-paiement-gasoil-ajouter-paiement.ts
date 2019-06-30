@@ -445,7 +445,7 @@ export class GestionPaiementGasoilAjouterPaiementPage {
         },
         err => {
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
             this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
               .subscribe( dataMax =>{
@@ -549,7 +549,7 @@ export class GestionPaiementGasoilAjouterPaiementPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -663,7 +663,7 @@ export class GestionPaiementGasoilAjouterPaiementPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -737,7 +737,7 @@ export class GestionPaiementGasoilAjouterPaiementPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,

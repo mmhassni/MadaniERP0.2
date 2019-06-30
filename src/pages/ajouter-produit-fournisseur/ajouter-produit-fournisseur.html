@@ -54,7 +54,6 @@
     <ion-label style="opacity:1; color: #000;font-weight: bold">Unité:</ion-label>
     <ion-select  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.uniteproduitfournisseur">
       <ion-option *ngFor="let item of listeChoixUnites" [value]="item.libelle">{{item.description}}</ion-option>
-      <ion-option value="">Aucune</ion-option>
     </ion-select>
   </ion-item>
 

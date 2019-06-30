@@ -74,14 +74,14 @@ export class ListeProduitFournisseurPage {
 
   ajouterItem() {
 
-    this.pushInformationsActuelles({},{},this.pageDAjout,"ajouter");
+    this.pushInformationsActuelles(this.informationsActuelles,{},this.pageDAjout,"ajouter");
 
 
   }
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",[])
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,""," reffournisseur = " + (this.informationsActuelles as any).idfournisseur,[])
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -158,7 +158,7 @@ export class ListeProduitFournisseurPage {
           requeteGetProjet = requeteGetProjet + " and " + filtreWhere ;
         }
         else{
-          requeteGetProjet = requeteGetProjet + " " + filtreWhere ;
+          requeteGetProjet = requeteGetProjet + " where " + filtreWhere ;
 
         }
 
@@ -313,7 +313,7 @@ export class ListeProduitFournisseurPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -424,7 +424,7 @@ export class ListeProduitFournisseurPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -486,7 +486,7 @@ export class ListeProduitFournisseurPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,

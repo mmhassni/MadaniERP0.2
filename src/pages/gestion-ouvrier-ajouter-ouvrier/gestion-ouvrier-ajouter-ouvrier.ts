@@ -64,7 +64,7 @@ export class GestionOuvrierAjouterOuvrierPage {
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
 
 
-    (this.objetActuel as any).reglementmensuelouvrier = 'f';
+    //(this.objetActuel as any).reglementmensuelouvrier = 'f';
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
@@ -387,7 +387,7 @@ export class GestionOuvrierAjouterOuvrierPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -498,7 +498,7 @@ export class GestionOuvrierAjouterOuvrierPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -572,7 +572,7 @@ export class GestionOuvrierAjouterOuvrierPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,

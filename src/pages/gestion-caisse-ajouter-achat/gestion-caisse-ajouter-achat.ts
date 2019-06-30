@@ -422,7 +422,7 @@ export class GestionCaisseAjouterAchatPage {
         },
         err => {
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
             this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
               .subscribe( dataMax =>{
@@ -526,7 +526,7 @@ export class GestionCaisseAjouterAchatPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -575,6 +575,7 @@ export class GestionCaisseAjouterAchatPage {
 
     console.log(objetAEnregistrer);
 
+
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
@@ -590,6 +591,7 @@ export class GestionCaisseAjouterAchatPage {
 
 
 
+
             //si on trouve les informations du mapping
             if( property == tableauMappingBDD[i][0]){
 
@@ -601,7 +603,7 @@ export class GestionCaisseAjouterAchatPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }
@@ -640,7 +642,7 @@ export class GestionCaisseAjouterAchatPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -714,7 +716,7 @@ export class GestionCaisseAjouterAchatPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,
@@ -774,6 +776,7 @@ export class GestionCaisseAjouterAchatPage {
 
 
   }
+
 
   remplirChampManquant(objetBDD , tableauMappingBDD, tableauChampAIgnorer ){
 

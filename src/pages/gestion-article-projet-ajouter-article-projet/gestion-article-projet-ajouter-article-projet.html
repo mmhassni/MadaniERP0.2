@@ -5,8 +5,10 @@
   Ionic pages and navigation.
 -->
 <ion-header>
+
   <ion-navbar>
-    <ion-title>Gestion Fournisseur</ion-title>
+
+    <ion-title>Gestion Article Projet</ion-title>
 
     <ion-buttons end *ngIf="!modeEditionAffichage">
       <button ion-button color="secondary" (click)="modeEdition()">
@@ -29,7 +31,7 @@
 
   <ion-item>
     <ion-label style="color: #000;font-weight: bold">
-      Nom :
+      Désignation :
     </ion-label>
     <ion-input text-center type="text" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.nomarticleprojet"  ></ion-input>
   </ion-item>

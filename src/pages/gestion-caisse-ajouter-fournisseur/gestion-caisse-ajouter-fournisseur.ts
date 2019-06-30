@@ -334,9 +334,46 @@ export class GestionCaisseAjouterFournisseurPage {
 
     this.httpClient.get(requeteUpdate)
       .subscribe(data => {
+
         console.log(data);
 
-      });
+      },
+        err => {
+
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
+
+
+                let messageGetToast = "Informations enregistrées";
+
+                let toast = this.toastCtrl.create({
+                  message: messageGetToast,
+                  duration: 1000,
+                  position: 'top',
+                  cssClass: "toast-success"
+                });
+
+                toast.present();
+
+
+
+
+          }
+          else{
+            let messageGetToast = "Objet non enregistré";
+
+            let toast = this.toastCtrl.create({
+              message: messageGetToast,
+              duration: 1000,
+              position: 'top',
+              cssClass: "toast-echec"
+            });
+
+            toast.present();
+          }
+
+
+
+        });
 
 
   }
@@ -425,13 +462,23 @@ export class GestionCaisseAjouterFournisseurPage {
         },
         err => {
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
             this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
               .subscribe( dataMax =>{
                 (this.objetActuel as any)[this.tableauMappingBDD[0][0]]=(dataMax as any).features.maxid;
                 this.updatePostObjet(objetAEnregistrer, nomTableBDD, (dataMax as any).features[0].maxid, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle);
 
+                let messageGetToast = "Informations enregistrées";
+
+                let toast = this.toastCtrl.create({
+                  message: messageGetToast,
+                  duration: 1000,
+                  position: 'top',
+                  cssClass: "toast-success"
+                });
+
+                toast.present();
 
               });
 
@@ -528,7 +575,7 @@ export class GestionCaisseAjouterFournisseurPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -641,7 +688,7 @@ export class GestionCaisseAjouterFournisseurPage {
 
       let messageGetToast = "Informations attributaires enregistrées";
 
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
         let toast = this.toastCtrl.create({
           message: messageGetToast,
@@ -715,7 +762,7 @@ export class GestionCaisseAjouterFournisseurPage {
 
           let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
 
-          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête."){
+          if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
 
             this.httpClient.post( requeteUpdate,
