@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import {GestionProjetListeAvancementArticleProjetPage} from "../gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
+import {GestionProjetArticleProjetListeIntervenantPage} from "../gestion-projet-article-projet-liste-intervenant/gestion-projet-article-projet-liste-intervenant";
 
 /**
  * Generated class for the GestionProjetListeArticleProjetAssociePage page.
@@ -29,7 +30,7 @@ export class GestionProjetListeArticleProjetAssociePage {
 
   //la liste des tables suivantes
   public pageDAjout : any = null;
-  public pageSuivante : any = GestionProjetListeAvancementArticleProjetPage;
+  public pageSuivante : any = GestionProjetArticleProjetListeIntervenantPage;
 
   public tableauMappingBDD = [
     ["idprojetarticleprojetassocie","id","number"],
@@ -71,6 +72,7 @@ export class GestionProjetListeArticleProjetAssociePage {
       }
     }
   }
+
 
   itemTapped(event, item) {
 

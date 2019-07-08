@@ -75,7 +75,7 @@ export class ListeFournisseurPage {
       "select id as idfournisseur, " +
       "adresse as adressefournisseur ," +
       " raisonsociale as raisonsocialefournisseur," +
-      " raisonsociale as telephonefournisseur," +
+      " tel as telephonefournisseur," +
       " fax as faxfournisseur," +
       " email as emailfournisseur," +
       " patente as patentefournisseur," +
@@ -86,7 +86,7 @@ export class ListeFournisseurPage {
       "(select " + this.genererListeAttributRequete("fournisseur",this.tableauMappingBDD) + ", " +
       "string_agg(produitfournisseur.nomproduit,',') as listeproduits " +
       "from produitfournisseur LEFT JOIN fournisseur ON fournisseur.id = produitfournisseur.reffournisseur " +
-      "group by fournisseur.id order by fournisseur.id desc) as PF on PF.idfournisseur = fournisseur.id")
+      "group by fournisseur.id order by fournisseur.id desc) as PF on PF.idfournisseur = fournisseur.id order by fournisseur.id desc")
       .subscribe(data => {
 
         this.listeFournisseurs = (data as any).features;

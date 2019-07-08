@@ -27,7 +27,7 @@ export class GestionOuvrierAjouterChantierAssociePage {
   //non de la table principale de cette page
   public nomTableActuelle = "chantierouvrierassocie";
 
-  public tableObjetAAssocier = "ouvrier";
+  public tableObjetAAssocier = "chantier";
   public informationsObjetAAssocier = {};
 
 
@@ -273,6 +273,7 @@ export class GestionOuvrierAjouterChantierAssociePage {
     return this.httpClient.get(requeteGetProjet);
 
   }
+
 
   insertObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 

@@ -11,7 +11,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Gestion Article Projet</ion-title>
+    <ion-title>Gestion Projet</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -32,28 +32,22 @@
 
   <ion-item>
     <ion-label style="color: #000;" >
-      Article Projet : {{informationsActuelles?.nomarticleprojet}}
+      Article projet : {{informationsActuelles?.nomarticleprojet}}
     </ion-label>
 
   </ion-item>
-  <ion-item>
-    <ion-label style="color: #000;" >
-      Intervenant : {{informationsActuelles?.nom}}
-    </ion-label>
 
-  </ion-item>
 
   <ion-item padding="0">
-    <h1 >Avancements:</h1>
+    <h1 >Intervenant:</h1>
     <ion-icon name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
   </ion-item>
 
 
   <ion-list>
     <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
-      Date : {{item?.dateavancementarticleprojet}}
-      <p>Avancement(%) : {{(item?.quantiteavancementarticleprojet / informationsActuelles?.quantiteprojetarticleprojetassocie)*100}} %</p>
-      <p>Quantité : {{item?.quantiteavancementarticleprojet}} </p>
+      {{item?.nom}}
+      <p>Raison sociale : {{item?.nom}}</p>
       <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
     </button>
   </ion-list>

@@ -113,6 +113,10 @@ import {GestionPaiementGasoilListeChantierPage} from "../pages/gestion-paiement-
 import {GestionPaiementGasoilListeSommeSituationPage} from "../pages/gestion-paiement-gasoil-liste-somme-situation/gestion-paiement-gasoil-liste-somme-situation";
 import {GestionPaiementGasoilAjouterPaiementPage} from "../pages/gestion-paiement-gasoil-ajouter-paiement/gestion-paiement-gasoil-ajouter-paiement";
 import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-gasoil-selection-date/gestion-paiement-gasoil-selection-date";
+import {AjouterVoyagePage} from "../pages/ajouter-voyage/ajouter-voyage";
+import {GestionProjetArticleProjetListeIntervenantPage} from "../pages/gestion-projet-article-projet-liste-intervenant/gestion-projet-article-projet-liste-intervenant";
+import {ListeArticleVoyagePage} from "../pages/liste-article-voyage/liste-article-voyage";
+import {AjouterArticleVoyagePage} from "../pages/ajouter-article-voyage/ajouter-article-voyage";
 
 
 
@@ -156,6 +160,8 @@ import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-
     GestionProjetAjouterArticleProjetAssociePage,
     GestionProjetListeAvancementArticleProjetPage,
     GestionProjetAjouterAvancementArticleProjetPage,
+    GestionProjetArticleProjetListeIntervenantPage,
+
 
     GestionVehiculeListeVehiculePage,
     GestionVehiculeAjouterVehiculePage,
@@ -219,7 +225,11 @@ import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-
     GestionPaiementGasoilSelectionDatePage,
     GestionPaiementGasoilListeSommeSituationPage,
     GestionPaiementGasoilAjouterPaiementPage,
-    GestionPaiementGasoilListePaiementPage
+    GestionPaiementGasoilListePaiementPage,
+
+    AjouterVoyagePage,
+    ListeArticleVoyagePage,
+    AjouterArticleVoyagePage
 
 
   ],
@@ -266,6 +276,7 @@ import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-
     GestionProjetAjouterArticleProjetAssociePage,
     GestionProjetListeAvancementArticleProjetPage,
     GestionProjetAjouterAvancementArticleProjetPage,
+    GestionProjetArticleProjetListeIntervenantPage,
 
 
     GestionVehiculeListeVehiculePage,
@@ -329,7 +340,11 @@ import {GestionPaiementGasoilSelectionDatePage} from "../pages/gestion-paiement-
     GestionPaiementGasoilSelectionDatePage,
     GestionPaiementGasoilListeSommeSituationPage,
     GestionPaiementGasoilAjouterPaiementPage,
-    GestionPaiementGasoilListePaiementPage
+    GestionPaiementGasoilListePaiementPage,
+
+    AjouterVoyagePage,
+    ListeArticleVoyagePage,
+    AjouterArticleVoyagePage
 
 
   ],

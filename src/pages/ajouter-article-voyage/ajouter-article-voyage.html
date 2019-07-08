@@ -1,0 +1,62 @@
+<!--
+  Generated template for the AjouterProjetPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Sous demande</ion-title>
+
+    <ion-buttons end *ngIf="!modeEditionAffichage">
+      <button ion-button color="secondary" (click)="modeEdition()">
+        Modifier
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content padding>
+
+  <ion-item padding="0" style="border-bottom: 0px;">
+    <h1 >Article reçu :</h1>
+
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;font-weight: bold">
+      Quantite reçue :
+    </ion-label>
+    <ion-input text-center type="number" name="adressefournisseur" [disabled]="!modeEditionAffichage" placeholder="" [(ngModel)]="objetActuel.quantiterecuevoyagearticleprojet"  ></ion-input>
+  </ion-item>
+
+
+
+
+  <ion-item>
+    <ion-label style="opacity:1; color: #000;font-weight: bold">Article:</ion-label>
+    <ion-select  name = "unites" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refproduitfournisseurvoyagearticleprojet">
+      <ion-option *ngFor="let item of listeChoixArticleSousDemande" [value]="item.id">{{item.nomproduit}}</ion-option>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+
+  <button *ngIf="!modeModificationCreation && modeEditionAffichage" type="submit" color="secondary" ion-button  block (click)="enregistrerNouvelObjet()">
+    Ajouter
+  </button>
+
+  <button *ngIf="modeModificationCreation" type="submit" color="tertiary" ion-button  block (click)="enregistrerModificationObjet()">
+    Enregistrer modifications
+  </button>
+
+
+
+
+
+
+</ion-content>

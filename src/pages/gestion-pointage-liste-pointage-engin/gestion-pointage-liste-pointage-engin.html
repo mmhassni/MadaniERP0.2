@@ -1,15 +1,111 @@
+
+
 <!--
-  Generated template for the GestionPointageListePointageEnginPage page.
+  Generated template for the ListeFournisseurPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>gestionPointageListePointageEngin</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Pointage Engin</ion-title>
   </ion-navbar>
 </ion-header>
 
+
+
 <ion-content padding>
 
+  <ion-item padding="0">
+    <h1 >Informations:</h1>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Projet : {{informationsActuelles?.nomprojet}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Chantier : {{informationsActuelles?.nomchantier}}
+    </ion-label>
+  </ion-item>
+
+  <ion-item>
+    <ion-label style="color: #000;" >
+      Matricule : {{informationsActuelles?.matriculevehicule}}
+    </ion-label>
+  </ion-item>
+
+  <div *ngIf="1==2">
+
+    <ion-item padding="0">
+      <h1 >Pointage:</h1>
+      <ion-icon name="add-circle" (click)="ajouterItem()" item-end></ion-icon>
+    </ion-item>
+
+    <ion-list>
+      <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
+        {{item?.date}}
+        <p>présence : {{item?.datepointagevehicule}}</p>
+        <p>heures : {{item?.nombreheurepointagevehicule}}</p>
+
+        <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+      </button>
+    </ion-list>
+
+  </div>
+
+  <br>
+  <br>
+  <angular2-fullcalendar #hashCalendar  [(options)]="calendarOptions"  (initialized)="onCalendarInit($event)"></angular2-fullcalendar>
+
+
+  <button (click)="refrechCalendar()" >refrech</button>
+
+  <div *ngIf="objetActuel && objetActuel.idpointagevehicule != 'NULL'">
+    <ion-item *ngIf="objetActuel && objetActuel.nombreheurepointagevehicule && (objetActuel.nombreheurepointagevehicule == '12' || objetActuel.nombreheurepointagevehicule == '8' || objetActuel.nombreheurepointagevehicule == '4' || objetActuel.nombreheurepointagevehicule == '0') ">
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Nombre d'heure:</ion-label>
+      <ion-select (ionChange) = "updateHeurePointage($event)"   name = "unites" [(ngModel)]="objetActuel.nombreheurepointagevehicule">
+        <ion-option value="12">12H</ion-option>
+        <ion-option value="8">8H</ion-option>
+        <ion-option value="4">4H</ion-option>
+        <ion-option value="0">0H</ion-option>
+      </ion-select>
+    </ion-item>
+
+
+
+
+    <ion-item *ngIf="objetActuel && objetActuel.nombreheurepointagevehicule && objetActuel.nombreheurepointagevehicule < 8">
+      <ion-label style="opacity:1; color: #000;font-weight: bold">Motif Absence:</ion-label>
+      <ion-select (ionChange) = "updateMotifPointage($event)"  #Projet  name = "unites" [(ngModel)]="objetActuel.refmotifabsencepointagepointagevehicule">
+        <ion-option *ngFor="let item of listeChoixMotifAbsencePointage" [value]="item.id">{{item.motif}}</ion-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <div *ngIf="objetActuel && objetActuel.idpointagevehicule == 'NULL'">
+
+    <button color="secondary" ion-button  block (click)="marquerAbsent()">
+      Marquer Absent
+    </button>
+
+    <button  color="tertiary" ion-button  block (click)="marquerPresent()">
+      Marquer Présent
+    </button>
+
+  </div>
+
+
+
+  <br><br><br>
+  <br><br><br>
+  <br><br><br>
+
 </ion-content>
+

@@ -755,12 +755,12 @@ export class GestionVehiculeAjouterChantierAssociePage {
 
   }
 
-  actualiserObjetAAssocier(){
-    this.getListObjet(this.tableObjetAAssocier,this.tableauMappingBDDObjetAAssocier,[],this.tableObjetAAssocier + ".id = " + this.objetActuel[this.tableauMappingBDD[1][0]],[],false)
-      .subscribe( data => {
-        this.informationsObjetAAssocier = (data as any).features[0];
-      });
-  }
+    actualiserObjetAAssocier(){
+      this.getListObjet(this.tableObjetAAssocier,this.tableauMappingBDDObjetAAssocier,[],this.tableObjetAAssocier + ".id = " + this.objetActuel[this.tableauMappingBDD[1][0]],[],false)
+        .subscribe( data => {
+          this.informationsObjetAAssocier = (data as any).features[0];
+        });
+    }
 
   objetToArray(objet){
     let objetRetour = [];

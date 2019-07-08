@@ -1,16 +1,10 @@
 import { Component } from '@angular/core';
-import {
-  IonicPage,
-  NavController,
-  NavParams,
-  ToastController
-} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import {CameraProvider} from "../../providers/camera/camera";
 
-
 /**
- * Generated class for the SuiviGasoilAjouterBonGasoilPage page.
+ * Generated class for the AjouterVoyagePage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -18,10 +12,12 @@ import {CameraProvider} from "../../providers/camera/camera";
 
 @IonicPage()
 @Component({
-  selector: 'page-suivi-gasoil-ajouter-bon-gasoil',
-  templateUrl: 'suivi-gasoil-ajouter-bon-gasoil.html',
+  selector: 'page-ajouter-voyage',
+  templateUrl: 'ajouter-voyage.html',
 })
-export class SuiviGasoilAjouterBonGasoilPage {
+export class AjouterVoyagePage {
+
+
 
   //le mode edition se divise en deux modes : le mode modification et le mode creation
   public modeModificationCreation = false; //modeModification est l'opposé du mode Creation
@@ -31,65 +27,46 @@ export class SuiviGasoilAjouterBonGasoilPage {
   public objetActuel = {};
 
   //non de la table principale de cette page
-  public nomTableActuelle = "bongasoil";
+  public nomTableActuelle = "voyage";
 
-  public champsPredefinis = ["refchantierbongasoil"];
+  public champsPredefinis = [];
 
   public havePhotoAttribut = true;
 
-  public parametresPost = ["photobgbongasoil"];
-  public parametresPostLibelle = ["Photo Bon Gasoil"];
-
-
-  public plateformeIsIOS = false;
+  public parametresPost = ["photoblvoyage","photofourniturevoyage"];
+  public parametresPostLibelle = ["Photo Bon Livraison","Photo Fourniture"];
 
   public tableauMappingBDD = [
-    ["idbongasoil","id","id"],
-    ["photobgbongasoil","photobg","text"],
-    ["prixunitairebongasoil","prixunitaire","number"],
-    //["datebongasoil","date","date"],
-    ["quantitegasoilbongasoil","quantitegasoil","number"],
-    ["montantgasoilbongasoil","montantgasoil","number"],
-    ["refchantierbongasoil","refchantier","number"],
-    ["refvehiculebongasoil","refvehicule","number"],
-    ["refstationbongasoil","refstation","number"],
-    ["nompersonnelbongasoil","nompersonnel","text"]
-
+    ["idvoyage","id","number"],
+    ["photoblvoyage","photobl","text"],
+    ["photofourniturevoyage","photofourniture","text"],
+    ["refsousdemandevoyage","refsousdemande","number"],
+    ["numeroblvoyage","numerobl","text"]
   ];
 
   public enregistrementColonneIgnore = [];
 
-  public typeVehicule : any;
-
-  public listeChoixTypesVehicule = [];
-  public listeChoixTypesEngin = [];
-  public listeChoixVehicule = [];
-  public listeChoixStation = [];
+  public listeChoixUnites = [];
 
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController, public cameraProvider : CameraProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,public httpClient : HttpClient,public toastCtrl : ToastController,  public cameraProvider : CameraProvider) {
 
 
     console.log("bienvenu au constructeur");
+    console.log(navParams.data.informationsActuelles);
 
     //on recupere les informations recuperees de la bdd
     this.objetActuel = navParams.data.informationsActuelles;
 
-    console.log(navParams.data.informationsActuelles);
+    this.objetActuel["refsousdemandevoyage"] = this.objetActuel["idsousdemande"];
+
 
     //on saisie les champs manquants selon les cas
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
-    //(this.objetActuel as any).refchantier = navParams.data.informationsActuelles.idchantier;
 
     //on initialise les liste de choix
-    this.recupererListeChoix("listeChoixTypesVehicule","typevehicule","id","nomtype");
-    this.recupererListeChoix("listeChoixTypesEngin","typeengin","id","nomtypeengin");
-    this.recupererListeChoix("listeChoixVehicule","vehicule","id","matricule");
-    this.recupererListeChoix("listeChoixStation","station","id","nom");
-
-    console.log(this.objetActuel);
-
+    this.recupererListeChoix("listeChoixUnites","unites","libelle","description",[],"",[]);
 
     //si on a des informations dans le navParams alors on va ajouter passer au mode affichage
     if(navParams.data.action &&  navParams.data.action == "ajouter"){
@@ -101,9 +78,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
     }
-    // cad le mode detail ou le mode modification
     else{
-
 
       console.log(this.objetActuel);
       this.modeModificationCreation = false;
@@ -127,16 +102,14 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   enregistrerNouvelObjet(){
 
-    (this.objetActuel as any).datebongasoil = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
 
-
-    this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
-
-    //console.log(this.navParams.data.parentPage);
-
-    //this.navParams.data.parentPage.refresh();
-
-    this.navCtrl.pop();
+    if(this.havePhotoAttribut){
+      this.insertPostObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
+    }
+    else{
+      this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    }
 
 
   }
@@ -145,26 +118,65 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     console.log(this.objetActuel);
 
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    this.navCtrl.pop();
 
 
 
   }
-
 
   photoChooser(objetActuel , photobgbongasoil ) {
     this.cameraProvider.photoChooser(objetActuel,photobgbongasoil);
   }
 
   //retourne une liste de choix contenant l'id et le libelle
-  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe){
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
 
+    for(let pp in this){
 
+      if(pp == nomListeARemplir){
+
+      }
+
+    }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
+
+      }
+    }
+    else{
+
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
+
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -203,17 +215,52 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD){
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
-    let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select";
+    let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
 
-      requeteGetProjet = requeteGetProjet + " " + tableauMappingBDD[i][1] + " as " + tableauMappingBDD[i][0] + ",";
+      requeteGetProjet = requeteGetProjet + " " + nomTableBDD + "." + tableauMappingBDD[i][1] + ' as "' + tableauMappingBDD[i][0] + '",';
 
     }
 
-    requeteGetProjet = requeteGetProjet + " * from " + nomTableBDD + " order by " + tableauMappingBDD[0][1] + " desc";
+    //on enleve la derniere virgule
+    requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) ;
 
+    if(importerLesAttributsEtoile){
+      //dabord on reference la table principale dans le from
+      requeteGetProjet = requeteGetProjet + ", *";
+    }
+
+
+    if(complementChamps){
+      requeteGetProjet = requeteGetProjet + ", " + complementChamps;
+    }
+
+    requeteGetProjet = requeteGetProjet + " from " + nomTableBDD;
+
+
+
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetProjet = requeteGetProjet + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableBDD + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(filtreWhere != "" ){
+      requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
+    }
+
+    if(groupBy != "" ){
+      requeteGetProjet = requeteGetProjet + " group by " + groupBy;
+    }
+
+    requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
+
+
+    console.log(requeteGetProjet);
     return this.httpClient.get(requeteGetProjet);
 
   }
@@ -285,13 +332,11 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   }
 
-  /*
-  insertPostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+  insertPostObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
-
-    console.log(objetAEnregistrer);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/insert into " + nomTableBDD + " (";
@@ -310,37 +355,35 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
 
-      if( ! parametresPost.includes(property) ){
+      if( ! parametresPost.includes(property) ) {
 
         // on doit recuperer les informations du mapping
         for(let i = 1; i < tableauMappingBDD.length; i++){
 
-          if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+          if( property == tableauMappingBDD[i][0]){
 
+            if(tableauMappingBDD[i][2] == "text"){
 
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
 
-            //si on trouve les informations du mapping
-            if( property == tableauMappingBDD[i][0]){
+            }
 
+            else if(tableauMappingBDD[i][2] == "date"){
 
-
-              if(tableauMappingBDD[i][2] == "text"){
-                requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
-
+              if(objetAEnregistrer[property] != "NULL"){
+                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
               }
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
 
-              else if(tableauMappingBDD[i][2] == "date"){
+            }
+            else if(tableauMappingBDD[i][2] == "number"){
 
-                if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
-                }
-                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
 
-              }
-              //les autres cas se traitent de la meme facon
-              else{
-                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
-              }
+            }
+            //les autres cas se traitent de la meme facon
+            else{
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
 
             }
 
@@ -349,9 +392,16 @@ export class SuiviGasoilAjouterBonGasoilPage {
         }
 
       }
+      else{
+
+        requeteUpdate = requeteUpdate + "'"  + "',";
+
+
+      }
+
+
 
     }
-
 
     //on doit enlever la derniere virgule
     requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
@@ -359,128 +409,46 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
 
-    //enregistrement des parametres attributaires
-    this.httpClient.get(requeteUpdate).subscribe(data => {
-
-      console.log(data);
-
-    },err => {
-
-      let messageGetToast = "Informations attributaires enregistrées";
-
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
-
-        let toast = this.toastCtrl.create({
-          message: messageGetToast,
-          duration: 1000,
-          position: 'top',
-          cssClass: "toast-success"
-        });
-
-        toast.present();
+    this.httpClient.get(requeteUpdate)
+      .subscribe(data => {
 
 
-
-      }
-      else{
-        messageGetToast = "Informations attributaires non enregistrées";
-
-        let toast = this.toastCtrl.create({
-          message: messageGetToast,
-          duration: 1000,
-          position: 'top',
-          cssClass: "toast-echec"
-        });
-
-        toast.present();
-
-      }
-
-
-    });
-
-
-    //enregistrement des parametres post
-    for(let i = 0; i < parametresPost.length; i++){
-
-      //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
-
-      //preparation de la requete
-      requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
-
-      //recuperation des informations du post
-      let body = objetAEnregistrer[parametresPost[i]];
-
-      if(!body){
-        body = "NULL";
-        console.log("aucune photo");
-      }
-
-
-      this.httpClient.post(requeteUpdatePost,
-
-        body)
-
-        .subscribe(data => {
-
-          console.log(data);
-
-        },err => {
-
-          let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
+        },
+        err => {
 
           if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
+            this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
+              .subscribe( dataMax =>{
+                (this.objetActuel as any)[this.tableauMappingBDD[0][0]]=(dataMax as any).features.maxid;
+                this.updatePostObjet(objetAEnregistrer, nomTableBDD, (dataMax as any).features[0].maxid, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle);
 
-            this.httpClient.post( requeteUpdate,
-
-              body)
-
-              .subscribe(data2 => {
-
-                console.log(data2);
-
-              },err2 => {
-
-
+                this.navCtrl.pop();
 
               });
 
 
-            let toast = this.toastCtrl.create({
-              message: messageToastPost,
-              duration: Number((2*i +3).toString() + '000'),
-              position: 'top',
-              cssClass: "toast-success"
-            });
-
-            toast.present();
 
           }
           else{
-
-            messageToastPost = "Informations " + parametresPostLibelle[i] +  " non enregistrées";
+            let messageGetToast = "Objet non enregistré";
 
             let toast = this.toastCtrl.create({
-              message: messageToastPost,
-              duration: Number((2*i +3).toString() + '000'),
+              message: messageGetToast,
+              duration: 1000,
               position: 'top',
               cssClass: "toast-echec"
             });
 
             toast.present();
-
           }
 
-        });
 
 
-    }
-
+        }
+      );
 
   }
-  */
 
   updateGetObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
@@ -563,6 +531,9 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
         toast.present();
 
+        this.navCtrl.pop();
+
+
 
 
       }
@@ -598,6 +569,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     console.log(objetAEnregistrer);
 
+
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
@@ -613,6 +585,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
 
+
             //si on trouve les informations du mapping
             if( property == tableauMappingBDD[i][0]){
 
@@ -624,7 +597,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }
@@ -764,6 +737,8 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
             toast.present();
 
+
+
           }
           else{
 
@@ -794,6 +769,11 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
 
+  }
+
+
+  genererLeftJoin(nomTableBDD,tableRef){
+    return "LEFT JOIN " + tableRef + " ON " + tableRef + ".id = " + nomTableBDD + ".ref" + tableRef;
   }
 
   remplirChampManquant(objetBDD , tableauMappingBDD, tableauChampAIgnorer ){
@@ -853,18 +833,27 @@ export class SuiviGasoilAjouterBonGasoilPage {
   objectIsFrameworklyNull(objetATester,champsPredefinis){
 
     let objectIsFrameworklyNull = true;
-    for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
 
-      if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
-        objectIsFrameworklyNull = false;
-        console.log(this.tableauMappingBDD[i][0]);
+    //si els champs predefinis sont null alors l utilisateur ne veut meme pas tester cet objet
+    if(champsPredefinis){
+      for(let i = 1 ; i < this.tableauMappingBDD.length; i++){
+
+        if(objetATester[this.tableauMappingBDD[i][0]] != '' && objetATester[this.tableauMappingBDD[i][0]] != 'NULL' && champsPredefinis.indexOf(this.tableauMappingBDD[i][0]) < 0){
+          objectIsFrameworklyNull = false;
+          console.log(this.tableauMappingBDD[i][0]);
+        }
       }
     }
+    else{
+      objectIsFrameworklyNull = false;
+    }
+
 
 
     return objectIsFrameworklyNull;
 
   }
+
 
   modeEdition() {
     this.modeModificationCreation = true;

@@ -39,7 +39,7 @@ export class GestionProjetAjouterAvancementArticleProjetPage {
     ["dateavancementarticleprojet","date","date"],
     ["observationavancementarticleprojet","observation","text"],
     ["quantiteavancementarticleprojet","quantite","number"],
-    ["refprojetarticleprojetassocieavancementarticleprojet","refprojetarticleprojetassocie","number"]
+    ["refsoustraitanceavancementarticleprojet","refsoustraitance","number"]
   ];
 
   public enregistrementColonneIgnore = [];
@@ -56,7 +56,8 @@ export class GestionProjetAjouterAvancementArticleProjetPage {
     //on recupere les informations recuperees de la bdd
     this.objetActuel = navParams.data.informationsActuelles;
 
-    (this.objetActuel as any).refprojetarticleprojetassocieavancementarticleprojet = (this.objetActuel as any).idprojetarticleprojetassocie;
+    (this.objetActuel as any).refsoustraitance = (this.objetActuel as any).idsoustraitance;
+    (this.objetActuel as any).refsoustraitanceavancementarticleprojet = (this.objetActuel as any).idsoustraitance;
 
     //on saisie les champs manquants selon les cas
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
@@ -114,7 +115,7 @@ export class GestionProjetAjouterAvancementArticleProjetPage {
 
     console.log(this.objetActuel);
 
-    (this.objetActuel as any).dateavancementarticleprojet = (new Date()).toISOString().substring(0,10);
+    (this.objetActuel as any).dateavancementarticleprojet = "'" + (new Date()).toISOString().substring(0,10) + "'";
 
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 

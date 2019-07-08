@@ -14,6 +14,8 @@ import { ToastController } from 'ionic-angular';
 import { normalizeURL } from 'ionic-angular';
 
 import { AlertController } from 'ionic-angular';
+import {AjouterVoyagePage} from "../ajouter-voyage/ajouter-voyage";
+import {ListeArticleVoyagePage} from "../liste-article-voyage/liste-article-voyage";
 
 
 
@@ -48,19 +50,20 @@ export class SousDemandePage {
   public tableauMappingBDD = [
     ["idsousdemande","id","number"],
     ["idfournisseur","reffournisseur","number"],
-    ["photobl","photobl","text"],
+    //["photobl","photobl","text"],
     ["observations","observations","text"],
-    ["numerobl","numerobl","text"],
+    //["numerobl","numerobl","text"],
     ["datemodificationsousdemande","datemodification","date"],
     ["traitee","traitee","text"],
     ["validee","validee","text"],
-    ["receptionnee","receptionnee","text"],
+    //["receptionnee","receptionnee","text"],
     ["suprimee","suprimee","text"],
-    ["photofourniture","photofourniture","text"]
+    //["photofourniture","photofourniture","text"]
   ];
 
 
   public sousdemandeActuelle = {};
+  listeVoyages: any;
 
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, private camera: Camera, private filePath: FilePath, public platform: Platform, public actionSheetCtrl: ActionSheetController, private emailComposer: EmailComposer , public toastCtrl: ToastController, public toast: Toast, private alertCtrl: AlertController) {
@@ -85,7 +88,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.refreshArticles();
+    this.refreshVoyages();
 
 
 
@@ -100,6 +103,8 @@ export class SousDemandePage {
     return 0;
   }
 
+
+
   detailTapped($event, item) {
 
     event.stopPropagation();
@@ -108,7 +113,7 @@ export class SousDemandePage {
     item["idsousdemande"] = (this.informationsActuelles as any).idsousdemande;
     item["quantitesaisiearticle"] = (this.informationsActuelles as any).quantitesaisiearticle;
 
-    console.log(item);
+    //console.log(item);
 
     this.navCtrl.push(AjouterNouvelArticlePage, {
       informationsActuelles: item
@@ -372,19 +377,43 @@ export class SousDemandePage {
   //rafraichir les articles
   ionViewDidEnter() {
 
-    this.refreshArticles();
+    this.refreshVoyages();
+    this.refreshArticle();
 
   }
 
-  refreshArticles(){
-
-    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select article.datereception as datereception, produitfournisseur.prixht as prixarticle, produitfournisseur.tvaenpourcentage as tvaarticle, article.id as idarticle, * from article, sousdemande, produitfournisseur where article.refsousdemande = sousdemande.id   and article.refproduitfournisseur = produitfournisseur.id and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande)
-      .subscribe(data => {
-        console.log(data);
+  refreshArticle(){
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+      "select * " +
+      "from article " +
+      "where refsousdemande = " + this.informationsActuelles["idsousdemande"] + " " +
+      "order by id ")
+      .subscribe( data => {
 
         this.listeArticles = (data as any).features;
 
       });
+  }
+
+  refreshVoyages(){
+
+    this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+      "select " +
+        "voyage.numerobl as numeroblvoyage, " +
+        "voyage.refsousdemande as numeroblvoyage, " +
+        "voyage.photobl as photoblvoyage, " +
+        "voyage.photofourniture as photofourniturevoyage " +
+      "from voyage " +
+      "where voyage.refsousdemande = " + (this.informationsActuelles as any).idsousdemande +
+      " order by voyage.id " )
+      .subscribe(data => {
+        console.log(data);
+
+        this.listeVoyages = (data as any).features;
+
+      });
+
+
 
   }
 
@@ -449,7 +478,7 @@ export class SousDemandePage {
 
     (this.sousdemandeActuelle as any).receptionnee = false;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
   }
 
@@ -457,7 +486,7 @@ export class SousDemandePage {
 
     (this.sousdemandeActuelle as any).validee = false;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
   }
 
@@ -465,7 +494,7 @@ export class SousDemandePage {
 
     console.log(this.informationsActuelles);
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
 
   }
@@ -959,4 +988,56 @@ export class SousDemandePage {
 
   }
 
+  creerNouveauVoyage($event: MouseEvent) {
+
+    if(this.informationsActuelles){
+      this.pushInformationsActuelles({}, this.informationsActuelles, AjouterVoyagePage, "ajouter");
+    }
+    else{
+      this.pushInformationsActuelles({}, {}, AjouterVoyagePage, "ajouter");
+    }
+
+    
+  }
+
+  pushInformationsActuelles(objetInformationsActuelles,objetComplement,PageSuivante,action){
+
+    //Object.assign(target, source); projet les informations "target" ------> dans les informations de "source"
+
+
+    let objetFusion = Object.assign(objetComplement,objetInformationsActuelles);
+
+    console.log(objetFusion);
+    this.navCtrl.push(PageSuivante, {
+      informationsActuelles: objetFusion,
+      action: action
+    });
+
+  }
+
+
+  detailItemTapped($event: MouseEvent, item) {
+
+    event.stopPropagation();
+
+
+    if(this.informationsActuelles){
+      this.pushInformationsActuelles(item, this.informationsActuelles, AjouterVoyagePage, "passer");
+    }
+    else{
+      this.pushInformationsActuelles(item, {}, AjouterVoyagePage, "passer");
+    }
+
+  }
+
+  itemTapped($event: MouseEvent, item) {
+
+    if(this.informationsActuelles){
+      this.pushInformationsActuelles(item, this.informationsActuelles, ListeArticleVoyagePage, "passer");
+    }
+    else{
+      this.pushInformationsActuelles(item, {}, ListeArticleVoyagePage, "passer");
+    }
+
+  }
 }

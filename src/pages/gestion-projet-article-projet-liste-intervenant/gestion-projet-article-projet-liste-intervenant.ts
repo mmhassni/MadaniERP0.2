@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
-import {GestionPointageListePointageEnginPage} from "../gestion-pointage-liste-pointage-engin/gestion-pointage-liste-pointage-engin";
+import {GestionProjetListeAvancementArticleProjetPage} from "../gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
 
 /**
- * Generated class for the GestionPointageListeEnginPage page.
+ * Generated class for the GestionProjetArticleProjetListeIntervenantPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -12,10 +12,11 @@ import {GestionPointageListePointageEnginPage} from "../gestion-pointage-liste-p
 
 @IonicPage()
 @Component({
-  selector: 'page-gestion-pointage-liste-engin',
-  templateUrl: 'gestion-pointage-liste-engin.html',
+  selector: 'page-gestion-projet-article-projet-liste-intervenant',
+  templateUrl: 'gestion-projet-article-projet-liste-intervenant.html',
 })
-export class GestionPointageListeEnginPage {
+export class GestionProjetArticleProjetListeIntervenantPage {
+
 
 
   //les informations recuperees d'un push a partir d'une page precedente
@@ -26,23 +27,18 @@ export class GestionPointageListeEnginPage {
   public listeObjetActuelle = [];
 
   //non de la table principale de cette page
-  public nomTableActuelle = "vehicule";
+  public nomTableActuelle = "soustraitance";
 
   //la liste des tables suivantes
   public pageDAjout : any = null;
-  public pageSuivante : any = GestionPointageListePointageEnginPage;
-
+  public pageSuivante : any = GestionProjetListeAvancementArticleProjetPage;
 
   public tableauMappingBDD = [
-    ["idvehicule","id","number"],
-    ["matriculevehicule","matricule","text"],
-    ["marquevehicule","marque","text"],
-    ["modelvehicule","model","number"],
-    ["locationvehicule","location","text"],
-    ["prixlocationvehicule","prixlocation","number"],
-    ["raisonsocialelocationvehicule","raisonsocialelocation","text"],
-    ["reftypeenginvehicule","reftypeengin","number"],
-    ["reftypevehiculevehicule","reftypevehicule","number"],
+    ["idsoustraitance","id","number"],
+    ["prixsoustraitance","prix","number"],
+    ["quantitesoustraitance","quantite","number"],
+    ["refprojetarticleprojetassociesoustraitance","refprojetarticleprojetassocie","number"],
+    ["refintervenantsoustraitance","refintervenant","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -121,7 +117,7 @@ export class GestionPointageListeEnginPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","reftypevehicule = 2 and vehicule.id in (select refvehicule from chantierenginassocie where (not refchantier is null) and refchantier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojetarticleprojetassocie = " + (this.informationsActuelles as any).refarticleprojet,["intervenant"],true,"")
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
@@ -162,7 +158,12 @@ export class GestionPointageListeEnginPage {
 
   }
 
-  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile){
+  genererLeftJoin(nomTableBDD,tableRef){
+    return "LEFT JOIN " + tableRef + " ON " + tableRef + ".id = " + nomTableBDD + ".ref" + tableRef;
+  }
+
+
+  getListObjet(nomTableBDD, tableauMappingBDD,complementChamps,filtreWhere,listeJointures,importerLesAttributsEtoile,groupBy){
 
     let requeteGetProjet = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct";
     for (let i = 0; i < tableauMappingBDD.length; i++) {
@@ -171,13 +172,21 @@ export class GestionPointageListeEnginPage {
 
     }
 
+    //on enleve la derniere virgule
+    requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) ;
+
     if(importerLesAttributsEtoile){
       //dabord on reference la table principale dans le from
-      requeteGetProjet = requeteGetProjet + " * " + complementChamps +" from " + nomTableBDD ;
+      requeteGetProjet = requeteGetProjet + ", *";
     }
-    else{
-      requeteGetProjet = requeteGetProjet.substring(0,requeteGetProjet.length-1) + complementChamps +" from " + nomTableBDD ;
+
+
+    if(complementChamps){
+      requeteGetProjet = requeteGetProjet + ", " + complementChamps;
     }
+
+    requeteGetProjet = requeteGetProjet + " from " + nomTableBDD;
+
 
 
 
@@ -192,6 +201,10 @@ export class GestionPointageListeEnginPage {
       requeteGetProjet = requeteGetProjet + " where " + filtreWhere;
     }
 
+    if(groupBy != "" ){
+      requeteGetProjet = requeteGetProjet + " group by " + groupBy;
+    }
+
     requeteGetProjet = requeteGetProjet + " order by " + nomTableBDD + "." +  tableauMappingBDD[0][1] + " desc";
 
 
@@ -199,6 +212,7 @@ export class GestionPointageListeEnginPage {
     return this.httpClient.get(requeteGetProjet);
 
   }
+
 
   insertObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD){
 

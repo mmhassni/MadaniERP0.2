@@ -120,7 +120,7 @@ export class GestionIncidentAjouterIncidentPage {
 
     console.log(this.objetActuel);
 
-    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+    (this.objetActuel as any).dateincident = "'" + (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19) + "'";
 
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
@@ -370,6 +370,7 @@ export class GestionIncidentAjouterIncidentPage {
 
             }
 
+
             else if(tableauMappingBDD[i][2] == "date"){
 
               if(objetAEnregistrer[property] != "NULL"){
@@ -484,7 +485,7 @@ export class GestionIncidentAjouterIncidentPage {
 
             else if(tableauMappingBDD[i][2] == "date"){
               if(objetAEnregistrer[property] != "NULL"){
-                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
               }
               requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
             }
@@ -597,7 +598,7 @@ export class GestionIncidentAjouterIncidentPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
+                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }

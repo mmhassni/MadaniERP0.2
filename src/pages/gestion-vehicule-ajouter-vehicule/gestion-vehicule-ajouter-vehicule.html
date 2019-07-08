@@ -73,7 +73,7 @@
 
   <ion-item>
     <ion-label style="opacity:1; color: #000;font-weight: bold">Type véhicule:</ion-label>
-    <ion-select #TypeVehicule  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="reftypevehiculevehicule">
+    <ion-select #TypeVehicule  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.reftypevehiculevehicule">
       <ion-option *ngFor="let item of listeChoixTypesVehicule" [value]="item.id">{{item.nomtype}}</ion-option>
       <ion-option value="">Aucune</ion-option>
     </ion-select>

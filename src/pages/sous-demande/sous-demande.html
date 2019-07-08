@@ -108,72 +108,21 @@
   <div *ngIf="sousdemandeActuelle.validee" class="reception">
 
     <ion-item padding="0">
-      <h1 >Reception de la livraison:</h1>
+      <h1 >Reception :</h1>
     </ion-item>
 
     <ion-list>
 
-      <ion-item *ngFor="let itemR of listeArticles">
-
-        <ion-label style="color: #000;">
-          Quantité récéptionnée:
-          <p>Num article : {{itemR.idarticle}}</p>
-          <p>Désignation: {{itemR.nomproduit}} </p>
-        </ion-label>
-        <ion-input type="text" name="quantiterecue" placeholder="" [(ngModel)]="itemR.quantiterecue"></ion-input>
-      </ion-item>
+      <button ion-item *ngFor="let item of listeVoyages"   (click)="itemTapped($event, item)">
+        Num BL : {{item.numeroblvoyage}}
+        <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+      </button>
 
     </ion-list>
 
-    <ion-item padding="0">
-      <h1 >Bon de livraison:</h1>
-    </ion-item>
-
-    <ion-item>
-      <ion-label style="color: #000;">
-        Numero BL :
-      </ion-label>
-      <ion-input type="tel" name="text" placeholder="" [(ngModel)]="sousdemandeActuelle.numerobl"  ></ion-input>
-    </ion-item>
-
-
-    <ion-item style="padding-bottom:4px;padding-top: 4px">
-      <ion-label>Photo BL:</ion-label>
-
-    </ion-item>
-
-    <img  [(src)]="'data:image/jpeg;base64,' + sousdemandeActuelle.photobl" *ngIf="sousdemandeActuelle.photobl"/>
-
-    <br>
-    <br>
-
-    <div text-center>
-      <button ion-button round (click)="photoBLChooser()">
-        Charger Photo  <ion-icon padding name="camera"></ion-icon>
-      </button>
-    </div>
-
-    <br>
-    <br>
-
-    <ion-item style="padding-bottom:4px;padding-top: 4px">
-      <ion-label>Photo Fourniture:</ion-label>
-
-    </ion-item>
-
-    <img  [(src)]="'data:image/jpeg;base64,' + sousdemandeActuelle.photofourniture" *ngIf="sousdemandeActuelle.photofourniture"/>
-
-    <br>
-    <br>
-
-    <div text-center>
-      <button ion-button round (click)="photoFournitureChooser()">
-        Charger Photo  <ion-icon padding name="camera"></ion-icon>
-      </button>
-    </div>
-
-    <br>
-    <br>
+    <button type="submit" ion-button color="secondary" (click)="creerNouveauVoyage($event)" block>
+      Nouvelle Récéption
+    </button>
 
   </div>
 

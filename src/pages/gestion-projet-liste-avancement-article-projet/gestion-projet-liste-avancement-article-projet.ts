@@ -36,7 +36,7 @@ export class GestionProjetListeAvancementArticleProjetPage {
     ["dateavancementarticleprojet","date","date"],
     ["observationavancementarticleprojet","observation","text"],
     ["quantiteavancementarticleprojet","quantite","number"],
-    ["refprojetarticleprojetassocieavancementarticleprojet","refprojetarticleprojetassocie","number"]
+    ["refsoustraitanceavancementarticleprojet","refsoustraitance","number"]
   ];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
@@ -115,7 +115,7 @@ export class GestionProjetListeAvancementArticleProjetPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refprojetarticleprojetassocie = " + (this.informationsActuelles as any).idprojetarticleprojetassocie,[],true,"")
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refsoustraitance = " + (this.informationsActuelles as any).idsoustraitance,[],true,"")
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });
