@@ -57,11 +57,17 @@ export class AjouterArticleVoyagePage {
     //on recupere les informations recuperees de la bdd
     this.objetActuel = navParams.data.informationsActuelles;
 
+
+
     console.log(this.objetActuel);
 
 
     //on saisie les champs manquants selon les cas
     (this.objetActuel as any) = this.remplirChampManquant(this.objetActuel,this.tableauMappingBDD,[]);
+
+
+    this.objetActuel["refvoyagevoyagearticleprojet"] = navParams.data.informationsActuelles["idvoyage"];
+
 
     //on initialise les liste de choix
     this.recupererListeChoix("listeChoixArticleSousDemande","produitfournisseur","id","nomproduit",[],"produitfournisseur.id in (select refproduitfournisseur from article where refsousdemande = " + navParams.data.informationsActuelles["idsousdemande"] + ")",[]);

@@ -384,10 +384,14 @@ export class SousDemandePage {
 
   refreshArticle(){
     this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
-      "select * " +
-      "from article " +
-      "where refsousdemande = " + this.informationsActuelles["idsousdemande"] + " " +
-      "order by id ")
+    "select article.datereception as datereception, " +
+      "produitfournisseur.prixht as prixarticle, " +
+      "produitfournisseur.tvaenpourcentage as tvaarticle, " +
+      "article.id as idarticle, * from article, sousdemande, " +
+      "produitfournisseur " +
+    "where article.refsousdemande = sousdemande.id " +
+    "and article.refproduitfournisseur = produitfournisseur.id " +
+    "and article.refsousdemande = " + (this.informationsActuelles as any).idsousdemande )
       .subscribe( data => {
 
         this.listeArticles = (data as any).features;
@@ -399,6 +403,7 @@ export class SousDemandePage {
 
     this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
       "select " +
+        "voyage.id as idvoyage, " +
         "voyage.numerobl as numeroblvoyage, " +
         "voyage.refsousdemande as numeroblvoyage, " +
         "voyage.photobl as photoblvoyage, " +
@@ -451,7 +456,7 @@ export class SousDemandePage {
 
     (this.sousdemandeActuelle as any).traitee = true;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
 
   }
@@ -460,7 +465,7 @@ export class SousDemandePage {
 
     (this.sousdemandeActuelle as any).validee = true;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
 
   }
@@ -469,7 +474,7 @@ export class SousDemandePage {
 
     (this.sousdemandeActuelle as any).receptionnee = true;
 
-    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],["photobl","photofourniture"],["photo bl","photo fourniture"]);
+    this.updatePostObjet(this.sousdemandeActuelle,"sousdemande",(this.sousdemandeActuelle as any)[Object.keys(this.sousdemandeActuelle as any)[0]],this.tableauMappingBDD,[],[],[]);
 
 
   }

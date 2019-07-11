@@ -64,9 +64,11 @@ export class GestionVehiculeListeVehiculePage {
     // if the value is an empty string don't filter the items
     if (val && val.trim() != '') {
       this.listeFournisseursFiltree = this.listeFournisseursFiltree.filter((item) => {
+        console.log(item.nomtype + item.nomtypeengin + item.matricule);
         return ( (item.nomtype + item.nomtypeengin + item.matricule).toLowerCase().indexOf(val.toLowerCase()) > -1);
       })
     }
+
   }
 
   refresh(){
@@ -103,6 +105,7 @@ export class GestionVehiculeListeVehiculePage {
 
   ionViewDidEnter() {
     this.refresh();
+
 
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {AlertController, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {ListeChantierPage} from "../liste-chantier/liste-chantier";
 import {HttpClient} from "@angular/common/http";
 import {UtilisateurProvider} from "../../providers/utilisateur/utilisateur";
@@ -40,6 +40,9 @@ export class ListeProjetPage {
 
   ];
 
+  //non de la table principale de cette page
+  public nomTableActuelle = "projet";
+
 
   public utilisateurSubscription : Subscription;
   public utilisateur = {
@@ -49,7 +52,7 @@ export class ListeProjetPage {
 
   };
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public utilisateurProvider: UtilisateurProvider) {
+  constructor(public navCtrl: NavController,public alertCtrl: AlertController, public navParams: NavParams, public httpClient: HttpClient, public utilisateurProvider: UtilisateurProvider) {
 
     this.utilisateurSubscription = this.utilisateurProvider.utilisateur$.subscribe(
 
@@ -149,4 +152,51 @@ export class ListeProjetPage {
 
   }
 
+  saveItem(item: any) {
+    
+  }
+
+  supprimerItem($event: MouseEvent, item: any) {
+
+    let confirmationSuppression = this.alertCtrl.create({
+      title: 'Attention',
+      message: "Etes-vous sure de vouloir supprimer l'élément" + '?',
+      buttons: [
+        {
+          text: 'Non',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Oui',
+          handler: () => {
+
+            this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+              "delete from " + this.nomTableActuelle + " where id = " + item["id" + this.nomTableActuelle])
+              .subscribe( data => {
+                console.log("nadi ");
+
+
+
+              }, err => {
+
+                console.log("erreur ");
+                console.log(err);
+                if(err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
+                  this.refresh();
+
+                }
+
+              });
+
+          }
+        }
+      ]
+    });
+    confirmationSuppression.present();
+
+
+
+  }
 }

@@ -46,6 +46,7 @@
   <ion-list>
     <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
       {{item?.matriculevehicule}}
+      <p>Type engin :  {{item?.nomtypeengin}}</p>
       <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
     </button>
   </ion-list>

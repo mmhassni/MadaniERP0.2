@@ -54,12 +54,11 @@
     <p>Date modification: {{sousdemandeActuelle.datemodificationsousdemande}} </p>
     <p>Montant total HT: {{sommeTotaleHT()}} </p>
     <p>Montant total TTC: {{sommeTotaleTTC()}} </p>
-    <p *ngIf="informationsActuelles?.traitee == 'TRUE'">Traitée: oui</p>
-    <p *ngIf="informationsActuelles?.traitee != 'TRUE'">Traitée: non</p>
-    <p *ngIf="informationsActuelles?.validee == 'TRUE'">Validée: oui</p>
-    <p *ngIf="informationsActuelles?.validee != 'TRUE'">Validée: non</p>
-    <p *ngIf="informationsActuelles?.receptionnee == 'TRUE'">Récéptionnée: oui</p>
-    <p *ngIf="informationsActuelles?.receptionnee != 'TRUE'">Récéptionnée: non</p>
+    <p *ngIf="informationsActuelles?.traitee">Traitée: oui</p>
+    <p *ngIf="!informationsActuelles?.traitee" >Traitée: non</p>
+    <p *ngIf="informationsActuelles?.validee" >Validée: oui</p>
+    <p *ngIf="!informationsActuelles?.validee">Validée: non</p>
+
   </ion-item>
 
 
@@ -113,8 +112,9 @@
 
     <ion-list>
 
-      <button ion-item *ngFor="let item of listeVoyages"   (click)="itemTapped($event, item)">
-        Num BL : {{item.numeroblvoyage}}
+      <button ion-item *ngFor="let item of listeVoyages; let i = index"   (click)="itemTapped($event, item)">
+        Voyage {{listeVoyages.length -i}}
+        <p>Num BL : {{item.numeroblvoyage}}</p>
         <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
       </button>
 
@@ -127,6 +127,8 @@
   </div>
 
 
+  <br><br>
+
 
   <button type="submit" *ngIf="!sousdemandeActuelle.traitee" color="tertiary" ion-button  block (click)="enregistrerEtatTraite()">
     Traiter
@@ -136,13 +138,6 @@
     Valider
   </button>
 
-  <button type="submit" *ngIf="!sousdemandeActuelle.receptionnee && sousdemandeActuelle.validee" color="tertiary" ion-button  block (click)="enregistrerEtatRecepetionne()">
-    Receptionner
-  </button>
-
-  <button type="submit" *ngIf="sousdemandeActuelle.receptionnee" color="tertiary" ion-button  block (click)="enregistrerEtatDerecepetionne()">
-    Déreceptionner
-  </button>
 
   <button type="submit" *ngIf="!sousdemandeActuelle.receptionnee && sousdemandeActuelle.validee" color="tertiary" ion-button  block (click)="enregistrerEtatDevalide()">
     Dévalider

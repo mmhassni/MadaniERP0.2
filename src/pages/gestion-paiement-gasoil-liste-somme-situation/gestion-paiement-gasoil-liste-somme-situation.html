@@ -59,13 +59,20 @@
 
 
   <ion-list>
-    <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
-      {{item?.nomstation}}
-      <p>HT : {{(item?.totalttc * 0.8).toFixed(2)}} DH</p>
-      <p>TTC : {{item?.totalttc}} DH</p>
-      <p>Nombre BG : {{item?.nombrebongasoil}} </p>
-      <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
-    </button>
+    <ion-item-sliding>
+      <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
+        {{item?.nomstation}}
+        <p>HT : {{(item?.totalttc * 0.8).toFixed(2)}} DH</p>
+        <p>TTC : {{item?.totalttc}} DH</p>
+        <p>Nombre BG : {{item?.nombrebongasoil}} </p>
+        <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+      </button>
+      <ion-item-options side="right" (ionSwipe)="saveItem(item)">
+        <button ion-button expandable (click)="saveItem(item)">
+          <ion-icon name="star"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
 
 

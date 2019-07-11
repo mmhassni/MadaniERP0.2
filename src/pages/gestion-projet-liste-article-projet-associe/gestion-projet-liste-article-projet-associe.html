@@ -38,10 +38,31 @@
 
 
   <ion-list>
-    <button ion-item *ngFor="let item of listeObjetActuelle"   (click)="itemTapped($event, item)">
-      {{item?.nom}}
-      <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
-    </button>
+
+    <ion-item-sliding *ngFor="let item of listeObjetActuelle">
+
+      <button ion-item    (click)="itemTapped($event, item)">
+        {{item?.nom}}
+        <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
+      </button>
+
+
+      <ion-item-options side="right" color="secondary" (ionSwipe)="saveItem(item)">
+
+        <button ion-button color="danger" (click)="supprimerItem($event, item)">
+          <ion-icon name="trash"></ion-icon>
+          Supprimer
+        </button>
+
+      </ion-item-options>
+
+
+    </ion-item-sliding>
+
+
+
+
+
   </ion-list>
 
 

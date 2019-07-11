@@ -114,7 +114,7 @@ export class ListeArticleVoyagePage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","",["produitfournisseur"],true,"")
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","refvoyage = " + this.informationsActuelles["idvoyage"] ,["produitfournisseur"],true,"")
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });

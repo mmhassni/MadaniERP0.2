@@ -36,10 +36,12 @@ export class SuiviGasoilListeBonGasoilPage {
     ["idbongasoil","id","id"],
     ["photobgbongasoil","photobg","text"],
     ["prixunitairebongasoil","prixunitaire","number"],
+    //["datebongasoil","date","date"],
     ["quantitegasoilbongasoil","quantitegasoil","number"],
     ["montantgasoilbongasoil","montantgasoil","number"],
     ["refchantierbongasoil","refchantier","number"],
     ["refvehiculebongasoil","refvehicule","number"],
+    ["refstationbongasoil","refstation","number"],
     ["nompersonnelbongasoil","nompersonnel","text"]
 
   ];

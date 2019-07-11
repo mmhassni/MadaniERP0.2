@@ -26,8 +26,10 @@
   <ion-list>
     <button ion-item *ngFor="let item of listeFournisseursFiltree"   (click)="itemTapped($event, item)">
       {{item.matriculevehicule}}
-      <p>Type : {{item.raisonsocialelocationvehicule}}</p>
-      <p>Nombre chantier : {{item.nombrechantierassocie}}</p>
+      <p>Type : {{item.nomtype}}</p>
+      <p *ngIf="item.nomtype == 'engin'">Type engin : {{item.nomtypeengin}}</p>
+      <p *ngIf="item.nombrechantierassocie">Nombre chantier : {{item.nombrechantierassocie}}</p>
+      <p *ngIf="!item.nombrechantierassocie">Nombre chantier : 0</p>
       <button ion-button clear item-end  (click)="detailItemTapped($event, item)">Détail</button>
     </button>
   </ion-list>

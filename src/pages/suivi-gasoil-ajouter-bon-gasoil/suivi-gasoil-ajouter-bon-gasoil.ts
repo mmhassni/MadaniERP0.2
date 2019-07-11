@@ -76,6 +76,8 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //on recupere les informations recuperees de la bdd
     this.objetActuel = navParams.data.informationsActuelles;
 
+    this.objetActuel["refchantierbongasoil"] = navParams.data.informationsActuelles["idchantier"];
+
     console.log(navParams.data.informationsActuelles);
 
     //on saisie les champs manquants selon les cas
@@ -83,10 +85,12 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //(this.objetActuel as any).refchantier = navParams.data.informationsActuelles.idchantier;
 
     //on initialise les liste de choix
-    this.recupererListeChoix("listeChoixTypesVehicule","typevehicule","id","nomtype");
-    this.recupererListeChoix("listeChoixTypesEngin","typeengin","id","nomtypeengin");
-    this.recupererListeChoix("listeChoixVehicule","vehicule","id","matricule");
-    this.recupererListeChoix("listeChoixStation","station","id","nom");
+    this.recupererListeChoix("listeChoixTypesVehicule","typevehicule","id","nomtype",[],"",[]);
+    this.recupererListeChoix("listeChoixTypesEngin","typeengin","id","nomtypeengin",[],"",[]);
+    this.recupererListeChoix("listeChoixVehicule","vehicule","id","matricule",[],"id in (select refvehicule from chantierenginassocie where refchantier = " + this.objetActuel["refchantierbongasoil"] + ")",["vehicule.reftypevehicule","vehicule.reftypeengin"]);
+    this.recupererListeChoix("listeChoixStation","station","id","nom",[],"",[]);
+
+
 
     console.log(this.objetActuel);
 
@@ -101,9 +105,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
     }
-    // cad le mode detail ou le mode modification
     else{
-
 
       console.log(this.objetActuel);
       this.modeModificationCreation = false;
@@ -127,16 +129,19 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   enregistrerNouvelObjet(){
 
-    (this.objetActuel as any).datebongasoil = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
 
-
-    this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    if(this.havePhotoAttribut){
+      this.insertPostObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
+    }
+    else{
+      this.insertObjet(this.objetActuel,this.nomTableActuelle,this.tableauMappingBDD);
+    }
 
     //console.log(this.navParams.data.parentPage);
 
     //this.navParams.data.parentPage.refresh();
 
-    this.navCtrl.pop();
 
 
   }
@@ -145,9 +150,10 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     console.log(this.objetActuel);
 
+    (this.objetActuel as any).dateincident = (new Date()).toISOString().substring(0,10)+" "+(new Date()).toISOString().substring(11,19);
+
     this.updatePostObjet(this.objetActuel,this.nomTableActuelle,(this.objetActuel as any)[Object.keys(this.objetActuel as any)[0]],this.tableauMappingBDD,[],this.parametresPost,this.parametresPostLibelle);
 
-    this.navCtrl.pop();
 
 
 
@@ -159,12 +165,51 @@ export class SuiviGasoilAjouterBonGasoilPage {
   }
 
   //retourne une liste de choix contenant l'id et le libelle
-  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe){
+  recupererListeChoix(nomListeARemplir,nomTableListeChoix,idAttributTable,libelleAttributListe,listeJointures,conditionWhere,listeAttributsSupplementaires){
 
+    for(let pp in this){
 
+      if(pp == nomListeARemplir){
+
+      }
+
+    }
 
     let listeARemplir = [];
-    let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select " + idAttributTable + ", " + libelleAttributListe + ",* from " + nomTableListeChoix;
+    let requeteGetListChoix = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select distinct " + nomTableListeChoix + "." + idAttributTable + " as "+ idAttributTable +" , " + nomTableListeChoix + "." + libelleAttributListe + " as " + libelleAttributListe;
+
+    if(listeAttributsSupplementaires.length){
+      for (let i = 0; i < listeAttributsSupplementaires.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeAttributsSupplementaires[i] + " as " + listeAttributsSupplementaires[i].split(".")[1] + listeAttributsSupplementaires[i].split(".")[0];
+
+      }
+    }
+    else{
+
+      for (let i = 0; i < listeJointures.length; i++) {
+
+        //on reference apres les autre table de la jointure
+        requeteGetListChoix = requeteGetListChoix + ", " + listeJointures[i] + ".* ";
+
+      }
+
+    }
+
+    requeteGetListChoix = requeteGetListChoix + " from " + nomTableListeChoix;
+
+    for (let i = 0; i < listeJointures.length; i++) {
+
+      //on reference apres les autre table de la jointure
+      requeteGetListChoix = requeteGetListChoix + " LEFT JOIN " + listeJointures[i] + " ON " + nomTableListeChoix + ".ref" + listeJointures[i] + " = " + listeJointures[i] + ".id ";
+
+    }
+
+    if(conditionWhere){
+      requeteGetListChoix = requeteGetListChoix + " where " + conditionWhere;
+    }
+
 
     this.httpClient.get(requeteGetListChoix).subscribe( data => {
 
@@ -285,13 +330,11 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
   }
 
-  /*
-  insertPostObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+  insertPostObjet(objetAEnregistrer, nomTableBDD, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle){
+
 
     //on doit dabord remplir les champs manquants
-    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,tableauChampAIgnorer);
-
-    console.log(objetAEnregistrer);
+    objetAEnregistrer = this.remplirChampManquant(objetAEnregistrer, tableauMappingBDD,[]);
 
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/insert into " + nomTableBDD + " (";
@@ -310,37 +353,35 @@ export class SuiviGasoilAjouterBonGasoilPage {
     //apres on doit parcourir tout les champs de notre objet
     for (var property in objetAEnregistrer) {
 
-      if( ! parametresPost.includes(property) ){
+      if( ! parametresPost.includes(property) ) {
 
         // on doit recuperer les informations du mapping
         for(let i = 1; i < tableauMappingBDD.length; i++){
 
-          if(tableauChampAIgnorer.indexOf(tableauMappingBDD[i][0]) < 0) {
+          if( property == tableauMappingBDD[i][0]){
 
+            if(tableauMappingBDD[i][2] == "text"){
 
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
 
-            //si on trouve les informations du mapping
-            if( property == tableauMappingBDD[i][0]){
+            }
 
+            else if(tableauMappingBDD[i][2] == "date"){
 
-
-              if(tableauMappingBDD[i][2] == "text"){
-                requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
-
+              if(objetAEnregistrer[property] != "NULL"){
+                objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
               }
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
 
-              else if(tableauMappingBDD[i][2] == "date"){
+            }
+            else if(tableauMappingBDD[i][2] == "number"){
 
-                if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
-                }
-                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
+              requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
 
-              }
-              //les autres cas se traitent de la meme facon
-              else{
-                requeteUpdate = requeteUpdate + "" + objetAEnregistrer[property] + ",";
-              }
+            }
+            //les autres cas se traitent de la meme facon
+            else{
+              requeteUpdate = requeteUpdate + "'" + objetAEnregistrer[property] + "',";
 
             }
 
@@ -349,9 +390,16 @@ export class SuiviGasoilAjouterBonGasoilPage {
         }
 
       }
+      else{
+
+        requeteUpdate = requeteUpdate + "'"  + "',";
+
+
+      }
+
+
 
     }
-
 
     //on doit enlever la derniere virgule
     requeteUpdate = requeteUpdate.substring(0, requeteUpdate.length - 1);
@@ -359,128 +407,46 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
 
-    //enregistrement des parametres attributaires
-    this.httpClient.get(requeteUpdate).subscribe(data => {
-
-      console.log(data);
-
-    },err => {
-
-      let messageGetToast = "Informations attributaires enregistrées";
-
-      if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
-
-        let toast = this.toastCtrl.create({
-          message: messageGetToast,
-          duration: 1000,
-          position: 'top',
-          cssClass: "toast-success"
-        });
-
-        toast.present();
+    this.httpClient.get(requeteUpdate)
+      .subscribe(data => {
 
 
-
-      }
-      else{
-        messageGetToast = "Informations attributaires non enregistrées";
-
-        let toast = this.toastCtrl.create({
-          message: messageGetToast,
-          duration: 1000,
-          position: 'top',
-          cssClass: "toast-echec"
-        });
-
-        toast.present();
-
-      }
-
-
-    });
-
-
-    //enregistrement des parametres post
-    for(let i = 0; i < parametresPost.length; i++){
-
-      //on doit enlever la derniere virgule
-      let requeteUpdatePost = requeteUpdate + " " + parametresPost[i] + " = " + "'postBody' ";
-
-      //preparation de la requete
-      requeteUpdatePost = requeteUpdatePost + " where " + tableauMappingBDD[0][1] + " = " + idEnregistrementAModifier;
-
-      //recuperation des informations du post
-      let body = objetAEnregistrer[parametresPost[i]];
-
-      if(!body){
-        body = "NULL";
-        console.log("aucune photo");
-      }
-
-
-      this.httpClient.post(requeteUpdatePost,
-
-        body)
-
-        .subscribe(data => {
-
-          console.log(data);
-
-        },err => {
-
-          let messageToastPost = "Informations " + parametresPostLibelle[i] +  " enregistrées";
+        },
+        err => {
 
           if(err.error.message == "org.postgresql.util.PSQLException: Aucun résultat retourné par la requête." || err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
 
+            this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/select max(id) as maxid from " + this.nomTableActuelle )
+              .subscribe( dataMax =>{
+                (this.objetActuel as any)[this.tableauMappingBDD[0][0]]=(dataMax as any).features.maxid;
+                this.updatePostObjet(objetAEnregistrer, nomTableBDD, (dataMax as any).features[0].maxid, tableauMappingBDD,tableauChampAIgnorer,parametresPost,parametresPostLibelle);
 
-            this.httpClient.post( requeteUpdate,
-
-              body)
-
-              .subscribe(data2 => {
-
-                console.log(data2);
-
-              },err2 => {
-
-
+                this.navCtrl.pop();
 
               });
 
 
-            let toast = this.toastCtrl.create({
-              message: messageToastPost,
-              duration: Number((2*i +3).toString() + '000'),
-              position: 'top',
-              cssClass: "toast-success"
-            });
-
-            toast.present();
 
           }
           else{
-
-            messageToastPost = "Informations " + parametresPostLibelle[i] +  " non enregistrées";
+            let messageGetToast = "Objet non enregistré";
 
             let toast = this.toastCtrl.create({
-              message: messageToastPost,
-              duration: Number((2*i +3).toString() + '000'),
+              message: messageGetToast,
+              duration: 1000,
               position: 'top',
               cssClass: "toast-echec"
             });
 
             toast.present();
-
           }
 
-        });
 
 
-    }
-
+        }
+      );
 
   }
-  */
 
   updateGetObjet(objetAEnregistrer, nomTableBDD, idEnregistrementAModifier, tableauMappingBDD,tableauChampAIgnorer){
 
@@ -563,6 +529,9 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
         toast.present();
 
+        this.navCtrl.pop();
+
+
 
 
       }
@@ -598,6 +567,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
     console.log(objetAEnregistrer);
 
+
     //debut de la construction de la requete
     let requeteUpdate = "http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/Update " + nomTableBDD + " set";
 
@@ -613,6 +583,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
 
 
+
             //si on trouve les informations du mapping
             if( property == tableauMappingBDD[i][0]){
 
@@ -624,7 +595,7 @@ export class SuiviGasoilAjouterBonGasoilPage {
 
               else if(tableauMappingBDD[i][2] == "date"){
                 if(objetAEnregistrer[property] != "NULL"){
-                  objetAEnregistrer[property] = "" + objetAEnregistrer[property] + "";
+                  objetAEnregistrer[property] = "'" + objetAEnregistrer[property] + "'";
                 }
                 requeteUpdate = requeteUpdate + " " + tableauMappingBDD[i][1] + " = " + objetAEnregistrer[property] + ",";
               }
@@ -673,6 +644,10 @@ export class SuiviGasoilAjouterBonGasoilPage {
         });
 
         toast.present();
+
+
+
+
 
 
 
@@ -763,6 +738,11 @@ export class SuiviGasoilAjouterBonGasoilPage {
             });
 
             toast.present();
+
+            this.navCtrl.pop();
+
+
+
 
           }
           else{

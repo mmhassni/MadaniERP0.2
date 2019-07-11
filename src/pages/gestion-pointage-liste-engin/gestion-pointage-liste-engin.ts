@@ -121,7 +121,7 @@ export class GestionPointageListeEnginPage {
 
   refresh(){
 
-    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","reftypevehicule = 2 and vehicule.id in (select refvehicule from chantierenginassocie where (not refchantier is null) and refchantier = " + (this.informationsActuelles as any).idchantier + ")",[],true)
+    this.getListObjet(this.nomTableActuelle,this.tableauMappingBDD,"","reftypevehicule = 2 and vehicule.id in (select refvehicule from chantierenginassocie where (not refchantier is null) and refchantier = " + (this.informationsActuelles as any).idchantier + ")",["typeengin"],true)
       .subscribe(data => {
         this.listeObjetActuelle = (data as any).features;
       });

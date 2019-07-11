@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
+import {AlertController, IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import {GestionProjetListeAvancementArticleProjetPage} from "../gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
 import {GestionProjetArticleProjetListeIntervenantPage} from "../gestion-projet-article-projet-liste-intervenant/gestion-projet-article-projet-liste-intervenant";
@@ -39,7 +39,7 @@ export class GestionProjetListeArticleProjetAssociePage {
     ["prixunitaireprojetarticleprojetassocie","prixunitaire","number"],
     ["quantiteprojetarticleprojetassocie","quantite","number"]
   ];
-  constructor(public navCtrl: NavController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
+  constructor(public navCtrl: NavController,public alertCtrl: AlertController, public navParams: NavParams, public httpClient: HttpClient, public toastCtrl : ToastController) {
 
     this.informationsActuelles = this.navParams.data.informationsActuelles;
 
@@ -625,4 +625,49 @@ export class GestionProjetListeArticleProjetAssociePage {
     return objetBDDInitialise;
 
   }
+
+  supprimerItem($event: MouseEvent, item: any) {
+
+    let confirmationSuppression = this.alertCtrl.create({
+      title: 'Attention',
+      message: "Etes-vous sure de vouloir supprimer l'élément" + '?',
+      buttons: [
+        {
+          text: 'Non',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Oui',
+          handler: () => {
+
+            this.httpClient.get("http://ec2-52-47-166-154.eu-west-3.compute.amazonaws.com:9090/requestAny/" +
+              "delete from " + this.nomTableActuelle + " where id = " + item["id" + this.nomTableActuelle])
+              .subscribe( data => {
+                console.log("nadi ");
+
+
+
+              }, err => {
+
+                console.log("erreur ");
+                console.log(err);
+                if(err.error.message == "org.postgresql.util.PSQLException: No results were returned by the query."){
+                  this.refresh();
+
+                }
+
+              });
+
+          }
+        }
+      ]
+    });
+    confirmationSuppression.present();
+
+
+
+  }
+
 }

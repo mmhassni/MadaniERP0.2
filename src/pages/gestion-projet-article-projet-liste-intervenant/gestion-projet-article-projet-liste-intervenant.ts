@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import {GestionProjetListeAvancementArticleProjetPage} from "../gestion-projet-liste-avancement-article-projet/gestion-projet-liste-avancement-article-projet";
+import {GestionIntervenantAjouterIntervenantPage} from "../gestion-intervenant-ajouter-intervenant/gestion-intervenant-ajouter-intervenant";
 
 /**
  * Generated class for the GestionProjetArticleProjetListeIntervenantPage page.

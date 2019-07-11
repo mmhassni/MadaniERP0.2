@@ -73,17 +73,27 @@
 
   <ion-item *ngIf="TypeVehicule.value == '2'">
   <ion-label  style="opacity:1; color: #000;font-weight: bold">Type engin:</ion-label>
-  <ion-select #TypeEngin  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refchantierbongasoil">
+  <ion-select #TypeEngin  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.reftypeenginbongasoil">
     <ion-option *ngFor="let item of listeChoixTypesEngin" [value]="item.id">{{item.nomtypeengin}}</ion-option>
     <ion-option value="">Aucune</ion-option>
   </ion-select>
   </ion-item>
 
-  <ion-item *ngIf="TypeVehicule.value">
+  <ion-item *ngIf="TypeVehicule.value != '' && TypeVehicule.value">
     <ion-label  style="opacity:1; color: #000;font-weight: bold">Matricule:</ion-label>
     <ion-select  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculebongasoil">
       <div *ngFor="let item of listeChoixVehicule">
-        <ion-option *ngIf="item.refprojet == navParams.data.informationsActuelles.refprojet && (TypeVehicule.value == item.reftypevehicule) && (objetActuel.reftypeenginbongasoil == item.reftypeengin)" [value]="item.id">{{item.matricule}}</ion-option>
+        <ion-option *ngIf="(TypeVehicule.value == item.reftypevehiculevehicule) && (objetActuel.reftypeenginbongasoil == item.reftypeenginvehicule)" [value]="item.id">{{item.matricule}}</ion-option>
+      </div>
+      <ion-option value="">Aucune</ion-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="TypeVehicule.value == '' ">
+    <ion-label  style="opacity:1; color: #000;font-weight: bold">Matricule :</ion-label>
+    <ion-select  name = "Type vehicule" [disabled]="!modeEditionAffichage" [(ngModel)]="objetActuel.refvehiculebongasoil">
+      <div *ngFor="let item of listeChoixVehicule">
+        <ion-option  [value]="item.id">{{item.matricule}}</ion-option>
       </div>
       <ion-option value="">Aucune</ion-option>
     </ion-select>
@@ -99,7 +109,7 @@
   <br>
 
   <div text-center>
-    <button ion-button round *ngIf="modeModificationCreation" (click)="photoChooser(objetActuel,'photobgbongasoil')">
+    <button ion-button round *ngIf="modeModificationCreation || (!modeModificationCreation && modeEditionAffichage)" (click)="photoChooser(objetActuel,'photobgbongasoil')">
       Charger Photo  <ion-icon padding name="camera"></ion-icon>
     </button>
   </div>
